@@ -1,1 +1,3 @@
 This provide capability for the user to review, tag and rate on an item in Ding!.
+
+In order to get this module shown on the item landing page, you have to include the module in ting/ting_object_overview.tpl.php.

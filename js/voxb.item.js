@@ -41,7 +41,7 @@ var VoxbItem = {
         src = 'star-off';
       }
 
-      jQuery(this).attr('src', voxb_images+src+'.png');
+      jQuery(this).attr('src', '/'+voxb_images+src+'.png');
     });
   },
 

@@ -5,10 +5,10 @@
  */
 
 var VoxbItem = {
-	ratingSet: false,
-	faustNumber: '',
-	
-	// Check tag existence in tag list
+  ratingSet: false,
+  faustNumber: '',
+  
+  // Check tag existence in tag list
   tagExists: function(tag) {
 
     var exists = false;
@@ -23,7 +23,7 @@ var VoxbItem = {
     return exists;
   },
 
-	 // Show a popup
+   // Show a popup
   showPopup: function(msg) {
     jQuery('div.errorPopup p:last').html(msg);
     jQuery('div.errorPopup').bPopup({zIndex:9900});
@@ -87,9 +87,9 @@ var VoxbItem = {
   },
   
   init: function() {
-  	VoxbItem.getComments();
-  	
-  	// Animate the rating 'stars' on mouseover
+    VoxbItem.getComments();
+    
+    // Animate the rating 'stars' on mouseover
     jQuery('span.userRate').each(function() {
       jQuery(this).find('img').mouseover(function() {
         if (VoxbItem.ratingSet == false) {
@@ -134,10 +134,10 @@ var VoxbItem = {
             if (msg['status'] == false) {
               VoxbItem.ratingSet = false;
               if (msg['error'] != undefined) {
-              	VoxbItem.showPopup(msg['error'][0]);
+                VoxbItem.showPopup(msg['error'][0]);
               }
               else {
-              	VoxbItem.showPopup('The request could not be completed or you rated this item already.');
+                VoxbItem.showPopup('The request could not be completed or you rated this item already.');
               }
             }
             // ToDo handle 'status == true' response
@@ -193,10 +193,10 @@ var VoxbItem = {
               success: function(msg) {
                 if (msg['status'] == false) {
                   if(msg['error'] != undefined) {
-                  	VoxbItem.showPopup(msg['error'][0]);
+                    VoxbItem.showPopup(msg['error'][0]);
                   }
                   else {
-                  	VoxbItem.showPopup('The request could not be completed or you tagged this item already.');
+                    VoxbItem.showPopup('The request could not be completed or you tagged this item already.');
                   }
                   jQuery('div.addTagContainer input[name=add_tag_btn]').show();
                   jQuery('div.addTagContainer input[name=tag_name]').show();
@@ -213,7 +213,7 @@ var VoxbItem = {
             });
           }
           else {
-          	VoxbItem.showPopup('Tag already exists.');
+            VoxbItem.showPopup('Tag already exists.');
           }
         }
       });
@@ -237,10 +237,10 @@ var VoxbItem = {
           success: function(msg) {
             if (msg['status'] == false) {
               if(msg['error'] != undefined) {
-              	VoxbItem.showPopup(msg['error'][0]);
+                VoxbItem.showPopup(msg['error'][0]);
               }
               else {
-              	VoxbItem.showPopup('The request could not be completed or you posted a comment already.');
+                VoxbItem.showPopup('The request could not be completed or you posted a comment already.');
               }
               jQuery('div.addReviewContainer textarea').show();
               jQuery('div.addReviewContainer input.form-submit').show();
@@ -261,8 +261,8 @@ var VoxbItem = {
 };
   
 jQuery(document).ready(function() {
-	VoxbItem.faustNumber = jQuery('#voxbItem .faustNum').html();
-	VoxbItem.init();
+  VoxbItem.faustNumber = jQuery('#voxbItem .faustNum').html();
+  VoxbItem.init();
 
  jQuery('div.errorPopup p.close').click(function(){
    jQuery('div.errorPopup').bPopup().close();

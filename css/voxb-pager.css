@@ -1,0 +1,29 @@
+/**
+ * @file
+ *
+ * Markup of the pager.
+ */
+
+div#pager_block {
+  margin: 0 auto;
+  width: 230px;
+}
+
+div#pager_block ul {
+  list-style-type: none;
+}
+
+div#pager_block ul li {
+  border: 1px solid #DDD;
+  float: left;
+  margin-right: 5px;
+  height: 25px;
+  text-align: center;
+  width: 25px;
+}
+
+div#pager_block ul li.active_page {
+  background-color: #CCC;
+  font-size: 120%;
+  font-weight: bold;
+}

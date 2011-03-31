@@ -1,0 +1,175 @@
+<?php
+
+/**
+ * @file
+ *
+ * hook_init
+ * Adding JS code to the page for ajax login form.
+ */
+
+function ding_voxb_init() {
+  global $user;
+  // What is our module path?
+  $module_path = drupal_get_path('module', 'ding_voxb');
+  // Load Thickbox files, but only if the user is not logged in and this module is enabled.
+  if ($user->uid == 0) {
+    drupal_add_js($module_path . "/js/jquery.bpopup.js");
+    drupal_add_js($module_path . "/js/voxb.login.js");
+    
+    drupal_add_css(drupal_get_path('module', 'ding_voxb') .'/css/voxb-login.css');
+  }
+
+  // Define comments per page
+  define('VOXB_COMMENTS_PER_PAGE', 3);
+  // Define path to Voxb module
+  define('VOXB_PATH', drupal_get_path('module','ding_voxb'));
+}
+
+/**
+ * Implementation of hook_menu.
+ */
+
+function ding_voxb_menu() {
+  $items = array();
+
+ $items['admin/config/voxb'] = array(
+    'title' => 'VoxB',
+    'description' => 'VoxB module settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ding_voxb_admin'),
+    'access arguments' => array('access adminitration pages'),
+    'file' => 'ding_voxb.admin.inc'
+  );
+   
+  $items['voxb/ajaxResponder'] = array(
+    'title' => "VoxB test link",
+    'description' => "",
+    'access arguments' => array('search content'),
+    'page arguments' => array(),
+    'page callback' => 'voxb_ajax_responder',
+    'type' => MENU_CALLBACK,
+    'file' => 'ding_voxb.ajax.inc'
+  );
+   
+  $items['voxb/login'] = array(
+    'title' => "VoxB Ajax login link",
+    'description' => "",
+    'page arguments' => array(),
+    'page callback' => 'ding_voxb_login',
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_form_alter.
+ *
+ * Changing action of user login form.  
+ */
+function ding_voxb_form_alter(&$form, $form_state, $form_id) { 
+  // only for user_login_block form
+  if ($form_id == 'user_login_block') {
+    // Change the form action
+    $form['#action'] = url('user/login', array('query' => array('destination' => '')));
+    
+    // Resize the fields
+    #$form['name']['#size'] = 50;
+    #$form['pass']['#size'] = 50;
+  }
+}
+
+function ding_voxb_login() {
+  global $user;
+   
+  // if user is already authenticated
+  if ($user->uid) {
+    $response = array('status' => true);
+    $response['data']['auth'] = true;
+    echo json_encode($response);
+    die();
+  }
+  
+  require_once(drupal_get_path('module', 'ding_voxb') . '/lib/VoxbLogin.class.php');
+  $obj = new VoxbLogin();
+  
+  switch ($_REQUEST['action']) {
+    case 'profile_choosen':
+    case 'login':
+      ding_voxb_process_drupal_login();
+      
+      // Start VoxB authentication
+      if ($user->uid) {
+        $name = isset($_REQUEST['name']) ? $_REQUEST['name'] : $_SESSION['voxb_auth']['name'];
+        $profileId = isset($_REQUEST['profileId']) ? intval($_REQUEST['profileId']) : 0;
+        if (!$obj->login($name, $profileId)) {
+          module_invoke_all('user_logout', $user);
+          // Destroy the current session, and reset $user to the anonymous user.
+          session_destroy();                  
+        }
+      }
+      break;
+    case 'alias_selected': 
+      $name = (isset($_REQUEST['name']) ? $_REQUEST['name'] : $_SESSION['voxb_auth']['name']);
+      $aliasName = (isset($_REQUEST['aliasName']) ? trim($_REQUEST['aliasName']) : '');
+      $profileLink = (isset($_REQUEST['profileLink']) ? trim($_REQUEST['profileLink']) : '');
+      if ($obj->createUser($name, $aliasName, $profileLink)) {
+        voxb_process_drupal_login();
+      }
+      break;
+  }
+  
+  echo json_encode($obj->getLoginStatus());
+  die();
+}
+
+function ding_voxb_theme() {
+  $review_data = array();
+  
+  $hooks['voxb_login'] = array(
+    'variables' => array(),
+    'template' => 'ding_voxb-login'
+  );
+
+  return $hooks;
+}
+
+/**
+ * Implements hook_page_alter().
+ *
+ * Add VoxB-login theme to the footer if user is not authenticated.
+ */
+function ding_voxb_page_alter(&$page) {
+  global $user;
+  if ($user->uid == 0) {
+    $page['page_bottom']['devel']= array(
+      '#type' => 'markup',
+      '#markup' => theme('voxb_login')
+    );
+  }
+}
+
+function ding_voxb_process_drupal_login() {
+  // get uid by name and password
+  $uid = user_authenticate($_REQUEST['name'], $_REQUEST['pass']);
+      
+  $form_state['uid'] = $uid;
+  user_login_submit(array(), $form_state);
+  global $user;
+  
+  /**
+   * Check if user has logged in as admin.
+   * In this case we don't need to create a profile in VoxB.
+   * Just use default VoxbUserId.
+   */
+  foreach ($user->roles as $v) {
+    if ($v == 'administrator') {
+      $_SESSION['voxb']['userId'] = variable_get('voxb_default_userid', '1');
+      $_SESSION['voxb']['aliasName'] = "Administrator";
+      $response = array('status' => true);
+      $response['data']['auth'] = true;
+      echo json_encode($response);
+      die();
+    }
+  } 
+}

@@ -1,3 +1,9 @@
+<?php
+/**
+ * @file
+ * VoxB login template.
+ */
+?>
 <div id="voxb-select-profile" class="popup">
   <div class="header">
     <h6>Select profile</h6>

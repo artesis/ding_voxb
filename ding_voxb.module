@@ -1,46 +1,47 @@
 <?php
-
 /**
  * @file
- *
- * hook_init
- * Adding JS code to the page for ajax login form.
+ * Implementation of VoxB to Artesis.
  */
 
+// Define comments per page
+define('VOXB_COMMENTS_PER_PAGE', 3);
+
+// Define path to Voxb module
+define('VOXB_PATH', drupal_get_path('module', 'ding_voxb'));
+
+/**
+ * Implements hook_init().
+ * Adding JS code to the page for ajax login form.
+ */
 function ding_voxb_init() {
-  global $user;
   // What is our module path?
   $module_path = drupal_get_path('module', 'ding_voxb');
+
   // Load Thickbox files, but only if the user is not logged in and this module is enabled.
-  if ($user->uid == 0) {
+  if (user_is_anonymous()) {
     drupal_add_js($module_path . "/js/jquery.bpopup.js");
     drupal_add_js($module_path . "/js/voxb.login.js");
-    
-    drupal_add_css(drupal_get_path('module', 'ding_voxb') .'/css/voxb-login.css');
-  }
 
-  // Define comments per page
-  define('VOXB_COMMENTS_PER_PAGE', 3);
-  // Define path to Voxb module
-  define('VOXB_PATH', drupal_get_path('module','ding_voxb'));
+    drupal_add_css(VOXB_PATH . '/css/voxb-login.css');
+  }
 }
 
 /**
- * Implementation of hook_menu.
+ * Implements hook_menu().
  */
-
 function ding_voxb_menu() {
   $items = array();
 
- $items['admin/config/voxb'] = array(
+  $items['admin/config/services/voxb'] = array(
     'title' => 'VoxB',
     'description' => 'VoxB module settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ding_voxb_admin'),
-    'access arguments' => array('access adminitration pages'),
+    'access arguments' => array('access administration pages'),
     'file' => 'ding_voxb.admin.inc'
   );
-   
+
   $items['voxb/ajaxResponder'] = array(
     'title' => "VoxB test link",
     'description' => "",
@@ -50,7 +51,7 @@ function ding_voxb_menu() {
     'type' => MENU_CALLBACK,
     'file' => 'ding_voxb.ajax.inc'
   );
-   
+
   $items['voxb/login'] = array(
     'title' => "VoxB Ajax login link",
     'description' => "",
@@ -59,20 +60,21 @@ function ding_voxb_menu() {
     'type' => MENU_CALLBACK,
     'access callback' => TRUE
   );
+
   return $items;
 }
 
 /**
- * Implements hook_form_alter.
+ * Implements hook_form_alter().
  *
- * Changing action of user login form.  
+ * Changing action of user login form.
  */
-function ding_voxb_form_alter(&$form, $form_state, $form_id) { 
+function ding_voxb_form_alter(&$form, $form_state, $form_id) {
   // only for user_login_block form
   if ($form_id == 'user_login_block') {
     // Change the form action
     $form['#action'] = url('user/login', array('query' => array('destination' => '')));
-    
+
     // Resize the fields
     #$form['name']['#size'] = 50;
     #$form['pass']['#size'] = 50;
@@ -81,23 +83,23 @@ function ding_voxb_form_alter(&$form, $form_state, $form_id) {
 
 function ding_voxb_login() {
   global $user;
-   
+
   // if user is already authenticated
   if ($user->uid) {
-    $response = array('status' => true);
-    $response['data']['auth'] = true;
-    echo json_encode($response);
-    die();
+    $response = array('status' => TRUE);
+    $response['data']['auth'] = TRUE;
+    drupal_json_output($response);
+    return;
   }
-  
-  require_once(drupal_get_path('module', 'ding_voxb') . '/lib/VoxbLogin.class.php');
+
+  require_once(VOXB_PATH . '/lib/VoxbLogin.class.php');
   $obj = new VoxbLogin();
-  
+
   switch ($_REQUEST['action']) {
     case 'profile_choosen':
     case 'login':
       ding_voxb_process_drupal_login();
-      
+
       // Start VoxB authentication
       if ($user->uid) {
         $name = isset($_REQUEST['name']) ? $_REQUEST['name'] : $_SESSION['voxb_auth']['name'];
@@ -105,27 +107,29 @@ function ding_voxb_login() {
         if (!$obj->login($name, $profileId)) {
           module_invoke_all('user_logout', $user);
           // Destroy the current session, and reset $user to the anonymous user.
-          session_destroy();                  
+          session_destroy();
         }
       }
       break;
-    case 'alias_selected': 
+    case 'alias_selected':
       $name = (isset($_REQUEST['name']) ? $_REQUEST['name'] : $_SESSION['voxb_auth']['name']);
       $aliasName = (isset($_REQUEST['aliasName']) ? trim($_REQUEST['aliasName']) : '');
       $profileLink = (isset($_REQUEST['profileLink']) ? trim($_REQUEST['profileLink']) : '');
       if ($obj->createUser($name, $aliasName, $profileLink)) {
-        voxb_process_drupal_login();
+        ding_voxb_process_drupal_login();
       }
       break;
   }
-  
-  echo json_encode($obj->getLoginStatus());
-  die();
+
+  drupal_json_output($obj->getLoginStatus());
 }
 
+/**
+ * Implements hook_theme().
+ */
 function ding_voxb_theme() {
-  $review_data = array();
-  
+  $hooks = array();
+
   $hooks['voxb_login'] = array(
     'variables' => array(),
     'template' => 'ding_voxb-login'
@@ -140,8 +144,7 @@ function ding_voxb_theme() {
  * Add VoxB-login theme to the footer if user is not authenticated.
  */
 function ding_voxb_page_alter(&$page) {
-  global $user;
-  if ($user->uid == 0) {
+  if (user_is_anonymous()) {
     $page['page_bottom']['devel']= array(
       '#type' => 'markup',
       '#markup' => theme('voxb_login')
@@ -152,11 +155,11 @@ function ding_voxb_page_alter(&$page) {
 function ding_voxb_process_drupal_login() {
   // get uid by name and password
   $uid = user_authenticate($_REQUEST['name'], $_REQUEST['pass']);
-      
+
   $form_state['uid'] = $uid;
   user_login_submit(array(), $form_state);
   global $user;
-  
+
   /**
    * Check if user has logged in as admin.
    * In this case we don't need to create a profile in VoxB.
@@ -166,10 +169,10 @@ function ding_voxb_process_drupal_login() {
     if ($v == 'administrator') {
       $_SESSION['voxb']['userId'] = variable_get('voxb_default_userid', '1');
       $_SESSION['voxb']['aliasName'] = "Administrator";
-      $response = array('status' => true);
-      $response['data']['auth'] = true;
-      echo json_encode($response);
-      die();
+      $response = array('status' => TRUE);
+      $response['data']['auth'] = TRUE;
+      drupal_json_output($response);
+      drupal_exit();
     }
-  } 
+  }
 }

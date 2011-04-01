@@ -3,6 +3,7 @@
  *
  * JavaScript for the login.
  *
+ * @todo Use Drupal Behaviours 
  */
 
 jQuery(document).ready(function() {
@@ -74,7 +75,7 @@ jQuery(document).ready(function() {
     } else {
       if (!msg.data) {
         // @todo This should be refactored.
-        alert('Invalid username or password');
+        alert(Drupal.t('Invalid username or password'));
         return;
       }
       // select profile

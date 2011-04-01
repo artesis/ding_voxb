@@ -16,6 +16,7 @@ $inline_js = "
   var user_comments = null;
 ";
 
+// @todo This should be set in preprocessor
 drupal_add_js($inline_js, 'inline');
 drupal_add_css(VOXB_PATH.'/css/voxb-pager.css', 'file');
 drupal_add_css(VOXB_PATH.'/css/voxb.css', 'file');
@@ -23,8 +24,10 @@ drupal_add_css(VOXB_PATH.'/css/voxb.css', 'file');
 ?>
 
 <div id="voxb">
+  // @todo Localization
   <h2>Brugerskabte Data</h2>
   <?php 
+    // @todo This should be set in preprocessor
     $acIdentifier = $object->record['ac:identifier'][''][0];
     $acIdentifier = explode('|', $acIdentifier);
     $faustNum = $acIdentifier[0];
@@ -152,6 +155,8 @@ drupal_add_css(VOXB_PATH.'/css/voxb.css', 'file');
   </div>
 
   <?php
+
+    // @todo This should be set in preprocessor
 
     /**
      * Markup prepared tags.

@@ -33,7 +33,12 @@ class VoxbBase {
       'trace'=>1,
       'cache_wsdl'=>WSDL_CACHE_NONE
     ); 
-    VoxbBase::$soapClient = new SoapClient(variable_get('voxb_service_url', ''), $options);
+
+    try {
+      VoxbBase::$soapClient = new SoapClient(variable_get('voxb_service_url', ''), $options);
+    } catch(Exception $e) {
+      VoxbBase::$soapClient = null;
+    }
   }
   
   /**
@@ -53,11 +58,22 @@ class VoxbBase {
    * @param array $data
    */
   public function call($method, $data) {
+    if (VoxbBase::$soapClient == null) {
+      return false;
+    }
+
     try {     
       $response = VoxbBase::$soapClient->$method($data);
     } catch(Exception $e) {
       return false;
     }
     return $response;
+  }
+
+  /**
+   * Check if the service is available
+   */
+  public function isServiceAvailable() {
+    return (VoxbBase::$soapClient == null ? false : true);
   }
 }

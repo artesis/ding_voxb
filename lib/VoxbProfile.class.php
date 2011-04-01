@@ -6,7 +6,7 @@ require_once(VOXB_PATH . '/lib/VoxbBase.class.php');
  * @file
  *
  * User profile class.
- * As you may know 1 VoxB user may have different amount of profiles (min 1).
+ * A VoxB user may have different amount of profiles (min 1).
  */
 class VoxbProfile extends VoxbBase {
   private $userId;
@@ -142,13 +142,16 @@ class VoxbProfile extends VoxbBase {
    * If the user already posted a review/tag/rating
    * he is not able to perform this action.
    * 
-   * @todo This logic should be changed on the server-side.
-   * 
    * @param integer $faustNum
    * @return boolean
    */
   public function isAbleToReview($faustNum) {
-    return in_array($faustNum, $this->getActedItems()) ? false : true;
+    if (in_array($faustNum, $this->getActedItems())) {
+      return false;
+    }
+
+    // Additional validation is welcome
+    return $this->isServiceAvailable();
   }
   
   /**
@@ -156,13 +159,16 @@ class VoxbProfile extends VoxbBase {
    * If the user already posted a review/tag/rating
    * he is not able to perform this action.
    * 
-   * @todo This logic should be changed on the server-side.
-   * 
    * @param integer $faustNum
    * @return boolean
    */
   public function isAbleToTag($faustNum) {
-    return in_array($faustNum, $this->getActedItems()) ? false : true;
+    if (in_array($faustNum, $this->getActedItems())) {
+      return false;
+    }
+
+    // Additional validation is welcome
+    return $this->isServiceAvailable();
   }
   
   /**
@@ -170,13 +176,16 @@ class VoxbProfile extends VoxbBase {
    * If the user already posted a review/tag/rating
    * he is not able to perform this action.
    * 
-   * @todo This logic should be changed on the server-side.
-   * 
    * @param integer $faustNum
    * @return boolean
    */
   public function isAbleToRate($faustNum) {
-    return in_array($faustNum, $this->getActedItems()) ? false : true;
+    if (in_array($faustNum, $this->getActedItems())) {
+      return false;
+    }
+
+    // Additional validation is welcome
+    return $this->isServiceAvailable();
   }
   
   /**

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once(VOXB_PATH . '/lib/VoxbBase.class.php');
 require_once(VOXB_PATH . '/lib/VoxbProfile.class.php');
@@ -10,18 +10,18 @@ require_once(VOXB_PATH . '/lib/VoxbProfile.class.php');
  */
 class VoxbUser extends VoxbBase {
   private $profiles;
-  
+
   public function __construct() {
     parent::getInstance();
   }
-  
+
   /**
    * Fetch user by his SSN(CPR) number
-   * 
+   *
    * @param string $cpr
    * @param string $identityProvider
    * @param string $institutionName
-   * 
+   *
    * @return boolean
    */
   public function getUserBySSN($cpr, $identityProvider, $institutionName) {
@@ -33,17 +33,17 @@ class VoxbUser extends VoxbBase {
           'institutionName' => $institutionName
         )
       )
-     );
+    );
     if (!$response || isset($response->error)) {
-      return false;
+      return FALSE;
     }
     $this->fetchProfiles($cpr, $response->users);
-    return true;
+    return TRUE;
   }
-  
+
   /**
    * Fetch profiles to VoxbProfile class.
-   * 
+   *
    * @param string $cpr
    * @param object $profiles
    */
@@ -55,10 +55,10 @@ class VoxbUser extends VoxbBase {
       $this->profiles[] = new VoxbProfile($v, $cpr);
     }
   }
-  
+
   /**
    * Return profiles array.
-   * 
+   *
    * @return array
    */
   public function getProfiles() {

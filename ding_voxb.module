@@ -69,7 +69,7 @@ function ding_voxb_menu() {
  *
  * Changing action of user login form.
  */
-function ding_voxb_form_alter(&$form, $form_state, $form_id) {
+function ding_voxb_form_alter(&$form, &$form_state, $form_id) {
   // only for user_login_block form
   if ($form_id == 'user_login_block') {
     // Change the form action
@@ -81,6 +81,10 @@ function ding_voxb_form_alter(&$form, $form_state, $form_id) {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function ding_voxb_login() {
   global $user;
 
@@ -92,7 +96,7 @@ function ding_voxb_login() {
     return;
   }
 
-  require_once(VOXB_PATH . '/lib/VoxbLogin.class.php');
+  require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbLogin.class.php';
   $obj = new VoxbLogin();
 
   switch ($_REQUEST['action']) {
@@ -145,16 +149,22 @@ function ding_voxb_theme() {
  */
 function ding_voxb_page_alter(&$page) {
   if (user_is_anonymous()) {
-    $page['page_bottom']['devel']= array(
+    $page['page_bottom']['devel'] = array(
       '#type' => 'markup',
       '#markup' => theme('voxb_login')
     );
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function ding_voxb_process_drupal_login() {
   // get uid by name and password
-  $uid = user_authenticate($_REQUEST['name'], $_REQUEST['pass']);
+  $name = $_REQUEST['name']['name'];
+  $password = $_REQUEST['name']['pass'];
+  $uid = user_authenticate($name, $password);
 
   $form_state['uid'] = $uid;
   user_login_submit(array(), $form_state);

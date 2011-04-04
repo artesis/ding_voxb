@@ -7,7 +7,7 @@
 /**
  * Form builder for the VoxB settings form.
  */
-function ding_voxb_admin($form_state) {
+function ding_voxb_admin($form, $form_state) {
   $form = array();
 
   $form['voxb'] = array(

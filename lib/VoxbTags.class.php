@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once(VOXB_PATH . '/lib/VoxbTagRecord.class.php');
 
@@ -10,15 +10,15 @@ require_once(VOXB_PATH . '/lib/VoxbTagRecord.class.php');
 class VoxbTags implements Iterator{
   private $items = array();
   private $position;
-  
+
   public function __construct() {
-    $this->position = 0;  
+    $this->position = 0;
   }
-  
+
   /**
    * Method fetch data from simpleXml object received
    * from the server to an array of VoxbTagRecord objects.
-   * 
+   *
    * @param object $o
    */
   public function fetch($o) {
@@ -29,7 +29,7 @@ class VoxbTags implements Iterator{
       $this->items[] = new VoxbTagRecord($v);
     }
   }
-  
+
   /**
    * Iterator interface method.
    */
@@ -64,22 +64,22 @@ class VoxbTags implements Iterator{
   public function valid() {
     return isset($this->items[$this->position]);
   }
-  
+
   /**
    * Convert object to array
    */
   public function toArray() {
-  	$ret = array();
-  	foreach ($this->items as $v) {
-  		$ret[] = $v->toArray();
-  	}
-  	return $ret;
+    $ret = array();
+    foreach ($this->items as $v) {
+      $ret[] = $v->toArray();
+    }
+    return $ret;
   }
-  
+
   /**
    * Get amount of tags
    */
   public function getCount() {
-  	return count($this->items);
+    return count($this->items);
   }
 }

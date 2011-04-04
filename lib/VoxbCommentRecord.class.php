@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * @file
@@ -7,20 +7,20 @@
  * This object is storing reviews attributes.
  */
 class VoxbCommentRecord extends VoxbBase{
-  
+
   private $title;
   private $text;
   private $authorVoxbId;
   private $authorName;
   private $voxbId;
-  
+
   /**
    * Constructor as parameter gets a part of SimpleXml object received from the server.
-   * 
+   *
    * @param $voxbObj
    */
-  public function __construct($voxbObj = null) {
-    parent::getInstance();        
+  public function __construct($voxbObj = NULL) {
+    parent::getInstance();
     if ($voxbObj) {
       $this->title = (string)$voxbObj->review->reviewTitle;
       $this->text = (string)$voxbObj->review->reviewData;
@@ -29,52 +29,52 @@ class VoxbCommentRecord extends VoxbBase{
       $this->voxbId = intval($voxbObj->voxbIdentifier);
     }
   }
-  
+
   /**
    * Getter function.
-   * 
+   *
    * @return string
    */
   public function getTitle() {
     return $this->title;
   }
-  
+
   /**
    * Getter function.
-   * 
+   *
    * @return string
    */
   public function getText() {
     return $this->text;
   }
-  
+
   /**
    * Getter function.
-   * 
+   *
    * @return string
    */
   public function getAuthorVoxbId() {
     return $this->authorVoxbId;
   }
-  
+
   /**
    * Getter function.
-   * 
+   *
    * @return string
    */
   public function getAuthorName() {
     return $this->authorName;
   }
-  
+
   /**
    * Getter function.
-   * 
+   *
    * @return string
    */
   public function getVobId() {
     return $this->voxbId;
   }
-  
+
   /**
    * Returns class attributes as array.
    * This method is user in Ajax responders.
@@ -90,28 +90,28 @@ class VoxbCommentRecord extends VoxbBase{
       'voxbId' => $this->voxbId
     );
   }
-  
+
   /**
    * @todo Finish this method as soon as this VoxB functionality will be tested.
    *
    * Delete review record from VoxB.
-   * 
+   *
    * @return boolean
    */
   public function delete() {
     $response = $this->call('deleteMyData', array(
       'voxbIdentifier' => $this->voxbId
     ));
-    
+
     if ($response->error) {
-      return false;
+      return FALSE;
     }
-    return true;
+    return TRUE;
   }
-  
+
   /**
    * Create comment.
-   * 
+   *
    * @param string $faustNum
    * @param string $review
    * @param integer $userId
@@ -131,10 +131,10 @@ class VoxbCommentRecord extends VoxbBase{
         'objectIdentifierType' => 'FAUST'
       )
     ));
-    
+
     if (!$response || $response->error) {
-      return false;
+      return FALSE;
     }
-    return true;
+    return TRUE;
   }
 }

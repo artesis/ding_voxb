@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once(VOXB_PATH . '/lib/VoxbBase.class.php');
 require_once(VOXB_PATH . '/lib/VoxbCommentRecord.class.php');
@@ -10,34 +10,34 @@ require_once(VOXB_PATH . '/lib/VoxbCommentRecord.class.php');
  * This class handles reviews colection.
  */
 class VoxbComments extends VoxbBase implements Iterator{
-    
+
   private $items = array();
   private $position;
-  
+
   public function __construct() {
     parent::getInstance();
     $this->position = 0;
   }
-  
+
   public function fetch($voxbUserItems) {
     if (!is_array($voxbUserItems)) {
       $voxbUserItems = array($voxbUserItems);
     }
-    
+
     foreach ($voxbUserItems as $v) {
-    	/*
-    	 * Select only reviews that are marked as comments
-    	 * This line can be changes, depends on the changes done on the server side
-    	 */ 
+      /*
+       * Select only reviews that are marked as comments
+       * This line can be changes, depends on the changes done on the server side
+       */
       if ($v->review->reviewTitle == 'comment') {
         $this->items[] = new VoxbCommentRecord($v);
       }
     }
   }
- 
+
   /**
    * This method takes all items attributes and coverts them to an array.
-   * 
+   *
    * @return array
    */
   public function toArray() {
@@ -47,7 +47,7 @@ class VoxbComments extends VoxbBase implements Iterator{
     }
     return $a;
   }
- 
+
   /**
    * Iterator interface method.
    */
@@ -82,7 +82,7 @@ class VoxbComments extends VoxbBase implements Iterator{
   public function valid() {
     return isset($this->items[$this->position]);
   }
-  
+
   /**
    * Returns amount of items available in class collection.
    *

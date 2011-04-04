@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once(VOXB_PATH . '/lib/VoxbBase.class.php');
 
@@ -9,19 +9,18 @@ require_once(VOXB_PATH . '/lib/VoxbBase.class.php');
  * This class handles reviews colection.
  */
 class VoxbReviews {
-    
   private $handlers;
-  
+
   public function __construct($handlers) {
     $this->handlers = $handlers;
   }
-  
+
   public function fetch($sXml) {
     foreach ($this->handlers as $handler) {
       $handler->fetch($sXml);
     }
   }
-  
+
   public function get($type) {
     if ($this->handlers[$type]) {
       return $this->handlers[$type];

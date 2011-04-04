@@ -10,8 +10,8 @@
 function voxb_ajax_responder() {
   $user_id = $_SESSION['voxb']['userId'];
 
-  require_once(VOXB_PATH . '/lib/VoxbItem.class.php');
-  require_once(VOXB_PATH . '/lib/VoxbComments.class.php');
+  require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbItem.class.php';
+  require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbComments.class.php';
 
   $obj = new VoxbItem();
   $obj->addReviewHandler('comment', new VoxbComments());

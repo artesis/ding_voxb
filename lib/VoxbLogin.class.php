@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once(VOXB_PATH . '/lib/VoxbUser.class.php');
 
@@ -8,22 +8,22 @@ require_once(VOXB_PATH . '/lib/VoxbUser.class.php');
  * This class handles all the login logic to Drupal
  */
 class VoxbLogin {
-  
+
   private $loginStatus;
-  
+
   public function __construct() {
-    $this->loginStatus['status'] = false;
+    $this->loginStatus['status'] = FALSE;
   }
-  
+
   /**
    * User authentification in VoxB.
    * Its not an anthentication really, we just check if such user exists in VoxB database
    * and saving his userid to _SESSION to use it user actions rating/reviewing etc.
-   * 
+   *
    * @param string $name
    * @param string $pass
    */
-  public function login($name, $profileUserId) {  
+  public function login($name, $profileUserId) {
     global $user;
     $obj = new VoxbUser();
     // Check if such user exist
@@ -37,8 +37,8 @@ class VoxbLogin {
             if ($profileUserId == $v->getUserId()) {
               $_SESSION['voxb']['userId'] = $v->getUserId();
               $_SESSION['voxb']['aliasName'] = $v->getAliasName();
-              $this->setLoginStatus(true, array('auth' => true));
-              return true;
+              $this->setLoginStatus(true, array('auth' => TRUE));
+              return TRUE;
             }
             $profiles[] = array('id' => $v->getUserId(), 'name' => $v->getAliasName());
           }
@@ -48,9 +48,10 @@ class VoxbLogin {
          * If a profile is not choosen then return list of profiles
          * this will cause creating a popup with profiles list on the JS side.
          */
-        $this->setLoginStatus(false, array('profiles' => $profiles));
-        return false;
-      } else {
+        $this->setLoginStatus(FALSE, array('profiles' => $profiles));
+        return FALSE;
+      }
+      else {
 
         /**
          * If a user has only 1 profile, we just use it
@@ -59,35 +60,36 @@ class VoxbLogin {
         $profiles = $obj->getProfiles();
         $_SESSION['voxb']['userId'] = $profiles[0]->getUserId();
         $_SESSION['voxb']['aliasName'] = $profiles[0]->getAliasName();
-        $this->setLoginStatus(true, array('auth' => true));
-        return true;
+        $this->setLoginStatus(TRUE, array('auth' => TRUE));
+        return TRUE;
       }
-    } else {
+    }
+    else {
 
       /**
        * No user with such credentials, so we will need to create him.
        */
-      $this->setLoginStatus(false, array('selectAliasName' => true));
-      return false;
+      $this->setLoginStatus(FALSE, array('selectAliasName' => TRUE));
+      return FALSE;
     }
   }
-  
-  private function setLoginStatus($status, $data = null, $error = null) {
+
+  private function setLoginStatus($status, $data = NULL, $error = NULL) {
     $this->loginStatus['status'] = $status;
     if ($data) $this->loginStatus['data'] = $data;
     if ($error) $this->loginStatus['error'] = $error;
   }
-  
+
   /**
    * Return login status.
    */
   public function getLoginStatus() {
     return $this->loginStatus;
   }
-  
+
   /**
    * Cretae a new user (with 1 profile).
-   * 
+   *
    * @param string $cpr
    * @param string $aliasName
    * @param string $profileLink
@@ -99,14 +101,15 @@ class VoxbLogin {
     $obj->setProfileLink($profileLink);
     if ($obj->createUser(variable_get('voxb_identity_provider', ''), variable_get('voxb_institution_name', ''))) {
       // User successfully created
-      $this->setLoginStatus(true, array('auth' => true, 'userId' => $obj->getUserId()));
+      $this->setLoginStatus(TRUE, array('auth' => TRUE, 'userId' => $obj->getUserId()));
       $_SESSION['voxb']['userId'] = $obj->getUserId();
       $_SESSION['voxb']['aliasName'] = $aliasName;
-      return true;
-    } else {
+      return TRUE;
+    }
+    else {
       // If this userAlias as occupied by another user, we will get user sugestion
-      $this->setLoginStatus(false, array('userAliasSuggestion' => $obj->getUserAliasSuggestion()));
-      return false;
+      $this->setLoginStatus(FALSE, array('userAliasSuggestion' => $obj->getUserAliasSuggestion()));
+      return FALSE;
     }
   }
 }

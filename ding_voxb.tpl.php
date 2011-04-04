@@ -13,7 +13,7 @@ drupal_add_js(VOXB_PATH.'/js/voxb.item.js', 'file');
 $inline_js = "
   var voxb_images = '".VOXB_PATH.'/img/'."';
   var comments_shown = ".variable_get('voxb_comments_per_page', VOXB_COMMENTS_PER_PAGE).";
-  var user_comments = null;
+  var user_comments = NULL;
 ";
 
 // @todo This should be set in preprocessor
@@ -28,16 +28,16 @@ drupal_add_css(VOXB_PATH.'/css/voxb.css', 'file');
   <h2>Brugerskabte Data</h2>
   <?php 
     // @todo This should be set in preprocessor
-    $acIdentifier = $object->record['ac:identifier'][''][0];
-    $acIdentifier = explode('|', $acIdentifier);
-    $faustNum = $acIdentifier[0];
+    $ac_identifier = $object->record['ac:identifier'][''][0];
+    $ac_identifier = explode('|', $ac_identifier);
+    $faustNum = $ac_identifier[0];
     require_once(VOXB_PATH . '/lib/VoxbItem.class.php');
     require_once(VOXB_PATH . '/lib/VoxbProfile.class.php');
     require_once(VOXB_PATH . '/lib/VoxbComments.class.php');
     
-    $voxbItem = new VoxbItem();
-    $voxbItem->addReviewHandler('comment', new VoxbComments());
-    $voxbItem->fetchByFaust($faustNum);
+    $voxb_item = new VoxbItem();
+    $voxb_item->addReviewHandler('comment', new VoxbComments());
+    $voxb_item->fetchByFaust($faustNum);
     
     $profile = new VoxbProfile();
     $profile->setUserId($_SESSION['voxb']['userId']);

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * @file
@@ -9,37 +9,38 @@
 class VoxbTagRecord extends VoxbBase {
   private $name;
   private $count;
-  
-  public function __construct($sXml = null) {
-  	if ($sXml) {
-	    $this->name = $sXml->tag;
-	    $this->count = $sXml->tagCount;
-	  }
-   parent::getInstance();
+
+  public function __construct($sXml = NULL) {
+    if ($sXml) {
+      $this->name = $sXml->tag;
+      $this->count = $sXml->tagCount;
+    }
+    parent::getInstance();
   }
-  
+
   /**
    * @return string
    */
   public function getName() {
     return $this->name;
   }
-  
+
   /**
    * Returns amount of taggings to this tag.
+   *
    * @return integer
    */
   public function getCount() {
     return $this->count;
   }
-  
+
  /**
-   * Create a tag. 
-   * 
-   * @param string $faustNum
-   * @param string $tag
-   * @param integer $userId
-   */
+  * Create a tag.
+  *
+  * @param string $faustNum
+  * @param string $tag
+  * @param integer $userId
+  */
   public function create($faustNum, $tag, $userId) {
     $response = $this->call('createMyData', array(
       'userId' => $userId,
@@ -53,20 +54,20 @@ class VoxbTagRecord extends VoxbBase {
         'objectIdentifierType' => 'FAUST'
       )
     ));
-    
+
     if (!$response || $response->error) {
-      return false;
+      return FALSE;
     }
-    return true;
+    return TRUE;
   }
-  
+
   /**
-   * convert object to array
+   * Convert object to array.
    */
-  public function toArray(){
-  	return array(
+  public function toArray() {
+    return array(
       'name' => $this->name,
-  	  'count' => $this->count
-  	);
+      'count' => $this->count
+    );
   }
 }

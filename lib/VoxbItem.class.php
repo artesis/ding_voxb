@@ -1,8 +1,7 @@
-<?php 
+<?php
 
 /**
  * @file
- *
  */
 
 error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
@@ -14,7 +13,7 @@ require_once(drupal_get_path('module', 'ding_voxb') . '/lib/VoxbTags.class.php')
 /**
  * This is the main VoxB-client class.
  * It has a method to fetch item information from VoxB server.
- * And parse it from simplexml object to different kind of VoxB-objects: tags, ratings, reviews 
+ * And parse it from simplexml object to different kind of VoxB-objects: tags, ratings, reviews
  */
 class VoxbItem extends VoxbBase {
   private $tags;
@@ -25,7 +24,7 @@ class VoxbItem extends VoxbBase {
   private $objectIdentifierType;
   private $rating = 0;
   private $ratingCount = 0;
-  
+
   public function __construct() {
     parent::getInstance();
 
@@ -38,133 +37,133 @@ class VoxbItem extends VoxbBase {
 
   /**
    * Fetching item from voxb server by ISBN.
-   * 
+   *
    * @param string $isbn
    */
   public function fetchByISBN($isbn) {
     $data = array(
       'fetchData' => array(
-        'objectIdentifierValue' => $isbn, 
+        'objectIdentifierValue' => $isbn,
         'objectIdentifierType' => 'ISBN'
       ),
       'output' => array('contentType' => 'all')
     );
-    $o = $this->call('fetchData', $data); 
+    $o = $this->call('fetchData', $data);
     if ($o->totalItemData) {
       $this->fetchData($o->totalItemData);
     }
-    
-    if ($o->error) { 
-      return false;
-    }     
-    return true;
+
+    if ($o->error) {
+      return FALSE;
+    }
+    return TRUE;
   }
-  
-/**
+
+  /**
    * Fetching item from voxb server by faust number.
-   * 
+   *
    * @param string $faustNum
    */
   public function fetchByFaust($faustNum) {
     $data = array(
       'fetchData' => array(
-        'objectIdentifierValue' => $faustNum, 
+        'objectIdentifierValue' => $faustNum,
         'objectIdentifierType' => 'FAUST'
       ),
       'output' => array('contentType' => 'all')
     );
     $this->reviews = new VoxbReviews($this->reviewHandlers);
-    
-    $o = $this->call('fetchData', $data); 
+
+    $o = $this->call('fetchData', $data);
     if ($o->totalItemData) {
       $this->fetchData($o->totalItemData);
     }
-    
-    if ($o->error) { 
-      return false;
-    }     
-    return true;
+
+    if ($o->error) {
+      return FALSE;
+    }
+    return TRUE;
   }
-  
+
   /**
    * Add review handlers to factory
-   * 
+   *
    * @param string $name
    * @param object $object
    */
   public function addReviewHandler($name, $object) {
-  	$this->reviewHandlers[$name] = $object;
+    $this->reviewHandlers[$name] = $object;
   }
-  
+
   /**
    * This method was not working at the moment of writing the code.
    * The reson probably wan on the voxb-server side or we used the call in the wrong way.
-   * 
+   *
    * @param integer $voxbId
    */
   public function fetchByVoxbIdentifier($voxbId) {
     $data = array(
       'fetchData' => array(
-        'objectIdentifierValue' => $voxbId, 
+        'objectIdentifierValue' => $voxbId,
         'objectIdentifierType' => 'LOCAL',
-        'voxbIdentifier' =>$voxbId
+        'voxbIdentifier' => $voxbId
       ),
       'output' => array('contentType' => 'all')
     );
     $o = $this->call('fetchData', $data);
   }
-  
+
   /**
    * Method is fetching data from a VoxB object.
    */
   private function fetchData($o) {
     $this->objectIdentifierValue = $o->fetchData->objectIdentifierValue;
     $this->objectIdentifierType = $o->fetchData->objectIdentifierType;
-    
+
     // Fetch Tags
     $this->tags = new VoxbTags();
     $this->tags->fetch($o->summaryTags);
 
-    // Fetch Reviews 
+    // Fetch Reviews
     $this->reviews = new VoxbReviews($this->reviewHandlers);
     $this->reviews->fetch($o->userItems);
 
-    // Fetch Rating    
+    // Fetch Rating
     $this->rating = $o->totalRatings->averageRating;
     $this->ratingCount = $o->totalRatings->totalNumberOfRaters;
   }
-  
+
   /**
    * Getter function.
    */
   public function getTags() {
     return $this->tags;
   }
-  
+
   /**
    * Getter function.
    */
   public function getReviews($type) {
     return $this->reviews->get($type);
   }
-  
+
   /**
    * Getter function.
    */
   public function getRating() {
     return $this->rating;
   }
-  
+
   /**
    * Getter function, returns amount of users rated this item.
    */
   public function getRatingCount() {
     return $this->ratingCount;
   }
-  
+
   /**
    * Rate the item.
-   * 
+   *
    * @param string $faustNum
    * @param integer $rating (0 to 100)
    * @param integer $userId
@@ -180,10 +179,10 @@ class VoxbItem extends VoxbBase {
         'objectIdentifierType' => 'FAUST'
       )
     ));
-    
+
     if (!$response || $response->error) {
-      return false;
+      return FALSE;
     }
-    return true;
+    return TRUE;
   }
 }

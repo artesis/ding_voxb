@@ -1,7 +1,7 @@
 VoxB module
 ==========
 
-### Version 0.2 (not released):
+### Version 0.2:
 
 * New: Added unit tests.
 * Enhancement: Upgraded AJAX to use Drupal 7 AJAX commands.

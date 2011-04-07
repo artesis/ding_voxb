@@ -34,3 +34,24 @@ div.errorPopup {
   padding: 15px;
 }
 
+#edit-rating {
+  display: none;
+}
+
+.rating {
+  width: 16px;
+  height: 16px;
+  float: left;
+}
+
+.star-on {
+	background-image: url(../img/star-on.png);
+}
+
+.star-off {
+	background-image: url(../img/star-off.png);
+}
+
+.userRate .ajax-progress {
+  display: none;
+}

@@ -1,30 +1,20 @@
 <?php
+
 /**
  * @file
- * Implementation of VoxB to Artesis.
- */
-
-// Define comments per page
-define('VOXB_COMMENTS_PER_PAGE', 3);
-
-// Define path to Voxb module
-define('VOXB_PATH', drupal_get_path('module', 'ding_voxb'));
-
-/**
- * Implements hook_init().
+ *
+ * hook_init
  * Adding JS code to the page for ajax login form.
  */
 function ding_voxb_init() {
-  // What is our module path?
-  $module_path = drupal_get_path('module', 'ding_voxb');
+  // Define comments per page
+  define('VOXB_COMMENTS_PER_PAGE', 3);
+  // Define path to Voxb module
+  define('VOXB_PATH', drupal_get_path('module', 'ding_voxb'));
 
-  // Load Thickbox files, but only if the user is not logged in and this module is enabled.
-  if (user_is_anonymous()) {
-    drupal_add_js($module_path . "/js/jquery.bpopup.js");
-    drupal_add_js($module_path . "/js/voxb.login.js");
-
-    drupal_add_css(VOXB_PATH . '/css/voxb-login.css');
-  }
+  drupal_add_library('system', 'drupal.ajax');
+  drupal_add_css(VOXB_PATH . '/css/voxb-pager.css', array('type' => 'file'));
+  drupal_add_css(VOXB_PATH . '/css/voxb.css', array('type' => 'file'));
 }
 
 /**
@@ -33,156 +23,355 @@ function ding_voxb_init() {
 function ding_voxb_menu() {
   $items = array();
 
-  $items['admin/config/services/voxb'] = array(
+  $items['admin/config/voxb'] = array(
     'title' => 'VoxB',
     'description' => 'VoxB module settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ding_voxb_admin'),
-    'access arguments' => array('access administration pages'),
+    'access arguments' => array('access adminitration pages'),
     'file' => 'ding_voxb.admin.inc'
   );
 
-  $items['voxb/ajaxResponder'] = array(
-    'title' => "VoxB test link",
-    'description' => "",
-    'access arguments' => array('search content'),
-    'page arguments' => array(),
-    'page callback' => 'voxb_ajax_responder',
+  $items['voxb/ajax/reviews/%/page/%'] = array(
+    'title' => 'VoxB pagination handler',
+    'description' => '',
+    'page arguments' => array(1, 3, 5),
     'type' => MENU_CALLBACK,
-    'file' => 'ding_voxb.ajax.inc'
+    'access arguments' => TRUE,
+    'page callback' => 'ding_voxb_paginator',
   );
 
-  $items['voxb/login'] = array(
-    'title' => "VoxB Ajax login link",
-    'description' => "",
-    'page arguments' => array(),
-    'page callback' => 'ding_voxb_login',
+  $items['voxb/ajax/rating/%/%'] = array(
+    'title' => 'VoxB rating handler',
+    'description' => '',
+    'page arguments' => array(1, 3, 4),
     'type' => MENU_CALLBACK,
-    'access callback' => TRUE
+    'access arguments' => TRUE,
+    'page callback' => 'ding_voxb_rating',
+
   );
 
   return $items;
 }
 
 /**
- * Implements hook_form_alter().
- *
- * Changing action of user login form.
+ * Hook user_login.
+ * Invokes methos to select user information from Voxb
+ * @param $edit
+ * @param $account
  */
-function ding_voxb_form_alter(&$form, &$form_state, $form_id) {
-  // only for user_login_block form
-  if ($form_id == 'user_login_block') {
-    // Change the form action
-    $form['#action'] = url('user/login', array('query' => array('destination' => '')));
-
-    // Resize the fields
-    #$form['name']['#size'] = 50;
-    #$form['pass']['#size'] = 50;
-  }
-}
-
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
- */
-function ding_voxb_login() {
-  global $user;
-
-  // if user is already authenticated
-  if ($user->uid) {
-    $response = array('status' => TRUE);
-    $response['data']['auth'] = TRUE;
-    drupal_json_output($response);
-    return;
-  }
-
+function ding_voxb_user_login($edit, $account) {
   require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbLogin.class.php';
   $obj = new VoxbLogin();
-
-  switch ($_REQUEST['action']) {
-    case 'profile_choosen':
-    case 'login':
-      ding_voxb_process_drupal_login();
-
-      // Start VoxB authentication
-      if ($user->uid) {
-        $name = isset($_REQUEST['name']) ? $_REQUEST['name'] : $_SESSION['voxb_auth']['name'];
-        $profileId = isset($_REQUEST['profileId']) ? intval($_REQUEST['profileId']) : 0;
-        if (!$obj->login($name, $profileId)) {
-          module_invoke_all('user_logout', $user);
-          // Destroy the current session, and reset $user to the anonymous user.
-          session_destroy();
-        }
-      }
-      break;
-    case 'alias_selected':
-      $name = (isset($_REQUEST['name']) ? $_REQUEST['name'] : $_SESSION['voxb_auth']['name']);
-      $aliasName = (isset($_REQUEST['aliasName']) ? trim($_REQUEST['aliasName']) : '');
-      $profileLink = (isset($_REQUEST['profileLink']) ? trim($_REQUEST['profileLink']) : '');
-      if ($obj->createUser($name, $aliasName, $profileLink)) {
-        ding_voxb_process_drupal_login();
-      }
-      break;
-  }
-
-  drupal_json_output($obj->getLoginStatus());
+  $obj->login($account);
 }
 
 /**
- * Implements hook_theme().
+ * Handle the pagination page click, update comments & pagination labels
+ *
+ * @param string $type - Type of the request, e.g. ajax or else
+ * @param string $faust_number - Item ID
+ * @param int $page - Clicked page number
+ */
+function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
+  // In case we have an ajax call
+  if ($type == 'ajax') {
+    if ($faust_number != '') {
+      // Calculate the reviews array fetch limits
+      $per_page = variable_get('voxb_reviews_per_page', VOXB_COMMENTS_PER_PAGE);
+      $start = ($page - 1) * $per_page;
+      $end = $start + $per_page;
+
+      require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbItem.class.php';
+      require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbComments.class.php';
+
+      // Get the reviews
+      $item = new VoxbItem();
+      $item->addReviewHandler('comment', new VoxbComments());
+      $item->fetchByFaust($faust_number);
+      $reviews = $item->getReviews('comment')->toArray();
+
+      // Remove the reviews
+      $commands[] = ajax_command_html('.userReviews', '');
+
+      // Place the reviews
+      for ($i = $start; $i < $end; $i++) {
+        $commands[] = ajax_command_append('.userReviews', theme(
+          'voxb_review_record',
+          array(
+            'author' => htmlspecialchars($reviews[$i]['authorName']),
+            'review' => htmlspecialchars($reviews[$i]['text']))));
+      }
+
+      $page_to_set = 1;
+      // Update the pagination 'previous' link
+      if ($page > 1) {
+        $page_to_set = $page - 1;
+      }
+
+      $commands[] = ajax_command_html(
+        '.prev_page',
+        l(
+          '<<',
+          'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_to_set . '',
+          array('attributes' => array('class' => array('use-ajax')))));
+
+      $pages_total = ceil(count($reviews) / $per_page);
+      $page_to_set = $pages_total;
+
+      // Update the pagination 'next' link
+      if ($page < $pages_total) {
+        $page_to_set = $page + 1;
+      }
+
+      $commands[] = ajax_command_html(
+        '.next_page',
+        l(
+          '>>',
+          'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_to_set . '',
+          array('attributes' => array('class' => array('use-ajax')))));
+
+      // Update the pagination 'numbered' links
+      for ($i = $page - 1, $k = 0; $k < 5; $i++, $k++) {
+        $page_link = $i - 1;
+
+        // Check the link index bounds, recreate if true, remove if otherwise
+        if ($page_link > 0 && $page_link <= $pages_total) {
+          $commands[] = ajax_command_html(
+            '.page_num:eq(' . $k . ')',
+            l(
+              $page_link,
+              'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_link . '',
+              array('attributes' => array('class' => array('use-ajax')))));
+        }
+        else {
+          $commands[] = ajax_command_html('.page_num:eq(' . $k . ')', l('', '', array()));
+        }
+      }
+
+      $result = array('#type' => 'ajax', '#commands' => $commands);
+
+      // Show the changes
+      ajax_deliver($result);
+    }
+  }
+}
+
+/**
+ * Implimentation of hook_theme
+ *
+ * @return array
  */
 function ding_voxb_theme() {
-  $hooks = array();
+  $hooks['voxb_tag_record'] = array(
+    'variables' => array('tag_name' => NULL),
+    'template' => 'ding_voxb-tag-record'
+  );
 
-  $hooks['voxb_login'] = array(
-    'variables' => array(),
-    'template' => 'ding_voxb-login'
+  $hooks['voxb_review_record'] = array(
+    'variables' => array('author' => NULL, 'review' => NULL),
+    'template' => 'ding_voxb-review-record',
   );
 
   return $hooks;
 }
 
 /**
- * Implements hook_page_alter().
+ * Build the text review form
  *
- * Add VoxB-login theme to the footer if user is not authenticated.
+ * @param array $form - The form and it's fields
+ * @param reference $form_state - Form state
+ * @param string $faustNumber - Item's faust number, e.g. ID
+ * @return array
  */
-function ding_voxb_page_alter(&$page) {
-  if (user_is_anonymous()) {
-    $page['page_bottom']['devel'] = array(
-      '#type' => 'markup',
-      '#markup' => theme('voxb_login')
-    );
+function ding_voxb_review_form($form, &$form_state, $faust_number) {
+  $form['review_content'] = array(
+    '#type' => 'textarea',
+  );
+
+  $form['faust_number'] = array(
+    '#type' => 'hidden',
+    '#value' => $faust_number,
+  );
+
+  $form['review_submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Review',
+    '#ajax' => array(
+      'callback' => 'ding_voxb_review_form_callback',
+    ),
+  );
+
+  return $form;
+}
+
+/**
+ *
+ * @param array $form - The form and it's fields
+ * @param reference $form_state - Form state
+ * @return array - Array of json commands
+ */
+function ding_voxb_review_form_callback($form, $form_state) {
+  $commands = array();
+
+  /*
+   * Check if we have review message and faustNumber
+   */
+  if (empty($form['review_content']['#value'])) {
+    $commands[] = ajax_command_ding_popup('add_review_error', t('Error'), t('Please fill in your review message.'));
   }
+  elseif (empty($form['faust_number']['#value'])) {
+    $commands[] = ajax_command_ding_popup('add_review_error', t('Error'), t('Wrong or empty faust number.'));
+  }
+  else {
+    require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbBase.class.php';
+    require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbCommentRecord.class.php';
+
+    // add review to to voxb
+    $review = new VoxbCommentRecord();
+    if (!$review->create($form['faust_number']['#value'], $form['review_content']['#value'], $_SESSION['voxb']['userId'])) {
+      // add ding_popup command with notice message
+      $commands[] = ajax_command_ding_popup('add_review_error', t('Notice'), t('You already submitted.'));
+    }
+    else {
+      // add commands to hide review container and show 'thank' message
+      $commands[] = ajax_command_invoke('.addReviewContainer', 'hide', array());
+      $commands[] = ajax_command_invoke('.reviewsContainer .ajax_message', 'show', array());
+      $commands[] = ajax_command_html('.userReviews', '');
+
+      // Get comments updated list
+      require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbItem.class.php';
+      require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbComments.class.php';
+
+      $item = new VoxbItem();
+      $item->addReviewHandler('comment', new VoxbComments());
+      $item->fetchByFaust($form['faust_number']['#value']);
+      $reviews = $item->getReviews('comment');
+      $reviews_count = $reviews->getCount();
+
+      // Limit the count of displayed text reviews
+      $limit = variable_get('voxb_reviews_per_page', VOXB_COMMENTS_PER_PAGE);
+
+      // Loop through reviews and display them
+      foreach ($reviews as $k => $review) {
+        if ($k >= $limit) {
+          break;
+        }
+
+        // TODO Please change this theme call to use an associative array for the $variables parameter.
+        $commands[] = ajax_command_prepend('.userReviews', theme(
+          'voxb_review_record',
+          array(
+            'author' => $review->getAuthorName(),
+            'review' => $review->getText())
+          )
+        );
+      }
+
+      // Jump to the first page
+      $commands[] = ajax_command_invoke('.page_first a', 'click');
+    }
+  }
+
+  return array('#type' => 'ajax', '#commands' => $commands);
+}
+
+/**
+ * Create form for adding tags
+ * @param $form
+ * @param $form_state
+ * @param $faust_number
+ */
+function ding_voxb_tag_form($form, $form_state, $faust_number) {
+
+  $form['name'] = array(
+    '#type' => 'textfield',
+    '#size' => 20,
+    '#name' => 'name',
+    '#ajax' => array(
+      'event' => 'submit',
+      'keypress' => TRUE,
+      'callback' => 'ding_voxb_add_tag_callback'
+    )
+  );
+  $form['faustNumber'] = array(
+    '#type' => 'hidden',
+    '#name' => 'faustNumber',
+    '#value' => $faust_number
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+    '#ajax' => array(
+      'callback' => 'ding_voxb_add_tag_callback'
+    )
+  );
+  return $form;
+}
+
+/**
+ * Callback method to handle add tag calls
+ *
+ * @param unknown_type $form
+ * @param unknown_type $form_state
+ */
+function ding_voxb_add_tag_callback($form, $form_state) {
+  require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbItem.class.php';
+  $tag = new VoxbTagRecord();
+  $user_id = $_SESSION['voxb']['userId'];
+
+  $commands = array();
+  if (!$tag->create($form['faustNumber']['#value'], $form['name']['#value'], $user_id)) {
+    // add popup notice
+    $commands[] = ajax_command_ding_popup('add_tag_error', t('Notice'), t('You have already submitted.'));
+  }
+  else {
+    // hide form and show new tag
+    $commands[] = ajax_command_append('div.recordTagHighlight', theme('voxb_tag_record', array('tag_name' => $form['name']['#value'])));
+    $commands[] = ajax_command_replace("#ding_voxb_tag_form", t('Thank you for contributing.'));
+  }
+  return array('#type' => 'ajax', '#commands' => $commands);
 }
 
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354
  */
-function ding_voxb_process_drupal_login() {
-  // get uid by name and password
-  $name = $_REQUEST['name']['name'];
-  $password = $_REQUEST['name']['pass'];
-  $uid = user_authenticate($name, $password);
-
-  $form_state['uid'] = $uid;
-  user_login_submit(array(), $form_state);
-  global $user;
-
+function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
   /**
-   * Check if user has logged in as admin.
-   * In this case we don't need to create a profile in VoxB.
-   * Just use default VoxbUserId.
+   * we check if it's an ajax call
+   * this can be used if we will ipmlement NO-JS functionality in FE
    */
-  foreach ($user->roles as $v) {
-    if ($v == 'administrator') {
-      $_SESSION['voxb']['userId'] = variable_get('voxb_default_userid', '1');
-      $_SESSION['voxb']['aliasName'] = "Administrator";
-      $response = array('status' => TRUE);
-      $response['data']['auth'] = TRUE;
-      drupal_json_output($response);
-      drupal_exit();
+  if ($type == 'ajax') {
+    $commands = array();
+    $rating = intval($rating);
+
+    if ($rating == 0) {
+      $commands[] = ajax_command_ding_popup('add_rate_error', t('Error'), t('Nothing selected.'));
     }
+    elseif (empty($faust_number)) {
+      $commands[] = ajax_command_ding_popup('add_rate_error', t('Error'), t('Wrong or empty faust number.'));
+    }
+    else {
+      require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbItem.class.php';
+
+      $item = new VoxbItem();
+
+      if (!$item->rateItem($faust_number, $rating * 20, $_SESSION['voxb']['userId'])) {
+        $commands[] = ajax_command_ding_popup('add_rate_error', t('Notice'), t('You already submitted.'));
+      }
+      else {
+        // Rating is successfully submited
+        // Now we need to fetch new rating form Voxb
+        $item->fetchByFaust($faust_number);
+        $commands[] = array(
+          'command' => 'voxb_rating_callback',
+          'rating' => intval($item->getRating() / 20),
+          'rating_count' => $item->getRatingCount()
+        );
+      }
+    }
+    $result = array('#type' => 'ajax', '#commands' => $commands);
+    ajax_deliver($result);
   }
 }

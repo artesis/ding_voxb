@@ -6,79 +6,68 @@
  * 
  */
 
-drupal_add_js(VOXB_PATH.'/js/voxb.pager.js', 'file');
-drupal_add_js(VOXB_PATH.'/js/jquery.bpopup.js', 'file');
-drupal_add_js(VOXB_PATH.'/js/voxb.item.js', 'file');
-
-$inline_js = "
-  var voxb_images = '".VOXB_PATH.'/img/'."';
-  var comments_shown = ".variable_get('voxb_comments_per_page', VOXB_COMMENTS_PER_PAGE).";
-  var user_comments = NULL;
-";
-
-// @todo This should be set in preprocessor
-drupal_add_js($inline_js, 'inline');
-drupal_add_css(VOXB_PATH.'/css/voxb-pager.css', 'file');
-drupal_add_css(VOXB_PATH.'/css/voxb.css', 'file');
-
 ?>
 
 <div id="voxb">
   // @todo Localization
   <h2>Brugerskabte Data</h2>
   <?php 
-    // @todo This should be set in preprocessor
     $ac_identifier = $object->record['ac:identifier'][''][0];
     $ac_identifier = explode('|', $ac_identifier);
-    $faustNum = $ac_identifier[0];
+    $faust_number = $ac_identifier[0];
+
     require_once(VOXB_PATH . '/lib/VoxbItem.class.php');
     require_once(VOXB_PATH . '/lib/VoxbProfile.class.php');
     require_once(VOXB_PATH . '/lib/VoxbComments.class.php');
     
     $voxb_item = new VoxbItem();
     $voxb_item->addReviewHandler('comment', new VoxbComments());
-    $voxb_item->fetchByFaust($faustNum);
-    
+    $voxb_item->fetchByFaust($faust_number);
     $profile = new VoxbProfile();
     $profile->setUserId($_SESSION['voxb']['userId']);
   ?>
-
-  <div id="voxbItem">
-    <p class="faustNum"><?php echo $faustNum; ?></p>
-  </div>
-
   <div class="tagsContainer">
     <h3><?php print t('Tags'); ?></h3>
-    <div class="recordTagHighlight"><?php showTags($voxbItem->getTags()); ?></div>
-    <div class="clearfix">&nbsp;</div>
-    <?php if ($user->uid != 0 && $profile->isAbleToTag($faustNum)) : ?>
-    <div class="addTagContainer">
-      <input type="text" name="tag_name" class="form-text" />
-      <input type="button" value="Tilf&oslash;j" name="add_tag_btn" class="form-submit">
-      <img class="ajax_anim" src="/<?php print(VOXB_PATH); ?>/img/ajax-loader.gif" width="16" height="16" alt="" />
-      <p class="ajax_message"><?php echo t('Thank you for contributing.'); ?></p>
+    <div class="recordTagHighlight">
+    <?php 
+      foreach ($voxb_item->getTags() as $v) {
+        echo theme('voxb_tag_record', array('tag_name' => $v->getName()));
+      }
+    ?>
     </div>
-    <?php ;endif ?>
+    <div class="clearfix">&nbsp;</div>
+    <?php 
+	    if (($user->uid != 0 && $profile->isAbleToTag($faust_number))) {
+	    	echo drupal_render(drupal_get_form('ding_voxb_tag_form', $faust_number));
+	    } 
+    ?>
   </div>
-
   <div class="ratingsContainer">
     <h3><?php print t('Ratings'); ?></h3>
-    <span class="ratingStars">
-      <?php showRating($voxbItem->getRating(), $voxbItem->getRatingCount()); ?>
-    </span>
-    <?php if ($user->uid != 0 && $profile->isAbleToRate($faustNum)) : ?>
+    <div class="ratingStars">
+      <?php 
+        $rating = $voxb_item->getRating();
+        $rating = intval($rating / 20);
+	      for ($i = 1; $i <= 5; $i++) {
+	        echo '<div class="rating ' . ($i <= $rating ? 'star-on' : 'star-off') . '"></div>';
+	      }
+	      if ($voxb_item->getRatingCount() > 0) {
+	        echo '<span class="ratingCountSpan">(<span class="ratingVotesNumber">' . $voxb_item->getRatingCount().'</span>)</span>';
+	      }
+      ?>
+    </div>
+    <?php if ($user->uid != 0 && $profile->isAbleToRate($faust_number)) : ?>
       <div class="addRatingContainer">
         <?php print t('Please rate this object'); ?><br />
-        <span class="ratingStars userRate">
-          <img src="/<?php print(VOXB_PATH); ?>/img/star-off.png" />
-          <img src="/<?php print(VOXB_PATH); ?>/img/star-off.png" />
-          <img src="/<?php print(VOXB_PATH); ?>/img/star-off.png" />
-          <img src="/<?php print(VOXB_PATH); ?>/img/star-off.png" />
-          <img src="/<?php print(VOXB_PATH); ?>/img/star-off.png" />
-        </span>
-        <img class="ajax_anim" src="/<?php print(VOXB_PATH); ?>/img/ajax-loader.gif" width="16" height="16" alt="" />
-        <p class="ajax_message"><?php print t('Thank you for contributing.'); ?></p>
+        <div class="userRate">
+          <div href="/voxb/ajax/rating/<?php echo $faust_number; ?>/1" class="use-ajax rating star-off"></div>
+          <div href="/voxb/ajax/rating/<?php echo $faust_number; ?>/2" class="use-ajax rating star-off"></div>
+          <div href="/voxb/ajax/rating/<?php echo $faust_number; ?>/3" class="use-ajax rating star-off"></div>
+          <div href="/voxb/ajax/rating/<?php echo $faust_number; ?>/4" class="use-ajax rating star-off"></div>
+          <div href="/voxb/ajax/rating/<?php echo $faust_number; ?>/5" class="use-ajax rating star-off"></div>
+        </div>
       </div>
+      <p class="ajax_message"><?php echo t('Thank you for contributing.'); ?></p>
     <?php ;endif ?>
   </div>
 
@@ -86,128 +75,74 @@ drupal_add_css(VOXB_PATH.'/css/voxb.css', 'file');
 
   <div class="reviewsContainer">
     <h3><?php print t('User reviews'); ?></h3>
-    <?php showReviews($voxbItem->getReviews('comment')); ?>
-    <div id="review_tpl" class="voxbReview" style="display: none;">
-      <?php print t('Written by'); ?> <em></em>
-      <div class="reviewContent"></div>
+    <div class="userReviews">
+    <?php 
+      $limit = variable_get('voxb_reviews_per_page', VOXB_COMMENTS_PER_PAGE);
+      
+      foreach ($voxb_item->getReviews('comment') as $k=>$v) {
+        if ($k >= $limit) {
+          break;
+        }
+        echo theme('voxb_review_record', 
+          array('author' => $v->getAuthorName(), 'review' => $v->getText())
+        );
+      }
+    ?>
     </div>
-    <?php if ($user->uid != 0 && $profile->isAbleToReview($faustNum)) : ?>
-      <div class="addReviewContainer">
-        <textarea class="addReviewTextarea" class="form-textarea"></textarea>
-        <div class="clearfix">&nbsp;</div>
-        <input type="button" value="<?php print t('Review'); ?>" class="form-submit" />
-        <img class="ajax_anim" src="/<?php print(VOXB_PATH); ?>/img/ajax-loader.gif" width="16" height="16" alt="" />
-        <p class="ajax_message"><?php print t('Thank you for contributing.'); ?></p>
-      </div>
+    <?php
+
+    /**
+     * Display pagination links.
+     */
+    // Review count
+      $reviews = $voxb_item->getReviews('comment')->getCount();
+      $pages = -1;
+
+      if ($reviews > $limit) {
+        echo '<div id="pager_block">';
+          echo '<ul>';
+            // Hidden tab to keep track of first page
+            echo '<li class="page_first" style="display: none;">'.l('','voxb/ajax/reviews/'.$faust_number.'/page/1', array('attributes' => array('class' => array('use-ajax')))).'</li>';
+            echo '<li class="prev_page">'.l('<<','voxb/ajax/reviews/'.$faust_number.'/page/1', array('attributes' => array('class' => array('use-ajax')))).'</li>';
+
+            $pages = ceil($reviews / variable_get('voxb_reviews_per_page', VOXB_COMMENTS_PER_PAGE));
+
+            // Draw 5 tabs/buttons/links
+            for ($i = 0; $i < 5; $i++) {
+              echo '<li class="page_num';
+              // Highlight the middle one
+              if ($i == 2) {
+                echo '  active_page"';
+              }
+              echo '">';
+
+              if ($i > 1 && $i < $pages + 2) {
+                echo l(($i - 1),'voxb/ajax/reviews/'.$faust_number.'/page/'.($i - 1).'', array('attributes' => array('class' => array('use-ajax'))));
+              }
+              else {
+                echo '<a href="#"></a>';
+              }
+
+              echo '</li>';
+            }
+            echo '<li class="next_page">'.l('>>','voxb/ajax/reviews/'.$faust_number.'/page/2', array('attributes' => array('class' => array('use-ajax')))).'</li>';
+          echo '</ul>';
+        echo '</div>';
+        echo '<div style="clear: both;"></div><br />';
+      }
+      $inline = "var pages = ".$pages.";";
+      drupal_add_js($inline, 'inline');
+
+    ?>
+    <?php if ($user->uid != 0 && $profile->isAbleToReview($faust_number)) : ?>
+    <div class="addReviewContainer">
+      <?php print drupal_render(drupal_get_form('ding_voxb_review_form', $faust_number)); ?>
+    </div>
+    <p class="ajax_message"><?php echo t('Thank you for contributing.'); ?></p>
     <?php ;endif ?>
   </div>
-
-  <?php
-
-  /**
-   * Display pagination links.
-   */
-  // Review count
-    $reviews = $voxbItem->getReviews('comment')->getCount();
-    $pages = -1;
-  
-    if ($reviews > variable_get('voxb_reviews_per_page', VOXB_COMMENTS_PER_PAGE)) {
-      echo '<div id="pager_block">';
-        echo '<ul>';
-          echo '<li class="prev_page"><a href="#">&lt;&lt;</a></li>';
-          $pages = ceil($reviews / variable_get('voxb_reviews_per_page', VOXB_COMMENTS_PER_PAGE));
-  
-          // JS variable to drive the pagination
-          $inline = "var pages = ".$pages.";";
-          drupal_add_js($inline, 'inline');
-  
-          // Draw 5 tabs/buttons/links
-          for ($i = 0; $i < 5; $i++) {
-            echo '<li class="page_num';
-            // Highlight the middle one
-            if ($i == 2) {
-              echo '  active_page"';
-            }
-            echo '">';
-  
-            if ($i > 1) {
-              echo '<a href="#">'.($i-1).'</a>';
-            }
-            else {
-              echo '<a href="#"></a>';
-            }
-  
-            echo '</li>';
-          }
-          echo '<li class="next_page"><a href="#">&gt;&gt;</a></li>';
-        echo '</ul>';
-        echo '<div class="clear"></div>';
-      echo '</div>';
-    }
-    $inline = "var pages = ".$pages.";";
-    drupal_add_js($inline, 'inline');
-  
-  ?>
-
   <div class="errorPopup">
     <p class="close"><a href="javascript: void();"><img src="/<?php echo VOXB_PATH; ?>/img/cancel-on.png" alt="" /></a></p>
     <p></p>
   </div>
-
-  <?php
-
-    // @todo This should be set in preprocessor
-
-    /**
-     * Markup prepared tags.
-     *
-     * @param array $tags
-     *   An array of tags.
-     */ 
-    function showTags($tags) {
-      foreach ($tags as $v) {
-        echo '<span class="tag"><a href="/search/ting/'.htmlspecialchars($v->getName()).'">'.htmlspecialchars($v->getName()).'</a></span>&nbsp;';
-      }
-    }
-
-    /**
-     * Markup prepared rating.
-     * 
-     * @param $rating
-     *   Int of the rating.
-     *
-     * @param $ratingCount
-     *   Int of amount of ratings.
-     */ 
-    function showRating($rating, $ratingCount) {
-      for ($i = 1; $i <= 5; $i++) {
-        echo '<img src="/'.VOXB_PATH.'/img/'.($i <= $rating ? 'star-on' : 'star-off').'.png" />';
-      }
-      if ($ratingCount > 0) {
-        echo '<span class="ratingCountSpan">(<span class="ratingVotesNumber">'.$ratingCount.'</span>)</span>';
-      }
-    }
-
-    /**
-     * Markup prepared reviews.
-     * 
-     * @param array $reviews
-     *  An array of reviews.
-     */ 
-    function showReviews($reviews) {
-      $i = 0;
-      $limit = variable_get('voxb_reviews_per_page', VOXB_COMMENTS_PER_PAGE);
-      foreach ($reviews as $v) {
-        if ($i >= $limit) {
-          break;
-        }
-        echo '<div class="voxbReview">';
-          echo t('Written by').' <em>'.htmlspecialchars($v->getAuthorName()).'</em>';
-          echo '<div class="reviewContent">'.htmlspecialchars($v->getText()).'</div>';
-        echo '</div>';
-
-        $i++;
-      }
-    }
-  ?>
 </div>

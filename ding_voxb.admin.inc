@@ -39,14 +39,6 @@ function ding_voxb_admin($form, $form_state) {
     '#default_value' => variable_get('voxb_institution_name', ''),
   );
 
-  $form['voxb']['voxb_default_userid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Default userId'),
-    '#description' => t('Default voxb userId is used for administrator actions'),
-    '#required' => TRUE,
-    '#default_value' => variable_get('voxb_default_userid', '1'),
-  );
-
   $form['voxb']['voxb_reviews_per_page'] = array(
     '#type' => 'textfield',
     '#title' => t('Reviews per page'),

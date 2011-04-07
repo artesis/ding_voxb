@@ -4,6 +4,10 @@
  * Markup of the pager.
  */
 
+div#pager_block * {
+  outline: none;
+}
+
 div#pager_block {
   margin: 0 auto;
   width: 230px;
@@ -22,8 +26,17 @@ div#pager_block ul li {
   width: 25px;
 }
 
+div#pager_block ul li a {
+  width: inherit !important;
+}
+
 div#pager_block ul li.active_page {
   background-color: #CCC;
   font-size: 120%;
   font-weight: bold;
+}
+
+div#pager_block .ajax-progress {
+  display: none;
+  width: 1px;
 }

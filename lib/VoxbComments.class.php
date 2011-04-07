@@ -25,7 +25,7 @@ class VoxbComments extends VoxbBase implements Iterator{
     }
 
     foreach ($voxbUserItems as $v) {
-      /*
+      /**
        * Select only reviews that are marked as comments
        * This line can be changes, depends on the changes done on the server side
        */

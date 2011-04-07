@@ -17,78 +17,42 @@ class VoxbLogin {
 
   /**
    * User authentification in VoxB.
-   * Its not an anthentication really, we just check if such user exists in VoxB database
-   * and saving his userid to _SESSION to use it user actions rating/reviewing etc.
    *
-   * @param string $name
-   * @param string $pass
+   * Its not an anthentication really, we just check if such user exists in VoxB database
+   * and save his voxb userId to _SESSION to use it in user actions rating/reviewing etc.
+   *
+   * @param object $account
    */
-  public function login($name, $profileUserId) {
-    global $user;
+  public function login($account) {
     $obj = new VoxbUser();
-    // Check if such user exist
-    if ($obj->getUserBySSN($user->name, variable_get('voxb_identity_provider', ''), variable_get('voxb_institution_name', ''))) {
-      // If this user has move than 1 account
-      if (count($obj->getProfiles()) > 1) {
-        // Walk through profiles
-        foreach ($obj->getProfiles() as $v) {
-          if (intval($v->getUserId())) {
-            // If a profile is already choosen - finish login
-            if ($profileUserId == $v->getUserId()) {
-              $_SESSION['voxb']['userId'] = $v->getUserId();
-              $_SESSION['voxb']['aliasName'] = $v->getAliasName();
-              $this->setLoginStatus(true, array('auth' => TRUE));
-              return TRUE;
-            }
-            $profiles[] = array('id' => $v->getUserId(), 'name' => $v->getAliasName());
-          }
-        }
+    if ($obj->getUserBySSN($account->name, variable_get('voxb_identity_provider', ''), variable_get('voxb_institution_name', ''))) {
 
-        /**
-         * If a profile is not choosen then return list of profiles
-         * this will cause creating a popup with profiles list on the JS side.
-         */
-        $this->setLoginStatus(FALSE, array('profiles' => $profiles));
-        return FALSE;
-      }
-      else {
-
-        /**
-         * If a user has only 1 profile, we just use it
-         * as result user is successfully authenticated.
-         */
-        $profiles = $obj->getProfiles();
-        $_SESSION['voxb']['userId'] = $profiles[0]->getUserId();
-        $_SESSION['voxb']['aliasName'] = $profiles[0]->getAliasName();
-        $this->setLoginStatus(TRUE, array('auth' => TRUE));
-        return TRUE;
-      }
+      /**
+       * Each user in Voxb can have several profiles
+       * but we take just the first one
+       */
+      $profiles = $obj->getProfiles();
+      $_SESSION['voxb']['userId'] = $profiles[0]->getUserId();
+      $_SESSION['voxb']['aliasName'] = $profiles[0]->getAliasName();
+      return TRUE;
     }
     else {
 
       /**
-       * No user with such credentials, so we will need to create him.
+       * Create a new user
+       *
+       * Use his username as user CPR and aliasName
+       * (we will give the possibility to update it later).
+       * Use user email as profile link.
+       *
+       * @todo Replace profile link with a real linkto users profiles in artesis system.
        */
-      $this->setLoginStatus(FALSE, array('selectAliasName' => TRUE));
-      return FALSE;
+      return $this->createUser($account->name, $account->name, $account->email);
     }
   }
 
-  private function setLoginStatus($status, $data = NULL, $error = NULL) {
-    $this->loginStatus['status'] = $status;
-    if ($data) $this->loginStatus['data'] = $data;
-    if ($error) $this->loginStatus['error'] = $error;
-  }
-
   /**
-   * Return login status.
-   */
-  public function getLoginStatus() {
-    return $this->loginStatus;
-  }
-
-  /**
-   * Cretae a new user (with 1 profile).
+   * Create a new user (with 1 profile).
    *
    * @param string $cpr
    * @param string $aliasName
@@ -101,15 +65,10 @@ class VoxbLogin {
     $obj->setProfileLink($profileLink);
     if ($obj->createUser(variable_get('voxb_identity_provider', ''), variable_get('voxb_institution_name', ''))) {
       // User successfully created
-      $this->setLoginStatus(TRUE, array('auth' => TRUE, 'userId' => $obj->getUserId()));
       $_SESSION['voxb']['userId'] = $obj->getUserId();
       $_SESSION['voxb']['aliasName'] = $aliasName;
       return TRUE;
     }
-    else {
-      // If this userAlias as occupied by another user, we will get user sugestion
-      $this->setLoginStatus(FALSE, array('userAliasSuggestion' => $obj->getUserAliasSuggestion()));
-      return FALSE;
-    }
+    return FALSE;
   }
 }

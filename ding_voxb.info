@@ -2,5 +2,5 @@ name = VoxB module
 description = Implementation of VoxB to Artesis.
 package = Ding! Frontend
 core = 7.x
-version = 0.1
+version = 0.2
 configure = admin/config/voxb

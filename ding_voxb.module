@@ -158,7 +158,7 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
 }
 
 /**
- * Implimentation of hook_theme
+ * Implements hook_theme.
  *
  * @return array
  */

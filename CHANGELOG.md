@@ -1,6 +1,12 @@
 VoxB module
 ==========
 
+### Version 0.3 (not released):
+
+* New: Support update of posts (edit rating, add more tags/comments) with [updateMyRequest] [updateMyRequest]
+* Enhancement: [JavaScript should be compatible with other libraries than jQuery] [js_compatibility]
+* Enhancement: [Use drupal_set_session instead of $_SESSION] [drupal_set_session]
+
 ### Version 0.2:
 
 * New: Added unit tests.
@@ -13,4 +19,7 @@ VoxB module
 * Init
 
 [ding_user]: https://github.com/ding2/ding_user
-[ding_popup]: https://github.com/ding2/ding_popup 
+[ding_popup]: https://github.com/ding2/ding_popup
+[js_compatibility]: http://drupal.org/node/224333#javascript_compatibility
+[drupal_set_session]: http://drupal.org/node/224333#drupal_set_session
+[updateMyRequest]: https://voxb.addi.dk/1.0/doc/voxb.html#Link51

@@ -7,7 +7,7 @@
 error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
 
 require_once(drupal_get_path('module', 'ding_voxb') . '/lib/VoxbBase.class.php');
-require_once(drupal_get_path('module', 'ding_voxb') . '/lib/VoxbReviews.class.php');
+require_once(drupal_get_path('module', 'ding_voxb') . '/lib/VoxbReviewsController.class.php');
 require_once(drupal_get_path('module', 'ding_voxb') . '/lib/VoxbTags.class.php');
 
 /**
@@ -32,7 +32,7 @@ class VoxbItem extends VoxbBase {
      * Review is a review too.
      */
     $this->tags = new VoxbTags();
-    $this->reviews = new VoxbReviews();
+    $this->reviews = new VoxbReviewsController();
   }
 
   /**
@@ -72,7 +72,7 @@ class VoxbItem extends VoxbBase {
       ),
       'output' => array('contentType' => 'all')
     );
-    $this->reviews = new VoxbReviews($this->reviewHandlers);
+    $this->reviews = new VoxbReviewsController($this->reviewHandlers);
 
     $o = $this->call('fetchData', $data);
     if ($o->totalItemData) {
@@ -96,24 +96,6 @@ class VoxbItem extends VoxbBase {
   }
 
   /**
-   * This method was not working at the moment of writing the code.
-   * The reson probably wan on the voxb-server side or we used the call in the wrong way.
-   *
-   * @param integer $voxbId
-   */
-  public function fetchByVoxbIdentifier($voxbId) {
-    $data = array(
-      'fetchData' => array(
-        'objectIdentifierValue' => $voxbId,
-        'objectIdentifierType' => 'LOCAL',
-        'voxbIdentifier' => $voxbId
-      ),
-      'output' => array('contentType' => 'all')
-    );
-    $o = $this->call('fetchData', $data);
-  }
-
-  /**
    * Method is fetching data from a VoxB object.
    */
   private function fetchData($o) {
@@ -125,7 +107,7 @@ class VoxbItem extends VoxbBase {
     $this->tags->fetch($o->summaryTags);
 
     // Fetch Reviews
-    $this->reviews = new VoxbReviews($this->reviewHandlers);
+    $this->reviews = new VoxbReviewsController($this->reviewHandlers);
     $this->reviews->fetch($o->userItems);
 
     // Fetch Rating
@@ -183,6 +165,27 @@ class VoxbItem extends VoxbBase {
     if (!$response || $response->error) {
       return FALSE;
     }
+    return TRUE;
+  }
+
+  /**
+   * This method is updating user item rating
+   *
+   * @param $record_id
+   * @param $rating
+   */
+  public function updateRateItem($record_id, $rating) {
+    $response = $this->call('updateMyData', array(
+      'voxbIdentifier' => $record_id,
+      'item' => array(
+        'rating' => $rating,
+      ),
+    ));
+
+    if (!$response || $response->error) {
+      return FALSE;
+    }
+
     return TRUE;
   }
 }

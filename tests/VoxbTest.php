@@ -1,7 +1,8 @@
 <?php
 
 require_once(dirname(__FILE__) . '/../lib/VoxbItem.class.php');
-require_once(dirname(__FILE__) . '/../lib/VoxbComments.class.php');
+require_once(dirname(__FILE__) . '/../lib/VoxbReviews.class.php');
+require_once(dirname(__FILE__) . '/../lib/VoxbProfile.class.php');
 
 /**
  * @file
@@ -42,13 +43,14 @@ class VoxbTest extends PHPUnit_Framework_TestCase {
         'rating' => 20,
         'tags' => array(
           'tag' => array(
-          'tag1',
-           'tag2',
-          'tag3')
+            'tag1',
+            'tag2',
+            'tag3'
+          )
         ),
         'review' => array(
-          'reviewTitle' => 'comment',
-          'reviewData' => 'Comment 1 body',
+          'reviewTitle' => 'review',
+          'reviewData' => 'Review 1 body',
           'reviewType' => 'TXT'
         )
       ),
@@ -66,8 +68,8 @@ class VoxbTest extends PHPUnit_Framework_TestCase {
           'tag' => 'tag4'
         ),
         'review' => array(
-          'reviewTitle' => 'comment-no',
-          'reviewData' => 'This is not a comment',
+          'reviewTitle' => 'review-no',
+          'reviewData' => 'This is not a review',
           'reviewType' => 'TXT'
         )
       ),
@@ -85,8 +87,8 @@ class VoxbTest extends PHPUnit_Framework_TestCase {
           'tag' => array('tag4', 'tag1')
         ),
         'review' => array(
-          'reviewTitle' => 'comment',
-          'reviewData' => 'Comment 2 body',
+          'reviewTitle' => 'review',
+          'reviewData' => 'Review 2 body',
           'reviewType' => 'TXT'
         )
       ),
@@ -104,8 +106,8 @@ class VoxbTest extends PHPUnit_Framework_TestCase {
           'tag' => 'tag4'
         ),
         'review' => array(
-          'reviewTitle' => 'comment',
-          'reviewData' => 'Comment 3 body',
+          'reviewTitle' => 'review',
+          'reviewData' => 'Review 3 body',
           'reviewType' => 'TXT'
         )
       ),

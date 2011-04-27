@@ -36,16 +36,16 @@ class VoxbItemTest extends VoxbTest {
     }
   }
 
-  public function testCommentsList() {
+  public function testReviewsList() {
     $obj = new VoxbItem();
-    $obj->addReviewHandler('comment', new VoxbComments());
+    $obj->addReviewHandler('review', new VoxbReviews());
     $obj->fetchByFaust('111111111');
 
-    $this->assertNotNull($obj->getReviews('comment'));
-    $comment = $obj->getReviews('comment')->toArray();
+    $this->assertNotNull($obj->getReviews('review'));
+    $reviews = $obj->getReviews('review')->toArray();
 
-    $this->assertEquals($obj->getReviews('comment')->getCount(), 3);
-    $this->assertTrue(is_array($comment));
+    $this->assertEquals($obj->getReviews('review')->getCount(), 3);
+    $this->assertTrue(is_array($reviews));
   }
 }
 

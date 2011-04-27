@@ -14,8 +14,6 @@ class VoxbProfile extends VoxbBase {
   private $profileLink;
   private $cpr;
 
-  private $userAliasSuggestion;
-
   /**
    * VoxB itemIds on which user has already actred (tagged/reviewed/rated).
    */
@@ -90,17 +88,6 @@ class VoxbProfile extends VoxbBase {
   }
 
   /**
-   * Returns user aliasName suggestion.
-   * This variable is only not empty if you tries to create a new profiles
-   * and there was already any user in VoxB database with such aliasName.
-   *
-   * @return string
-   */
-  public function getUserAliasSuggestion() {
-    return $this->userAliasSuggestion;
-  }
-
-  /**
    * Create user method creates not only an user.
    * If a user with such credentials (CPR, identity provider and institution name)
    * already exist in VoxB database only a new profile will be added to his account.
@@ -127,13 +114,6 @@ class VoxbProfile extends VoxbBase {
       return TRUE;
     }
 
-    /**
-     * If a user/profiles is not created but because this
-     * aliasName is not available we will get a suggestion.
-     */
-    if (isset($response->userAliasSuggestion)) {
-      $this->userAliasSuggestion = $response->userAliasSuggestion;
-    }
     return FALSE;
   }
 
@@ -146,11 +126,6 @@ class VoxbProfile extends VoxbBase {
    * @return boolean
    */
   public function isAbleToReview($faustNum) {
-    if (in_array($faustNum, $this->getActedItems())) {
-      return FALSE;
-    }
-
-    // Additional validation is welcome
     return $this->isServiceAvailable();
   }
 
@@ -163,11 +138,7 @@ class VoxbProfile extends VoxbBase {
    * @return boolean
    */
   public function isAbleToTag($faustNum) {
-    if (in_array($faustNum, $this->getActedItems())) {
-      return FALSE;
-    }
-
-    // Additional validation is welcome
+    // user is always able to add more tags
     return $this->isServiceAvailable();
   }
 
@@ -180,26 +151,41 @@ class VoxbProfile extends VoxbBase {
    * @return boolean
    */
   public function isAbleToRate($faustNum) {
-    if (in_array($faustNum, $this->getActedItems())) {
-      return FALSE;
-    }
-
-    // Additional validation is welcome
     return $this->isServiceAvailable();
   }
 
   /**
-   * Select faust numbers on which this user has already acted.
+   * Retuns an array which shows user actions on items
+   * array(
+   *  array(
+   *    voxbIdentifier:integer
+   *    tags:array
+   *    review:array
+   *    rating:integer
+   *  )
+   * )
    *
    * @return array
    */
   private function getActedItems() {
     if (empty($this->actedItems)) {
       $response = $this->call('fetchMyData', array('userId' => $this->userId));
+      if (!$result) return array();
+
+      if (!is_array($response->result))
+        $response->result = array($response->result);
 
       foreach ($response->result as $v) {
         if ($v->object && $v->object->objectIdentifierType == 'FAUST') {
-          $this->actedItems[] = $v->object->objectIdentifierValue;
+          $this->actedItems[$v->object->objectIdentifierValue] = array(
+            'voxbIdentifier' => $v->voxbIdentifier,
+            'tags' => $v->item->tags->tag,
+            'review' => array(
+              'title' => $v->item->review->reviewTitle,
+              'data' => $v->item->review->reviewData
+            ),
+            'rating' => $v->item->rating
+          );
         }
       }
     }
@@ -207,12 +193,12 @@ class VoxbProfile extends VoxbBase {
   }
 
   /**
-   * Add a new item to profile if user acted on it.
+   * Update array of acted items
    *
-   * @param string $faustNum
    */
-  public function addActedItem($faustNum) {
-    $this->actedItems[] = $faustNum;
+  public function updateActedItems() {
+    $this->actedItems = array();
+    $this->getActedItems();
   }
 
   /**
@@ -223,4 +209,27 @@ class VoxbProfile extends VoxbBase {
   public function setUserId($x) {
     $this->userId = $x;
   }
+
+  /**
+   * This is a public method
+   * to be used after successfull authntication to store VoxbIdentifiers in the SESSION
+   */
+  public function fetchMyData() {
+    if (!$this->userId) return FALSE;
+    $this->getActedItems();
+    return TRUE;
+  }
+
+  /**
+   * This method return Voxb user data on specified item
+   * Or NULL if he didn't act on it yet
+   * @param $faustNumber
+   * @return array
+   */
+  public function getVoxbUserData($faustNumber) {
+    $actedItems = $this->getActedItems();
+
+    return $actedItems[$faustNumber];
+  }
+
 }

@@ -1,7 +1,7 @@
 VoxB module
 ==========
 
-### Version 0.3 (not released):
+### Version 0.3:
 
 * New: Support update of posts (edit rating, add more tags/comments) with [updateMyRequest] [updateMyRequest]
 * Enhancement: [JavaScript should be compatible with other libraries than jQuery] [js_compatibility]
@@ -22,4 +22,4 @@ VoxB module
 [ding_popup]: https://github.com/ding2/ding_popup
 [js_compatibility]: http://drupal.org/node/224333#javascript_compatibility
 [drupal_set_session]: http://drupal.org/node/224333#drupal_set_session
-[updateMyRequest]: https://voxb.addi.dk/1.0/doc/voxb.html#Link51
+[updateMyRequest]: https://voxb.addi.dk/1.0/doc/voxb.html#Link51 

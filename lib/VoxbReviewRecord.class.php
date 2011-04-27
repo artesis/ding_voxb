@@ -6,7 +6,7 @@
  * VoxbReviewRecord single review class.
  * This object is storing reviews attributes.
  */
-class VoxbCommentRecord extends VoxbBase{
+class VoxbReviewRecord extends VoxbBase{
 
   private $title;
   private $text;
@@ -110,18 +110,25 @@ class VoxbCommentRecord extends VoxbBase{
   }
 
   /**
-   * Create comment.
+   * Create review.
    *
    * @param string $faustNum
    * @param string $review
    * @param integer $userId
    */
-  public function create($faustNum, $review, $userId) {
+  public function create($faustNum, $review, $profile) {
+    // check if user has already reviewed this item
+    $data = $profile->getVoxbUserData($faustNum);
+    if ($data && ($data['review']['title'] == 'review' || !$data['review']['title'])) {
+      // Update reviews
+      return $this->update($data['voxbIdentifier'], $review);
+    }
+
     $response = $this->call('createMyData', array(
-      'userId' => $userId,
+      'userId' => $profile->getUserId(),
       'item' => array(
         'review' => array(
-          'reviewTitle' => 'comment',
+          'reviewTitle' => 'review',
           'reviewData' => $review,
           'reviewType' => 'TXT'
         )
@@ -129,6 +136,30 @@ class VoxbCommentRecord extends VoxbBase{
       'object' => array(
         'objectIdentifierValue' => $faustNum,
         'objectIdentifierType' => 'FAUST'
+      )
+    ));
+
+    if (!$response || $response->error) {
+      return FALSE;
+    }
+    return TRUE;
+  }
+
+  /**
+   * Update review method
+   *
+   * @param integer $voxbId
+   * @param string $review
+   */
+  private function update($voxbId, $review) {
+    $response = $this->call('updateMyData', array(
+      'voxbIdentifier' => $voxbId,
+      'item' => array(
+        'review' => array(
+          'reviewTitle' => 'review',
+          'reviewData' => $review,
+          'reviewType' => 'TXT'
+        )
       )
     ));
 

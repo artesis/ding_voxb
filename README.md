@@ -5,7 +5,7 @@ This module provides capability for the user to review, tag and rate on an item 
 
 Installation
 -----------------
-1. Include the module in `ting/ting_object_overview.tpl.php`.
+1. Include the module in `ting/ting_object_details.tpl.php`.
 2. Activate the module.
 3. Configure the module with the values given as examples.
 
@@ -18,13 +18,10 @@ This is not the right solution.
 
 VoxB related issues
 -----------------------------
-### Current bugs in the service:
-* `updateMyRequest` needs all former posts in the request.
-
 ### Current deficiencies in the service:
-* Webservice is slow.
-* Reviews and tags not sorted after date of creation.
-* `objectIdentifier` not supported when using `updateMyRequest` (= not possible to update post).
+* `updateMyRequest` needs all former posts in the request.
+* The VoxB-service is slow.
+* Reviews and tags are not sorted after date of creation.
 
 ### Current features to the service:
 * Expand error messages, eventually with error codes (only 2 messages exist at the moment).

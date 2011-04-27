@@ -9,10 +9,10 @@ require_once(VOXB_PATH . '/lib/VoxbUser.class.php');
  */
 class VoxbLogin {
 
-  private $loginStatus;
-
+  /**
+   * Empty contructor
+   */
   public function __construct() {
-    $this->loginStatus['status'] = FALSE;
   }
 
   /**
@@ -34,6 +34,9 @@ class VoxbLogin {
       $profiles = $obj->getProfiles();
       $_SESSION['voxb']['userId'] = $profiles[0]->getUserId();
       $_SESSION['voxb']['aliasName'] = $profiles[0]->getAliasName();
+      //Fetch user actions and put serialized profile object into session
+      $profiles[0]->fetchMyData();
+      $_SESSION['voxb']['profile'] = serialize($profiles[0]);
       return TRUE;
     }
     else {
@@ -47,7 +50,20 @@ class VoxbLogin {
        *
        * @todo Replace profile link with a real linkto users profiles in artesis system.
        */
-      return $this->createUser($account->name, $account->name, $account->email);
+      $userId = $this->createUser($account->name, $account->name, $account->email);
+
+      if ($userId != 0) {
+        $_SESSION['voxb']['userId'] = $userId;
+        $_SESSION['voxb']['aliasName'] = $account->name;
+
+        //Fetch user actions and put serialized profile object into session
+        $profile = new VoxbProfile();
+        $profile->setUserId($userId);
+        $profile->fetchMyData();
+        $_SESSION['voxb']['profile'] = serialize($profile);
+        return TRUE;
+      }
+      return FALSE;
     }
   }
 
@@ -65,10 +81,8 @@ class VoxbLogin {
     $obj->setProfileLink($profileLink);
     if ($obj->createUser(variable_get('voxb_identity_provider', ''), variable_get('voxb_institution_name', ''))) {
       // User successfully created
-      $_SESSION['voxb']['userId'] = $obj->getUserId();
-      $_SESSION['voxb']['aliasName'] = $aliasName;
-      return TRUE;
+      return $obj->getUserId();
     }
-    return FALSE;
+    return 0;
   }
 }

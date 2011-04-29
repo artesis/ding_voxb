@@ -170,7 +170,7 @@ class VoxbProfile extends VoxbBase {
   private function getActedItems() {
     if (empty($this->actedItems)) {
       $response = $this->call('fetchMyData', array('userId' => $this->userId));
-      if (!$result) return array();
+      if (!$response) return array();
 
       if (!is_array($response->result))
         $response->result = array($response->result);
@@ -179,7 +179,7 @@ class VoxbProfile extends VoxbBase {
         if ($v->object && $v->object->objectIdentifierType == 'FAUST') {
           $this->actedItems[$v->object->objectIdentifierValue] = array(
             'voxbIdentifier' => $v->voxbIdentifier,
-            'tags' => $v->item->tags->tag,
+            'tags' => (is_array($v->item->tags->tag) ? $v->item->tags->tag : array($v->item->tags->tag)),
             'review' => array(
               'title' => $v->item->review->reviewTitle,
               'data' => $v->item->review->reviewData

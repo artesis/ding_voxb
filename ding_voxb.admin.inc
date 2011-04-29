@@ -44,7 +44,7 @@ function ding_voxb_admin($form, $form_state) {
     '#title' => t('Reviews per page'),
     '#description' => t('Text reviews shown per page.'),
     '#required' => TRUE,
-    '#default_value' => variable_get('voxb_reviews_per_page', VOXB_COMMENTS_PER_PAGE),
+    '#default_value' => variable_get('voxb_reviews_per_page', VOXB_REVIEWS_PER_PAGE),
   );
 
   return system_settings_form($form);

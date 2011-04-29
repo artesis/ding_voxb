@@ -1,6 +1,10 @@
 VoxB module
 ==========
 
+### Version 1.0:
+
+* Hotfixes.
+
 ### Version 0.3:
 
 * New: Support update of posts (edit rating, add more tags/comments) with [updateMyRequest] [updateMyRequest]

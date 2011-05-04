@@ -327,6 +327,7 @@ function ding_voxb_tag_form($form, $form_state, $faust_number) {
  */
 function ding_voxb_add_tag_callback($form, $form_state) {
   require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbItem.class.php';
+  require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbProfile.class.php';
   $tag = new VoxbTagRecord();
   $profile = unserialize($_SESSION['voxb']['profile']);
 
@@ -382,9 +383,10 @@ function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
       else {
         $r = $item->updateRateItem($record_id['voxbIdentifier'], $rating * 20);
         // update profile object in session
-        $profile->updateActedItems();
-        $_SESSION['voxb']['profile'] = serialize($profile);
+        
       }
+      $profile->updateActedItems();
+      $_SESSION['voxb']['profile'] = serialize($profile);
 
       if ($r) {
         // Rating is successfully submited

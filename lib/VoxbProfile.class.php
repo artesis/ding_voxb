@@ -179,12 +179,12 @@ class VoxbProfile extends VoxbBase {
         if ($v->object && $v->object->objectIdentifierType == 'FAUST') {
           $this->actedItems[$v->object->objectIdentifierValue] = array(
             'voxbIdentifier' => $v->voxbIdentifier,
-            'tags' => (is_array($v->item->tags->tag) ? $v->item->tags->tag : array($v->item->tags->tag)),
+            'tags' => @$v->item->tags ? (is_array($v->item->tags->tag) ? $v->item->tags->tag : array($v->item->tags->tag)) : array(),
             'review' => array(
-              'title' => $v->item->review->reviewTitle,
-              'data' => $v->item->review->reviewData
+              'title' => @$v->item->review->reviewTitle,
+              'data' => @$v->item->review->reviewData
             ),
-            'rating' => $v->item->rating
+            'rating' => @$v->item->rating
           );
         }
       }

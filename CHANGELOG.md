@@ -9,8 +9,7 @@ VoxB module
 
 * New: Support update of posts (edit rating, add more tags/comments) with [updateMyRequest] [updateMyRequest]
 * Enhancement: [JavaScript should be compatible with other libraries than jQuery] [js_compatibility]
-
-~~* Enhancement: [Use drupal_set_session instead of $_SESSION] [drupal_set_session]~~
+* Enhancement: ~~[Use drupal_set_session instead of $_SESSION] [drupal_set_session]~~
 
 ### Version 0.2:
 

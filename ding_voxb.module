@@ -13,9 +13,11 @@ define('VOXB_PATH', drupal_get_path('module', 'ding_voxb'));
  */
 function ding_voxb_init() {
   drupal_add_library('system', 'drupal.ajax');
+  drupal_add_library('system', 'jquery.form');  
   drupal_add_css(VOXB_PATH . '/css/voxb-pager.css', array('type' => 'file'));
   drupal_add_css(VOXB_PATH . '/css/voxb.css', array('type' => 'file'));
-  drupal_add_js(VOXB_PATH . '/js/voxb.item.js');
+  drupal_add_js(VOXB_PATH . '/js/cyclic.fade.js');
+  drupal_add_js(VOXB_PATH . '/js/voxb.item.js');  
 }
 
 /**
@@ -38,7 +40,7 @@ function ding_voxb_menu() {
     'description' => '',
     'page arguments' => array(1, 3, 5),
     'type' => MENU_CALLBACK,
-    'access arguments' => TRUE,
+    'access arguments' => array('search content'),
     'page callback' => 'ding_voxb_paginator',
   );
 
@@ -62,7 +64,6 @@ function ding_voxb_menu() {
  * @param $account
  */
 function ding_voxb_user_login($edit, $account) {
-var_dump('in');
   require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbLogin.class.php';
   $obj = new VoxbLogin();
   $obj->login($account);
@@ -246,9 +247,10 @@ function ding_voxb_review_form_callback($form, $form_state) {
       $_SESSION['voxb']['profile'] = serialize($profile);
 
       // add commands to hide review container and show 'thank' message
-      $commands[] = ajax_command_invoke('.addReviewContainer', 'hide', array());
-      $commands[] = ajax_command_invoke('.reviewsContainer .ajax_message', 'show', array());
+      //$commands[] = ajax_command_invoke('.addReviewContainer', 'hide', array());
       $commands[] = ajax_command_html('.userReviews', '');
+      $commands[] = ajax_command_invoke('#edit-review-submit', 'val', array('Update'));
+      $commands[] = ajax_command_invoke('.addVideoReviewContainer', 'hide', array());
 
       // Get reviews updated list
       require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbItem.class.php';
@@ -259,7 +261,7 @@ function ding_voxb_review_form_callback($form, $form_state) {
       $item->fetchByFaust($form['faust_number']['#value']);
       $reviews = $item->getReviews('review');
       $reviews_count = $reviews->getCount();
-
+      
       // Limit the count of displayed text reviews
       $limit = variable_get('voxb_reviews_per_page', VOXB_REVIEWS_PER_PAGE);
 
@@ -277,9 +279,14 @@ function ding_voxb_review_form_callback($form, $form_state) {
           )
         );
       }
-
+      
+      if ($reviews_count > $limit) {
+        $commands[] = ajax_command_invoke('#pager_block', 'show');
+      }
       // Jump to the first page
-      $commands[] = ajax_command_invoke('.page_first a', 'click');
+      if ($reviews_count > $limit) {
+        $commands[] = ajax_command_invoke('.page_first a', 'click');
+      }
     }
   }
 
@@ -304,18 +311,21 @@ function ding_voxb_tag_form($form, $form_state, $faust_number) {
       'callback' => 'ding_voxb_add_tag_callback'
     )
   );
+  
   $form['faustNumber'] = array(
     '#type' => 'hidden',
     '#name' => 'faustNumber',
     '#value' => $faust_number
   );
+  
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
     '#ajax' => array(
       'callback' => 'ding_voxb_add_tag_callback'
-    )
+    ),
   );
+  
   return $form;
 }
 
@@ -326,24 +336,33 @@ function ding_voxb_tag_form($form, $form_state, $faust_number) {
  * @param unknown_type $form_state
  */
 function ding_voxb_add_tag_callback($form, $form_state) {
-  require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbItem.class.php';
-  require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbProfile.class.php';
-  $tag = new VoxbTagRecord();
-  $profile = unserialize($_SESSION['voxb']['profile']);
-
   $commands = array();
-  if (!$tag->create($form['faustNumber']['#value'], $form['name']['#value'], $profile)) {
-    // add popup notice
-    $commands[] = ajax_command_ding_popup('voxb_error', t('Error'), t('Service temporary unavailable.'));
+
+  if (empty($form['name']['#value'])) {
+    $commands[] = ajax_command_ding_popup('add_tag_error', t('Error'), t('Please fill in your tag.'));
   }
   else {
-    // update profile object in session
-    $profile->updateActedItems();
-    $_SESSION['voxb']['profile'] = serialize($profile);
+    require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbItem.class.php';
+    require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbProfile.class.php';
+    $tag = new VoxbTagRecord();
+    $profile = unserialize($_SESSION['voxb']['profile']);
 
-    // hide form and show new tag
-    $commands[] = ajax_command_append('div.recordTagHighlight', theme('voxb_tag_record', array('tag_name' => $form['name']['#value'])));
-    $commands[] = ajax_command_replace("#ding_voxb_tag_form", t('Thank you for contributing.'));
+    if (!$tag->create($form['faustNumber']['#value'], $form['name']['#value'], $profile)) {
+      // add popup notice
+      $commands[] = ajax_command_ding_popup('voxb_error', t('Error'), t('Service temporary unavailable.'));
+    }
+    else {
+      // update profile object in session
+      $profile->updateActedItems();
+      $_SESSION['voxb']['profile'] = serialize($profile);
+
+      // hide form and show new tag
+      $commands[] = ajax_command_append('div.recordTagHighlight', theme('voxb_tag_record', array('tag_name' => $form['name']['#value'])));
+      $commands[] = ajax_command_replace("#ding_voxb_tag_form", t('Thank you for contributing.'));
+      $commands[] = array(
+        'command' => 'voxb_tag_callback',
+      );
+    }
   }
   return array('#type' => 'ajax', '#commands' => $commands);
 }
@@ -383,7 +402,6 @@ function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
       else {
         $r = $item->updateRateItem($record_id['voxbIdentifier'], $rating * 20);
         // update profile object in session
-        
       }
       $profile->updateActedItems();
       $_SESSION['voxb']['profile'] = serialize($profile);
@@ -402,6 +420,8 @@ function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
         $commands[] = ajax_command_ding_popup('voxb_error', t('Error'), t('Service temporary unavailable.'));
       }
     }
+
+    $commands[] = ajax_command_invoke('.ratingsContainer .ajax_anim', 'hide', array());
 
     $result = array('#type' => 'ajax', '#commands' => $commands);
     ajax_deliver($result);

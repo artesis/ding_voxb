@@ -13,6 +13,10 @@
   margin-bottom: 15px;
 }
 
+.addRatingContainer {
+  float: left;
+}
+
 .addReviewTextarea {
   width: 100%;
   height: 100px;
@@ -22,20 +26,22 @@
   width: 50%;
 }
 
-img.ajax_anim, p.ajax_message, div.errorPopup, #voxbItem {
+#edit-rating, div.ajax_anim, #voxbItem {
   display: none;
 }
 
-div.errorPopup {
-  background-color: #FFFFFF;
-  border: 1px solid red;
-  min-width: 200px;
-  text-align: center;
-  padding: 15px;
+div.ajax_anim {
+  background-image: url('../img/throbber.gif');
+  background-repeat: no-repeat;
+  background-position: 0 -18px;
+  float: left;
+  height: 15px;
+  line-height: 19px;
+  width: 15px;
 }
 
-#edit-rating {
-  display: none;
+.ratingCountSpan {
+  float: left;
 }
 
 .rating {
@@ -52,6 +58,14 @@ div.errorPopup {
 	background-image: url(../img/star-off.png);
 }
 
-.userRate .ajax-progress {
+.star-black {
+  background-image: url(../img/star-black.png);
+}
+
+.userRate .ajax-progress, .tagsContainer .message, .addReviewContainer .message {
   display: none;
+}
+
+.recordTagHighlight div, .recordTagHighlight .tag {
+  float: left;
 }

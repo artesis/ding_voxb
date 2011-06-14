@@ -1,15 +1,20 @@
 VoxB module
 ==========
 
+### Version 1.1:
+
+* Fix: Various minor styling, AJAX, commenting and JS issues.
+* Fix: Adjusted the module due to [changes] [ddbcae5eb2c7c7417089] in [ding2/ting] [ting].
+
 ### Version 1.0:
 
 * Hotfixes.
 
 ### Version 0.3:
 
-* New: Support update of posts (edit rating, add more tags/comments) with [updateMyRequest] [updateMyRequest]
-* Enhancement: [JavaScript should be compatible with other libraries than jQuery] [js_compatibility]
-* Enhancement: ~~[Use drupal_set_session instead of $_SESSION] [drupal_set_session]~~
+* New: Support update of posts (edit rating, add more tags/comments) with [updateMyRequest] [updateMyRequest].
+* Enhancement: [JavaScript should be compatible with other libraries than jQuery] [js_compatibility].
+* Enhancement: ~~[Use drupal_set_session instead of $_SESSION] [drupal_set_session]~~.
 
 ### Version 0.2:
 

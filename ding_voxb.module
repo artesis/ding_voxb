@@ -13,11 +13,11 @@ define('VOXB_PATH', drupal_get_path('module', 'ding_voxb'));
  */
 function ding_voxb_init() {
   drupal_add_library('system', 'drupal.ajax');
-  drupal_add_library('system', 'jquery.form');  
+  drupal_add_library('system', 'jquery.form');
   drupal_add_css(VOXB_PATH . '/css/voxb-pager.css', array('type' => 'file'));
   drupal_add_css(VOXB_PATH . '/css/voxb.css', array('type' => 'file'));
   drupal_add_js(VOXB_PATH . '/js/cyclic.fade.js');
-  drupal_add_js(VOXB_PATH . '/js/voxb.item.js');  
+  drupal_add_js(VOXB_PATH . '/js/voxb.item.js');
 }
 
 /**
@@ -261,7 +261,7 @@ function ding_voxb_review_form_callback($form, $form_state) {
       $item->fetchByFaust($form['faust_number']['#value']);
       $reviews = $item->getReviews('review');
       $reviews_count = $reviews->getCount();
-      
+
       // Limit the count of displayed text reviews
       $limit = variable_get('voxb_reviews_per_page', VOXB_REVIEWS_PER_PAGE);
 
@@ -279,7 +279,7 @@ function ding_voxb_review_form_callback($form, $form_state) {
           )
         );
       }
-      
+
       if ($reviews_count > $limit) {
         $commands[] = ajax_command_invoke('#pager_block', 'show');
       }
@@ -311,13 +311,13 @@ function ding_voxb_tag_form($form, $form_state, $faust_number) {
       'callback' => 'ding_voxb_add_tag_callback'
     )
   );
-  
+
   $form['faustNumber'] = array(
     '#type' => 'hidden',
     '#name' => 'faustNumber',
     '#value' => $faust_number
   );
-  
+
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
@@ -325,7 +325,7 @@ function ding_voxb_tag_form($form, $form_state, $faust_number) {
       'callback' => 'ding_voxb_add_tag_callback'
     ),
   );
-  
+
   return $form;
 }
 

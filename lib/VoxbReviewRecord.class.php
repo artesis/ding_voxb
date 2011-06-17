@@ -10,6 +10,7 @@ class VoxbReviewRecord extends VoxbBase{
 
   private $title;
   private $text;
+  private $created;
   private $authorVoxbId;
   private $authorName;
   private $voxbId;
@@ -24,6 +25,7 @@ class VoxbReviewRecord extends VoxbBase{
     if ($voxbObj) {
       $this->title = (string)$voxbObj->review->reviewTitle;
       $this->text = (string)$voxbObj->review->reviewData;
+      $this->created = date('d.m.Y H:i:s', strtotime($voxbObj->timestamp));
       $this->authorVoxbId = (int)$voxbObj->userId;
       $this->authorName = (string)$voxbObj->userAlias->aliasName;
       $this->voxbId = intval($voxbObj->voxbIdentifier);
@@ -46,6 +48,15 @@ class VoxbReviewRecord extends VoxbBase{
    */
   public function getText() {
     return $this->text;
+  }
+  
+  /**
+   * Getter function
+   * 
+   * @return string 
+   */
+  public function getDate() {
+    return $this->created;
   }
 
   /**

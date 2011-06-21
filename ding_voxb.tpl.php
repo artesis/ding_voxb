@@ -67,7 +67,7 @@ drupal_add_library('system', 'jquery.form');
     <h3><?php print t('User reviews'); ?></h3>
     <div class="userReviews">
     <?php 
-      $limit = variable_get('voxb_reviews_per_page', VOXB_REVIEWS_PER_PAGE);
+      $limit = variable_get('voxb_reviews_per_page', VOXB_DEFAULT_REVIEWS_PER_PAGE);
       
       foreach ($voxb_item->getReviews('review') as $k=>$v) {
         if ($k >= $limit) {
@@ -94,7 +94,7 @@ drupal_add_library('system', 'jquery.form');
       echo '<li class="page_first" style="display: none;">'.l('','voxb/ajax/reviews/'.$faust_number.'/page/1', array('attributes' => array('class' => array('use-ajax')))).'</li>';
       echo '<li class="prev_page">'.l('<<','voxb/ajax/reviews/'.$faust_number.'/page/1', array('attributes' => array('class' => array('use-ajax')))).'</li>';
 
-      $pages = ceil($reviews / variable_get('voxb_reviews_per_page', VOXB_REVIEWS_PER_PAGE));
+      $pages = ceil($reviews / variable_get('voxb_reviews_per_page', VOXB_DEFAULT_REVIEWS_PER_PAGE));
 
       // Draw 5 tabs/buttons/links
       for ($i = 0; $i < 5; $i++) {

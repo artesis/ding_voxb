@@ -45,7 +45,6 @@
   }
 
   Drupal.voxb_item = {
-
     initial_rating : 0,
     rating_set : false,
 
@@ -78,7 +77,9 @@
     }
   };
 
-  $(document).ready(function() {
-    Drupal.voxb_item.init();
-  });
+  Drupal.behaviors.voxb_init = {
+    attach: function(context) {
+      Drupal.voxb_item.init();
+    }
+  }
 })(jQuery);

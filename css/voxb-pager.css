@@ -4,20 +4,20 @@
  * Markup of the pager.
  */
 
-div#pager_block * {
+div#pager-block * {
   outline: none;
 }
 
-div#pager_block {
+div#pager-block {
   margin: 0 auto;
   width: 230px;
 }
 
-div#pager_block ul {
+div#pager-block ul {
   list-style-type: none;
 }
 
-div#pager_block ul li {
+div#pager-block ul li {
   border: 1px solid #DDD;
   float: left;
   margin-right: 5px;
@@ -26,17 +26,17 @@ div#pager_block ul li {
   width: 25px;
 }
 
-div#pager_block ul li a {
+div#pager-block ul li a {
   width: inherit !important;
 }
 
-div#pager_block ul li.active_page {
+div#pager-block ul li.active-page {
   background-color: #CCC;
   font-size: 120%;
   font-weight: bold;
 }
 
-div#pager_block .ajax-progress {
+div#pager-block .ajax-progress {
   display: none;
   width: 1px;
 }

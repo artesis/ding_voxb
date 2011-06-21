@@ -9,28 +9,28 @@
   background-color: #F6F6F2;
 }
 
-.voxbReview {
+.voxb-review {
   margin-bottom: 15px;
 }
 
-.addRatingContainer {
+.add-rating-container {
   float: left;
 }
 
-.addReviewTextarea {
+.add-review-textarea {
   width: 100%;
   height: 100px;
 }
-.tagsContainer, .ratingsContainer {
+.tags-container, .ratings-container {
   float: left;
   width: 50%;
 }
 
-#edit-rating, div.ajax_anim, #voxbItem {
+#edit-rating, div.ajax-anim, #voxb-item {
   display: none;
 }
 
-div.ajax_anim {
+div.ajax-anim {
   background-image: url('../img/throbber.gif');
   background-repeat: no-repeat;
   background-position: 0 -18px;
@@ -40,7 +40,7 @@ div.ajax_anim {
   width: 15px;
 }
 
-.ratingCountSpan {
+.rating-count-span {
   float: left;
 }
 
@@ -51,21 +51,21 @@ div.ajax_anim {
 }
 
 .star-on {
-	background-image: url(../img/star-on.png);
+  background-image: url('../img/star-on.png');
 }
 
 .star-off {
-	background-image: url(../img/star-off.png);
+  background-image: url('../img/star-off.png');
 }
 
 .star-black {
-  background-image: url(../img/star-black.png);
+  background-image: url('../img/star-black.png');
 }
 
-.userRate .ajax-progress, .tagsContainer .message, .addReviewContainer .message {
+.userRate .ajax-progress, .tags-container .message, .add-review-container .message {
   display: none;
 }
 
-.recordTagHighlight div, .recordTagHighlight .tag {
+.record-tag-highlight div, .record-tag-highlight .tag {
   float: left;
 }

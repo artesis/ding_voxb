@@ -95,11 +95,11 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
       $reviews = $item->getReviews('review')->toArray();
 
       // Remove the reviews
-      $commands[] = ajax_command_html('.userReviews', '');
+      $commands[] = ajax_command_html('.user-reviews', '');
 
       // Place the reviews
       for ($i = $start; $i < $end; $i++) {
-        $commands[] = ajax_command_append('.userReviews', theme(
+        $commands[] = ajax_command_append('.user-reviews', theme(
           'voxb_review_record',
           array(
             'author' => $reviews[$i]['authorName'],
@@ -113,7 +113,7 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
       }
 
       $commands[] = ajax_command_html(
-        '.prev_page',
+        '.prev-page',
         l(
           '<<',
           'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_to_set . '',
@@ -128,7 +128,7 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
       }
 
       $commands[] = ajax_command_html(
-        '.next_page',
+        '.next-page',
         l(
           '>>',
           'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_to_set . '',
@@ -141,14 +141,14 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
         // Check the link index bounds, recreate if true, remove if otherwise
         if ($page_link > 0 && $page_link <= $pages_total) {
           $commands[] = ajax_command_html(
-            '.page_num:eq(' . $k . ')',
+            '.page-num:eq(' . $k . ')',
             l(
               $page_link,
               'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_link . '',
               array('attributes' => array('class' => array('use-ajax')))));
         }
         else {
-          $commands[] = ajax_command_html('.page_num:eq(' . $k . ')', l('', '', array()));
+          $commands[] = ajax_command_html('.page-num:eq(' . $k . ')', l('', '', array()));
         }
       }
 

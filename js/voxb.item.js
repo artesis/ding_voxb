@@ -7,17 +7,17 @@
 (function ($) {
   Drupal.ajax.prototype.commands['voxb_rating_callback'] = function (ajax, response, status) {
    // update rating count
-    $('.ratingCountSpan').each(function() {
+    $('.rating-count-span').each(function() {
       $(this).html('(' + response.rating_count + ')');
     });
     
     // update rating
-    $('div.userRate').each(function() {
+    $('div.user-rate').each(function() {
       $(this).find('div.rating:lt(' + response.rating + ')').removeClass('star-off').removeClass('star-black').addClass('star-on');
       $(this).find('div.rating:gt(' + (response.rating - 1) + ')').removeClass('star-on').removeClass('star-black').addClass('star-off');
     });
 
-    $('.addRatingContainer').cyclicFade({
+    $('.add-rating-container').cyclicFade({
       repeat: 3,
       params: [
         {fadeout:200, stayout:100, opout:0, fadein:200, stayin:100, opin:1},
@@ -30,11 +30,11 @@
   }
 
   Drupal.ajax.prototype.commands['voxb_tag_callback'] = function (ajax, response, status) {
-    $('.tagsContainer input[type=text]').each(function() {
+    $('.tags-container input[type=text]').each(function() {
       $(this).val('');
     });
     
-    $('.recordTagHighlight .tag:last').cyclicFade({
+    $('.record-tag-highlight .tag:last').cyclicFade({
       repeat: 3,
       params: [
         {fadeout:200, stayout:100, opout:0, fadein:200, stayin:100, opin:1},
@@ -51,27 +51,27 @@
 
     // Init function, binds method to user input and sets variables
     init: function() {
-      Drupal.voxb_item.initial_rating = $('div.userRate div.star-on').length;
+      Drupal.voxb_item.initial_rating = $('div.user-rate div.star-on').length;
       // Bind ratings on mouse over and out
-      $('div.userRate div.rating').mouseover(function() {
+      $('div.user-rate div.rating').mouseover(function() {
         if (!Drupal.voxb_item.rating_set) {
-          $("div.userRate div.rating:lt(" + ($(this).index() + 1) + ")").removeClass('star-off').removeClass('star-on').addClass('star-black');
-          $("div.userRate div.rating:gt(" + $(this).index() + ")").removeClass('star-black').removeClass('star-on').addClass('star-off');
+          $("div.user-rate div.rating:lt(" + ($(this).index() + 1) + ")").removeClass('star-off').removeClass('star-on').addClass('star-black');
+          $("div.user-rate div.rating:gt(" + $(this).index() + ")").removeClass('star-black').removeClass('star-on').addClass('star-off');
         }
       });
       
       // Restore the stars after mouseout
-      $('div.userRate').mouseleave(function() {
+      $('div.user-rate').mouseleave(function() {
         if (!Drupal.voxb_item.rating_set) {
-          $("div.userRate div.rating:lt(" + Drupal.voxb_item.initial_rating + ")").removeClass('star-off').removeClass('star-black').addClass('star-on');
-          $("div.userRate div.rating:gt(" + (Drupal.voxb_item.initial_rating - 1) + ")").removeClass('star-on').removeClass('star-black').addClass('star-off');
+          $("div.user-rate div.rating:lt(" + Drupal.voxb_item.initial_rating + ")").removeClass('star-off').removeClass('star-black').addClass('star-on');
+          $("div.user-rate div.rating:gt(" + (Drupal.voxb_item.initial_rating - 1) + ")").removeClass('star-on').removeClass('star-black').addClass('star-off');
         }
       });
 
       // Show the rating ajax animation
-      $('div.userRate div.rating').click(function() {
+      $('div.user-rate div.rating').click(function() {
         if (!Drupal.voxb_item.rating_set) {
-          $('div.ratingsContainer .ajax_anim').show();
+          $('div.ratings-container .ajax-anim').show();
           Drupal.voxb_item.rating_set = true;
         }
       });

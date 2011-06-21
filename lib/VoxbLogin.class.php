@@ -1,7 +1,5 @@
 <?php
 
-require_once(VOXB_PATH . '/lib/VoxbUser.class.php');
-
 /**
  * @file
  *
@@ -50,7 +48,7 @@ class VoxbLogin {
        *
        * @todo Replace profile link with a real linkto users profiles in artesis system.
        */
-      $userId = $this->createUser($account->name, $account->name, $account->email);
+      $userId = $this->createUser($account->name, $account->name, $account->mail);
 
       if ($userId != 0) {
         $_SESSION['voxb']['userId'] = $userId;

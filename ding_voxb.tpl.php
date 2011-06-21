@@ -5,6 +5,9 @@
  * The VoxB main template. Controls the output of all VoxB content.
  * 
  */
+
+drupal_add_library('system', 'drupal.ajax');
+drupal_add_library('system', 'jquery.form');
 ?>
 
 <div id="voxb">
@@ -14,10 +17,6 @@
     $ac_identifier = $object->record['ac:identifier'][''][0];
     $ac_identifier = explode('|', $ac_identifier);
     $faust_number = $ac_identifier[0];
-
-    require_once(VOXB_PATH . '/lib/VoxbItem.class.php');
-    require_once(VOXB_PATH . '/lib/VoxbProfile.class.php');
-    require_once(VOXB_PATH . '/lib/VoxbReviews.class.php');
     
     $voxb_item = new VoxbItem();
     $voxb_item->addReviewHandler('review', new VoxbReviews());

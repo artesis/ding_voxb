@@ -62,7 +62,7 @@ div.ajax-anim {
   background-image: url('../img/star-black.png');
 }
 
-.userRate .ajax-progress, .tags-container .message, .add-review-container .message {
+.user-rate .ajax-progress, .tags-container .message, .add-review-container .message {
   display: none;
 }
 

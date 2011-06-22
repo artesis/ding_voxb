@@ -248,9 +248,9 @@ function ding_voxb_review_form_callback($form, $form_state) {
 
       // add commands to hide review container and show 'thank' message
       //$commands[] = ajax_command_invoke('.add-review-container', 'hide', array());
-      $commands[] = ajax_command_html('.userReviews', '');
+      $commands[] = ajax_command_html('.user-reviews', '');
       $commands[] = ajax_command_invoke('#edit-review-submit', 'val', array('Update'));
-      $commands[] = ajax_command_invoke('.addVideoReviewContainer', 'hide', array());
+      $commands[] = ajax_command_invoke('.add-video-review-container', 'hide', array());
 
       // Get reviews updated list
       require_once DRUPAL_ROOT . '/' . VOXB_PATH . '/lib/VoxbItem.class.php';
@@ -271,7 +271,7 @@ function ding_voxb_review_form_callback($form, $form_state) {
           break;
         }
 
-        $commands[] = ajax_command_prepend('.userReviews', theme(
+        $commands[] = ajax_command_prepend('.user-reviews', theme(
           'voxb_review_record',
           array(
             'author' => $review->getAuthorName(),
@@ -281,11 +281,11 @@ function ding_voxb_review_form_callback($form, $form_state) {
       }
 
       if ($reviews_count > $limit) {
-        $commands[] = ajax_command_invoke('#pager_block', 'show');
+        $commands[] = ajax_command_invoke('#pager-block', 'show');
       }
       // Jump to the first page
       if ($reviews_count > $limit) {
-        $commands[] = ajax_command_invoke('.page_first a', 'click');
+        $commands[] = ajax_command_invoke('.page-first a', 'click');
       }
     }
   }

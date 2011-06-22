@@ -358,7 +358,6 @@ function ding_voxb_add_tag_callback($form, $form_state) {
 
       // hide form and show new tag
       $commands[] = ajax_command_append('div.recordTagHighlight', theme('voxb_tag_record', array('tag_name' => $form['name']['#value'])));
-      $commands[] = ajax_command_replace("#ding_voxb_tag_form", t('Thank you for contributing.'));
       $commands[] = array(
         'command' => 'voxb_tag_callback',
       );

@@ -223,17 +223,17 @@ function ding_voxb_preprocess_voxb(&$variables) {
   $ratings = '';
   $rating = (int)$voxb_item->getRating() / 20;
 
-    $ratings .= '<div class="addRatingContainer">';
-    $ratings .= '<div' . ($profile && $profile->isAbleToRate($object->localId) ? ' class="userRate"' : '') . '>';
+  $ratings .= '<div class="addRatingContainer">';
+  $ratings .= '<div' . ($profile && $profile->isAbleToRate($object->localId) ? ' class="userRate"' : '') . '>';
 
-    // Add 'stars'
-    for ($i = 1; $i <= 5; $i++) {
-      $ratings .= '<div href="/voxb/ajax/rating/' . $object->localId . "/" . $i . '" class="' . ($profile && $profile->isAbleToRate($faust_number) ? 'use-ajax' : '') . ' rating' . ($i <= $rating ? ' star-on' : ' star-off') . '"></div>';
-    }
+  // Add 'stars'
+  for ($i = 1; $i <= 5; $i++) {
+    $ratings .= '<div href="/voxb/ajax/rating/' . $object->localId . "/" . $i . '" class="' . ($profile && $profile->isAbleToRate($faust_number) ? 'use-ajax' : '') . ' rating' . ($i <= $rating ? ' star-on' : ' star-off') . '"></div>';
+  }
 
-    $ratings .= '</div></div>';
-    $ratings .= '<span class="ratingCountSpan">(<span class="ratingVotesNumber">' . (($voxb_item->getRatingCount() > 0) ? $voxb_item->getRatingCount() : 0) . '</span>)</span>';
-    $ratings .= '<div class="ajax_anim">&nbsp;</div><div class="clearfix"></div>';
+  $ratings .= '</div></div>';
+  $ratings .= '<span class="ratingCountSpan">(<span class="ratingVotesNumber">' . (($voxb_item->getRatingCount() > 0) ? $voxb_item->getRatingCount() : 0) . '</span>)</span>';
+  $ratings .= '<div class="ajax_anim">&nbsp;</div><div class="clearfix"></div>';
 
   
   // Reviews section

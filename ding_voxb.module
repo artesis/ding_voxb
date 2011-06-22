@@ -191,13 +191,10 @@ function ding_voxb_theme() {
  * 
  * Enrich ting item landing page with VoxB data
  * 
- * @global $user
- *   Logged user various data
  * @param $variables
  *   Variables passed to template
  */
 function ding_voxb_preprocess_voxb(&$variables) {
-  global $user;
   // Since the theme only read the ting object, further data is gathered next
   $object = $variables['object'];
   
@@ -215,7 +212,7 @@ function ding_voxb_preprocess_voxb(&$variables) {
   
   // Tags form section
   $tags_form = '';
-  if (($user->uid != 0 && $profile->isAbleToTag($object->localId))) {
+  if (($profile && $profile->isAbleToTag($object->localId))) {
     $tags_form = drupal_render(drupal_get_form('ding_voxb_tag_form', $object->localId));
   }
   
@@ -291,7 +288,7 @@ function ding_voxb_preprocess_voxb(&$variables) {
   // Add review form section
   $review_form = '';
   $params = array();
-  if ($user->uid) {
+  if ($profile) {
     // Form params, specific if user reviewed already or not
     $data = $profile->getVoxbUserData($object->localId);
     if ($data['review']['title'] != 'videoreview') {

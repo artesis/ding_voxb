@@ -1,9 +1,14 @@
+<?php
+/**
+ * @file
+ */
+?>
 <div id="voxb">
   // @todo Localization
   <h2>Brugerskabte Data</h2>
-  <div class="tagsContainer">
+  <div class="tags-container">
     <h3><?php print t('Tags'); ?></h3>
-    <div class="recordTagHighlight">
+    <div class="record-tag-highlight">
       <?php print($tags); ?>
     </div>
     <div class="clearfix">&nbsp;</div>

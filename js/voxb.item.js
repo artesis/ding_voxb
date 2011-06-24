@@ -50,27 +50,27 @@
 
     // Init function, binds method to user input and sets variables
     init: function() {
-      Drupal.voxb_item.initial_rating = $('div.user-rate div.star-on').length;
+      Drupal.voxb_item.initial_rating = $('div.user-rate:first div.star-on').length;
       // Bind ratings on mouse over and out
-      $('div.user-rate div.rating').mouseover(function() {
+      $('#voxb div.user-rate div.rating').mouseover(function() {
         if (!Drupal.voxb_item.rating_set) {
-          $("div.user-rate div.rating:lt(" + ($(this).index() + 1) + ")").removeClass('star-off').removeClass('star-on').addClass('star-black');
-          $("div.user-rate div.rating:gt(" + $(this).index() + ")").removeClass('star-black').removeClass('star-on').addClass('star-off');
+          $('#voxb div.user-rate div.rating:lt(' + ($(this).index() + 1) + ')').removeClass('star-off').removeClass('star-on').addClass('star-black');
+          $('#voxb div.user-rate div.rating:gt(' + $(this).index() + ')').removeClass('star-black').removeClass('star-on').addClass('star-off');
         }
       });
       
       // Restore the stars after mouseout
-      $('div.user-rate').mouseleave(function() {
+      $('#voxb div.user-rate').mouseleave(function() {
         if (!Drupal.voxb_item.rating_set) {
-          $("div.user-rate div.rating:lt(" + Drupal.voxb_item.initial_rating + ")").removeClass('star-off').removeClass('star-black').addClass('star-on');
-          $("div.user-rate div.rating:gt(" + (Drupal.voxb_item.initial_rating - 1) + ")").removeClass('star-on').removeClass('star-black').addClass('star-off');
+          $('#voxb div.user-rate div.rating:lt(' + Drupal.voxb_item.initial_rating + ')').removeClass('star-off').removeClass('star-black').addClass('star-on');
+          $('#voxb div.user-rate div.rating:gt(' + (Drupal.voxb_item.initial_rating - 1) + ')').removeClass('star-on').removeClass('star-black').addClass('star-off');
         }
       });
 
       // Show the rating ajax animation
-      $('div.user-rate div.rating').click(function() {
+      $('#voxb div.user-rate div.rating').click(function() {
         if (!Drupal.voxb_item.rating_set) {
-          $('div.ratings-container .ajax-anim').show();
+          $('#voxb div.ratings-container .ajax-anim').show();
           Drupal.voxb_item.rating_set = true;
         }
       });

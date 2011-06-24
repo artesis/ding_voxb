@@ -54,10 +54,9 @@ function ding_voxb_menu() {
 }
 
 /**
- * Hook user_login.
+ * Implements hook_user_login().
+ * 
  * Invokes methos to select user information from Voxb
- * @param $edit
- * @param $account
  */
 function ding_voxb_user_login($edit, $account) {
   $obj = new VoxbLogin();
@@ -67,9 +66,12 @@ function ding_voxb_user_login($edit, $account) {
 /**
  * Handle the pagination page click, update reviews & pagination labels
  *
- * @param string $type - Type of the request, e.g. ajax or else
- * @param string $faust_number - Item ID
- * @param int $page - Clicked page number
+ * @param $type
+ *   Type of the request, e.g. ajax or else
+ * @param $faust_number
+ *   Item ID
+ * @param $page
+ *   Clicked page number
  */
 function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
   // In case we have an ajax call
@@ -154,8 +156,6 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
 
 /**
  * Implements hook_theme().
- *
- * @return array
  */
 function ding_voxb_theme() {
   $hooks['voxb'] = array(
@@ -182,9 +182,6 @@ function ding_voxb_theme() {
  * Implements MODULE_preprocess_THEME().
  * 
  * Enrich ting item landing page with VoxB data
- * 
- * @param $variables
- *   Variables passed to template
  */
 function ding_voxb_preprocess_voxb(&$variables) {
   // Since the theme only read the ting object, further data is gathered next
@@ -195,7 +192,7 @@ function ding_voxb_preprocess_voxb(&$variables) {
   $voxb_item->addReviewHandler('review', new VoxbReviews());
   $voxb_item->fetchByFaust($object->localId);
   $profile = unserialize($_SESSION['voxb']['profile']);
-  //var_dump($profile);
+  
   // Tags section
   $tags = '';
   foreach ($voxb_item->getTags() as $v) {
@@ -269,6 +266,7 @@ function ding_voxb_preprocess_voxb(&$variables) {
 
     $pagination .= '</li>';
   }
+  
   $pagination .= '<li class="next-page">' . l('>>', 'voxb/ajax/reviews/' . $object->localId . '/page/2', array('attributes' => array('class' => array('use-ajax')))) . '</li>';
   $pagination .= '</ul>';
   $pagination .= '</div>';
@@ -315,10 +313,14 @@ function ding_voxb_preprocess_voxb(&$variables) {
 /**
  * Build the text review form
  *
- * @param array $form - The form and it's fields
- * @param reference $form_state - Form state
- * @param string $faustNumber - Item's faust number, e.g. ID
- * @return array
+ * @param $form
+ *   The form and it's fields
+ * @param $form_state
+ *   Form state
+ * @param $faustNumber
+ *   Item's faust number, e.g. ID
+ * @return
+ *   Form structure
  */
 function ding_voxb_review_form($form, &$form_state, $params) {
   $form['review_content'] = array(
@@ -343,15 +345,19 @@ function ding_voxb_review_form($form, &$form_state, $params) {
 }
 
 /**
- *
- * @param array $form - The form and it's fields
- * @param reference $form_state - Form state
- * @return array - Array of json commands
+ * Callback function for text review
+ * 
+ * @param $form
+ *   The form and it's fields
+ * @param $form_state
+ *   Form state
+ * @return 
+ *   Array of json commands
  */
-function ding_voxb_review_form_callback($form, $form_state) {
+function ding_voxb_review_form_callback($form, &$form_state) {
   $commands = array();
 
-  /*
+  /**
    * Check if we have review message and faustNumber
    */
   if (empty($form['review_content']['#value'])) {
@@ -377,7 +383,6 @@ function ding_voxb_review_form_callback($form, $form_state) {
       $_SESSION['voxb']['profile'] = serialize($profile);
 
       // add commands to hide review container and show 'thank' message
-      //$commands[] = ajax_command_invoke('.add-review-container', 'hide', array());
       $commands[] = ajax_command_html('.user-reviews', '');
       $commands[] = ajax_command_invoke('#edit-review-submit', 'val', array('Update'));
       $commands[] = ajax_command_invoke('.add-video-review-container', 'hide', array());
@@ -422,13 +427,16 @@ function ding_voxb_review_form_callback($form, $form_state) {
 }
 
 /**
- * Create form for adding tags
+ * Create form for adding tags.
+ * 
  * @param $form
+ *   Form structure
  * @param $form_state
+ *   Form state
  * @param $faust_number
+ *   Item ID
  */
 function ding_voxb_tag_form($form, $form_state, $faust_number) {
-
   $form['name'] = array(
     '#type' => 'textfield',
     '#size' => 20,
@@ -468,12 +476,16 @@ function ding_voxb_tag_form($form, $form_state, $faust_number) {
 }
 
 /**
- * Callback method to handle add tag calls
+ * Callback method to handle add tag calls.
  *
- * @param unknown_type $form
- * @param unknown_type $form_state
+ * @param $form
+ *   Form structure
+ * @param $form_state
+ *   Form state
+ * @return
+ *   Array of JSON commands
  */
-function ding_voxb_add_tag_callback($form, $form_state) {
+function ding_voxb_add_tag_callback($form, &$form_state) {
   $commands = array();
 
   if (empty($form['name']['#value'])) {
@@ -503,14 +515,18 @@ function ding_voxb_add_tag_callback($form, $form_state) {
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Callback function for item rating.
+ * 
+ * @param $type
+ *   Type of request
+ * @param $faust_number
+ *   Item ID
+ * @param $rating
+ *   Item rating
  */
 function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
-  /**
-   * we check if it's an ajax call
-   * this can be used if we will ipmlement NO-JS functionality in FE
-   */
+   // We check if it's an ajax call
+   // this can be used if we will ipmlement NO-JS functionality in FE.
   if ($type == 'ajax') {
     $commands = array();
     $rating = intval($rating);
@@ -522,7 +538,6 @@ function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
       $commands[] = ajax_command_ding_popup('add_rate_error', t('Error'), t('Wrong or empty faust number.'));
     }
     else {
-
       $item = new VoxbItem();
 
       $profile = unserialize($_SESSION['voxb']['profile']);

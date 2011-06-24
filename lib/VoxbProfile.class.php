@@ -166,27 +166,26 @@ class VoxbProfile extends VoxbBase {
    * @return array
    */
   private function getActedItems() {
-   // if (empty($this->actedItems)) {
-      $response = $this->call('fetchMyData', array('userId' => $this->userId));
-      if (!$response->result) return array();
+    $response = $this->call('fetchMyData', array('userId' => $this->userId));
+    if (!$response->result) return array();
 
-      if (!is_array($response->result))
-        $response->result = array($response->result);
+    if (!is_array($response->result))
+      $response->result = array($response->result);
 
-      foreach ($response->result as $v) {
-        if ($v->object && $v->object->objectIdentifierType == 'FAUST') {
-          $this->actedItems[$v->object->objectIdentifierValue] = array(
-            'voxbIdentifier' => $v->voxbIdentifier,
-            'tags' => @$v->item->tags ? (is_array($v->item->tags->tag) ? $v->item->tags->tag : array($v->item->tags->tag)) : array(),
-            'review' => array(
-              'title' => @$v->item->review->reviewTitle,
-              'data' => @$v->item->review->reviewData
-            ),
-            'rating' => @$v->item->rating
-          );
-        }
+    foreach ($response->result as $v) {
+      if ($v->object && $v->object->objectIdentifierType == 'FAUST') {
+        $this->actedItems[$v->object->objectIdentifierValue] = array(
+          'voxbIdentifier' => $v->voxbIdentifier,
+          'tags' => @$v->item->tags ? (is_array($v->item->tags->tag) ? $v->item->tags->tag : array($v->item->tags->tag)) : array(),
+          'review' => array(
+            'title' => @$v->item->review->reviewTitle,
+            'data' => @$v->item->review->reviewData
+          ),
+          'rating' => @$v->item->rating
+        );
       }
-    //}
+    }
+    
     return $this->actedItems;
   }
 

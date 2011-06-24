@@ -6,10 +6,6 @@
 
 error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
 
-require_once(drupal_get_path('module', 'ding_voxb') . '/lib/VoxbBase.class.php');
-require_once(drupal_get_path('module', 'ding_voxb') . '/lib/VoxbReviewsController.class.php');
-require_once(drupal_get_path('module', 'ding_voxb') . '/lib/VoxbTags.class.php');
-
 /**
  * This is the main VoxB-client class.
  * It has a method to fetch item information from VoxB server.

@@ -1,7 +1,5 @@
 <?php
 
-require_once(VOXB_PATH . '/lib/VoxbTagRecord.class.php');
-
 /**
  * @file
  *

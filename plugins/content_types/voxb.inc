@@ -12,7 +12,9 @@ $plugin = array(
 );
 
 /**
- * Output function for the 'voxb_rating' content type.
+ * Implements MODULE_CONTENT_content_type_render().
+ * 
+ * Display VoxB content type.
  */
 function ding_voxb_voxb_content_type_render($subtype, $conf, $panel_args, $context) {
   $block = new stdClass();

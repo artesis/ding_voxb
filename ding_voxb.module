@@ -161,10 +161,10 @@ function ding_voxb_theme() {
   $hooks['voxb'] = array(
     'variables' => array(
       'object' => NULL,
-     ),
+    ),
     'template' => 'ding_voxb',
   );
-  
+
   $hooks['voxb_tag_record'] = array(
     'variables' => array('tag_name' => NULL),
     'template' => 'ding_voxb-tag-record',
@@ -180,31 +180,31 @@ function ding_voxb_theme() {
 
 /**
  * Implements MODULE_preprocess_THEME().
- * 
- * Enrich ting item landing page with VoxB data
+ *
+ * Enrich ting item landing page with VoxB data.
  */
 function ding_voxb_preprocess_voxb(&$variables) {
   // Since the theme only read the ting object, further data is gathered next
   $object = $variables['object'];
-  
+
   // Fetch data from VoxB service
   $voxb_item = new VoxbItem();
   $voxb_item->addReviewHandler('review', new VoxbReviews());
   $voxb_item->fetchByFaust($object->localId);
   $profile = unserialize($_SESSION['voxb']['profile']);
-  
+
   // Tags section
   $tags = '';
   foreach ($voxb_item->getTags() as $v) {
     $tags .= theme('voxb_tag_record', array('tag_name' => $v->getName()));
   }
-  
+
   // Tags form section
   $tags_form = '';
   if (($profile && $profile->isAbleToTag($object->localId))) {
     $tags_form = drupal_render(drupal_get_form('ding_voxb_tag_form', $object->localId));
   }
-  
+
   // Rating section
   $ratings = '';
   $rating = (int)$voxb_item->getRating() / 20;
@@ -221,20 +221,20 @@ function ding_voxb_preprocess_voxb(&$variables) {
   $ratings .= '<span class="rating-count-span">(<span class="rating-votes-number">' . (($voxb_item->getRatingCount() > 0) ? $voxb_item->getRatingCount() : 0) . '</span>)</span>';
   $ratings .= '<div class="ajax-anim">&nbsp;</div><div class="clearfix"></div>';
 
-  
+
   // Reviews section
   $reviews = '';
   $limit = variable_get('voxb_reviews_per_page', VOXB_DEFAULT_REVIEWS_PER_PAGE);
-      
-  foreach ($voxb_item->getReviews('review') as $k=>$v) {
+
+  foreach ($voxb_item->getReviews('review') as $k => $v) {
     if ($k >= $limit) {
       break;
     }
-    $reviews .= theme('voxb_review_record', 
+    $reviews .= theme('voxb_review_record',
       array('author' => $v->getAuthorName(), 'review' => $v->getText())
     );
   }
-  
+
   // Pagination section
   $pagination = '';
   $review_count = $voxb_item->getReviews('review')->getCount();
@@ -243,8 +243,8 @@ function ding_voxb_preprocess_voxb(&$variables) {
   $pagination .= '<div id="pager-block" ' . (($reviews < $limit) ? 'style="display: none;"' : '') . '>';
   $pagination .= '<ul>';
   // Hidden tab to keep track of first page
-  $pagination .= '<li class="page-first" style="display: none;">' . l('','voxb/ajax/reviews/' . $object->localId . '/page/1', array('attributes' => array('class' => array('use-ajax')))) . '</li>';
-  $pagination .= '<li class="prev-page">' . l('<<','voxb/ajax/reviews/' . $object->localId . '/page/1', array('attributes' => array('class' => array('use-ajax')))) . '</li>';
+  $pagination .= '<li class="page-first" style="display: none;">' . l('', 'voxb/ajax/reviews/' . $object->localId . '/page/1', array('attributes' => array('class' => array('use-ajax')))) . '</li>';
+  $pagination .= '<li class="prev-page">' . l('<<', 'voxb/ajax/reviews/' . $object->localId . '/page/1', array('attributes' => array('class' => array('use-ajax')))) . '</li>';
 
   $pages = ceil($review_count / variable_get('voxb_reviews_per_page', VOXB_DEFAULT_REVIEWS_PER_PAGE));
 
@@ -255,10 +255,11 @@ function ding_voxb_preprocess_voxb(&$variables) {
     if ($i == 2) {
       $pagination .= '  active-page"';
     }
+
     $pagination .= '">';
 
     if ($i > 1 && $i < $pages + 2) {
-      $pagination .= l(($i - 1),'voxb/ajax/reviews/' . $object->localId . '/page/' . ($i - 1) . '', array('attributes' => array('class' => array('use-ajax'))));
+      $pagination .= l(($i - 1), 'voxb/ajax/reviews/' . $object->localId . '/page/' . ($i - 1) . '', array('attributes' => array('class' => array('use-ajax'))));
     }
     else {
       $pagination .= '<a href="#"></a>';
@@ -266,15 +267,12 @@ function ding_voxb_preprocess_voxb(&$variables) {
 
     $pagination .= '</li>';
   }
-  
+
   $pagination .= '<li class="next-page">' . l('>>', 'voxb/ajax/reviews/' . $object->localId . '/page/2', array('attributes' => array('class' => array('use-ajax')))) . '</li>';
   $pagination .= '</ul>';
   $pagination .= '</div>';
   $pagination .= '<div class="clearfix"></div><br />';
 
-  $inline = "var pages = " . $pages . ";";
-  drupal_add_js($inline, 'inline');
-  
   // Add review form section
   $review_form = '';
   $params = array();
@@ -300,7 +298,7 @@ function ding_voxb_preprocess_voxb(&$variables) {
       $review_form .= drupal_render(drupal_get_form('ding_voxb_review_form', $params));
     }
   }
- 
+
   // Add stuff to template
   $variables['tags'] = $tags;
   $variables['tags_form'] = $tags_form;

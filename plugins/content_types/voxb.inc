@@ -1,9 +1,9 @@
 <?php
 /**
  * @file
- * 
+ *
  * VoxB content type implementation.
- * 
+ *
  */
 $plugin = array(
   'single' => TRUE,
@@ -15,14 +15,14 @@ $plugin = array(
 
 /**
  * Implements MODULE_CONTENT_content_type_render().
- * 
+ *
  * Display VoxB content type.
  */
 function ding_voxb_voxb_content_type_render($subtype, $conf, $panel_args, $context) {
   $block = new stdClass();
   $object = isset($context->data) ? $context->data : NULL;
   $block->content = theme('voxb', array('object' => $object));
-  
+
   return $block;
 }
 

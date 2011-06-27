@@ -55,7 +55,7 @@ function ding_voxb_menu() {
 
 /**
  * Implements hook_user_login().
- * 
+ *
  * Invokes methos to select user information from Voxb
  */
 function ding_voxb_user_login($edit, $account) {
@@ -344,12 +344,12 @@ function ding_voxb_review_form($form, &$form_state, $params) {
 
 /**
  * Callback function for text review
- * 
+ *
  * @param $form
  *   The form and it's fields
  * @param $form_state
  *   Form state
- * @return 
+ * @return
  *   Array of json commands
  */
 function ding_voxb_review_form_callback($form, &$form_state) {
@@ -426,7 +426,7 @@ function ding_voxb_review_form_callback($form, &$form_state) {
 
 /**
  * Create form for adding tags.
- * 
+ *
  * @param $form
  *   Form structure
  * @param $form_state
@@ -459,12 +459,12 @@ function ding_voxb_tag_form($form, $form_state, $faust_number) {
       'callback' => 'ding_voxb_add_tag_callback'
     ),
   );
-  
+
   $form['#attached']['css'] = array(
     VOXB_PATH . '/css/voxb-pager.css',
     VOXB_PATH . '/css/voxb.css'
   );
-  
+
   $form['#attached']['js'] = array(
     VOXB_PATH . '/js/cyclic.fade.js',
     VOXB_PATH . '/js/voxb.item.js'
@@ -514,7 +514,7 @@ function ding_voxb_add_tag_callback($form, &$form_state) {
 
 /**
  * Callback function for item rating.
- * 
+ *
  * @param $type
  *   Type of request
  * @param $faust_number

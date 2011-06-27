@@ -185,7 +185,7 @@ class VoxbProfile extends VoxbBase {
         );
       }
     }
-    
+
     return $this->actedItems;
   }
 

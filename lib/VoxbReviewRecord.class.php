@@ -49,11 +49,11 @@ class VoxbReviewRecord extends VoxbBase{
   public function getText() {
     return $this->text;
   }
-  
+
   /**
    * Getter function
-   * 
-   * @return string 
+   *
+   * @return string
    */
   public function getDate() {
     return $this->created;

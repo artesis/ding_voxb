@@ -93,11 +93,13 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
 
       // Place the reviews
       for ($i = $start; $i < $end; $i++) {
-        $commands[] = ajax_command_append('.user-reviews', theme(
-          'voxb_review_record',
-          array(
-            'author' => $reviews[$i]['authorName'],
-            'review' => $reviews[$i]['text'])));
+        if (isset($reviews[$i]['text'])) {
+          $commands[] = ajax_command_append('.user-reviews', theme(
+            'voxb_review_record',
+            array(
+              'author' => $reviews[$i]['authorName'],
+              'review' => $reviews[$i]['text'])));
+        }
       }
 
       $page_to_set = 1;
@@ -159,9 +161,7 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
  */
 function ding_voxb_theme() {
   $hooks['voxb'] = array(
-    'variables' => array(
-      'object' => NULL,
-    ),
+    'variables' => array('object' => NULL),
     'template' => 'ding_voxb',
   );
 
@@ -240,7 +240,7 @@ function ding_voxb_preprocess_voxb(&$variables) {
   $review_count = $voxb_item->getReviews('review')->getCount();
   $pages = -1;
 
-  $pagination .= '<div id="pager-block" ' . (($reviews < $limit) ? 'style="display: none;"' : '') . '>';
+  $pagination .= '<div id="pager-block" ' . (($review_count <= $limit) ? 'style="display: none;"' : '') . '>';
   $pagination .= '<ul>';
   // Hidden tab to keep track of first page
   $pagination .= '<li class="page-first" style="display: none;">' . l('', 'voxb/ajax/reviews/' . $object->localId . '/page/1', array('attributes' => array('class' => array('use-ajax')))) . '</li>';
@@ -571,5 +571,11 @@ function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
 
     $result = array('#type' => 'ajax', '#commands' => $commands);
     ajax_deliver($result);
+  }
+}
+
+function ding_voxb_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'ctools') {
+    return 'plugins/' . $plugin;
   }
 }

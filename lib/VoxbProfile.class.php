@@ -167,7 +167,7 @@ class VoxbProfile extends VoxbBase {
    */
   private function getActedItems() {
     $response = $this->call('fetchMyData', array('userId' => $this->userId));
-    if (!$response->result) return array();
+    if (!isset($response->result)) return array();
 
     if (!is_array($response->result))
       $response->result = array($response->result);

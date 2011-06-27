@@ -1,7 +1,9 @@
 <?php
-
 /**
  * @file
+ * 
+ * VoxB content type implementation.
+ * 
  */
 $plugin = array(
   'single' => TRUE,

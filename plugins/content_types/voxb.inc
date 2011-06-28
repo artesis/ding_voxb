@@ -3,8 +3,8 @@
  * @file
  *
  * VoxB content type implementation.
- *
  */
+
 $plugin = array(
   'single' => TRUE,
   'title' => t('VoxB'),

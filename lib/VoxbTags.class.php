@@ -1,10 +1,10 @@
 <?php
-
 /**
  * @file
  *
  * This class handles tags collection.
  */
+
 class VoxbTags implements Iterator{
   private $items = array();
   private $position;

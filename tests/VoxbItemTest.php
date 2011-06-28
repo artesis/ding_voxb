@@ -1,9 +1,10 @@
 <?php
-require_once(dirname(__FILE__) . '/VoxbTest.php');
-
 /**
  * @file
+ *
  */
+
+require_once(dirname(__FILE__) . '/VoxbTest.php');
 
 class VoxbItemTest extends VoxbTest {
 

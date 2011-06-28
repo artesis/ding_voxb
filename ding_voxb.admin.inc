@@ -1,6 +1,7 @@
 <?php
 /**
  * @file
+ *
  * Admin pages for the Ding VoxB module.
  */
 

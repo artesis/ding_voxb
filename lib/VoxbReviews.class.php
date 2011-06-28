@@ -1,11 +1,11 @@
 <?php
-
 /**
  * @file
  *
  * VoxbReviews class.
  * This class handles reviews colection.
  */
+
 class VoxbReviews extends VoxbBase implements Iterator{
 
   private $items = array();

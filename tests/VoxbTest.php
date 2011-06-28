@@ -1,12 +1,12 @@
 <?php
+/**
+ * @file
+ *
+ */
 
 require_once(dirname(__FILE__) . '/../lib/VoxbItem.class.php');
 require_once(dirname(__FILE__) . '/../lib/VoxbReviews.class.php');
 require_once(dirname(__FILE__) . '/../lib/VoxbProfile.class.php');
-
-/**
- * @file
- */
 
 class VoxbTest extends PHPUnit_Framework_TestCase {
 

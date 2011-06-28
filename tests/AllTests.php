@@ -1,7 +1,7 @@
 <?php
-
 /**
  * @file
+ *
  */
 
 define('VOXB_PATH', dirname(__FILE__) . '/..');

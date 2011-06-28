@@ -1,10 +1,10 @@
 <?php
-
 /**
  * @file
  *
  * VoxbUser used to select user by SSN and fetch his profiles to VoxbProfile class.
  */
+
 class VoxbUser extends VoxbBase {
   private $profiles;
 

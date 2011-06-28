@@ -1,11 +1,11 @@
 <?php
-
 /**
  * @file
  *
  * VoxbReviewRecord single review class.
  * This object is storing reviews attributes.
  */
+
 class VoxbReviewRecord extends VoxbBase{
 
   private $title;

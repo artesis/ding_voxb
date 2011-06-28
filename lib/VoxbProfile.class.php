@@ -1,11 +1,11 @@
 <?php
-
 /**
  * @file
  *
  * User profile class.
  * A VoxB user may have different amount of profiles (min 1).
  */
+
 class VoxbProfile extends VoxbBase {
   private $userId;
   private $aliasName;

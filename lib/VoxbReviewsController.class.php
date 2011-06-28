@@ -1,11 +1,11 @@
 <?php
-
 /**
  * @file
  *
  * VoxbReviews class.
  * This class handles reviews colection.
  */
+
 class VoxbReviewsController {
   private $handlers;
 

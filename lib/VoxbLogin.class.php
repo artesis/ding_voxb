@@ -1,10 +1,10 @@
 <?php
-
 /**
  * @file
  *
  * This class handles all the login logic to Drupal
  */
+
 class VoxbLogin {
 
   /**

@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
+ *
  */
 ?>
 <div id="voxb">
-  // @todo Localization
   <h2>Brugerskabte Data</h2>
   <div class="tags-container">
     <h3><?php print t('Tags'); ?></h3>

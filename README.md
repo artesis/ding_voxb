@@ -2,26 +2,11 @@ VoxB module
 ==========
 This module provides capability for the user to review, tag and rate on an item in Ding! through the VoxB service.
 
-Installation
------------------
-1. Include the module in `ting/ting_object_details.tpl.php`.
-2. Activate the module.
-3. Configure the module with the values given as examples.
-
 Improvements
 ----------------------------------
-In order to make the item landing page look & feel nice, content types for showing VoxB is needed ([Chaos tool suite] [ctools]?).
-
-At this moment the module is included in `ting/ting_object_details.tpl.php`.
-This is not the right solution.
-
 * Replace the SOAP client with [NanoSOAP] [nanosoap].
-* Integrate the possibility of logging requests.
-* Refactoring of CSS class names to not use camelCase.
+* Integrate the possibility of logging requests ([ding_devel]) [ding_devel].
 * Model the pagination over [theme_pager] [theme_pager].
-* Refactor the JavaScript to the behavior of drupal.js.
-* Major template changes.
-* Various fixes (AJAX, naming, spaces, etc.).
 
 VoxB related issues
 -----------------------------
@@ -37,6 +22,6 @@ VoxB related issues
 * Lists and user lists (highest rated items, mostly reviewed items, popular items, etc.).
 * Rating of reviews in order to hide inappropriate reviews.
 
-[ctools]: http://drupal.org/project/ctools
 [nanosoap]: http://drupal.org/project/nanosoap
 [theme_pager]: http://api.drupal.org/api/drupal/includes--pager.inc/function/theme_pager/5
+[ding_devel]: https://github.com/ding2/ding_devel

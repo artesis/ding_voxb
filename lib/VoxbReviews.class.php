@@ -17,10 +17,6 @@ class VoxbReviews extends VoxbBase implements Iterator{
   }
 
   public function fetch($voxbUserItems) {
-    if (!is_array($voxbUserItems)) {
-      $voxbUserItems = array($voxbUserItems);
-    }
-
     foreach ($voxbUserItems as $v) {
       /**
        * Select only reviews that are marked as review

@@ -20,9 +20,6 @@ class VoxbTags implements Iterator{
    * @param object $o
    */
   public function fetch($o) {
-    if (!is_array($o)) {
-      $o = array($o);
-    }
     foreach ($o as $v) {
       $this->items[] = new VoxbTagRecord($v);
     }

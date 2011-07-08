@@ -280,6 +280,7 @@ function ding_voxb_preprocess_voxb(&$variables) {
   if ($profile) {
     // Form params, specific if user reviewed already or not
     $data = $profile->getVoxbUserData($object->localId);
+    
     if ($data['review']['title'] != 'videoreview') {
       if ($data['review']['title'] == 'review') {
         $params = array(
@@ -557,6 +558,7 @@ function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
         // Rating is successfully submited
         // Now we need to fetch new rating form Voxb
         $item->fetchByFaust($faust_number);
+        
         $commands[] = array(
           'command' => 'voxb_rating_callback',
           'rating' => intval($item->getRating() / 20),

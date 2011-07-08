@@ -38,7 +38,7 @@ class VoxbProfile extends VoxbBase {
    * @param object $xml
    */
   private function fetch($xml) {
-    $this->userId = intval($xml->userId);
+    $this->userId = (int)($xml->userId);
     $this->aliasName = (string)$xml->userAlias->aliasName;
     $this->profileLInk = (string)$xml->userAlias->profileLink;
   }
@@ -107,8 +107,9 @@ class VoxbProfile extends VoxbBase {
         'institutionName' => $institutionName
       )
     ));
-    if (isset($response->userId)) {
-      $this->userId = $response->userId;
+
+    if (isset($response->Body->createUserResponse->userId)) {
+      $this->userId = (int)$response->Body->createUserResponse->userId;
       return TRUE;
     }
 
@@ -167,21 +168,19 @@ class VoxbProfile extends VoxbBase {
    */
   private function getActedItems() {
     $response = $this->call('fetchMyData', array('userId' => $this->userId));
-    if (!isset($response->result)) return array();
+    
+    if (!isset($response->Body->fetchMyDataResponse->result)) return array();
 
-    if (!is_array($response->result))
-      $response->result = array($response->result);
-
-    foreach ($response->result as $v) {
+    foreach ($response->Body->fetchMyDataResponse->result as $v) { 
       if ($v->object && $v->object->objectIdentifierType == 'FAUST') {
-        $this->actedItems[$v->object->objectIdentifierValue] = array(
-          'voxbIdentifier' => $v->voxbIdentifier,
-          'tags' => @$v->item->tags ? (is_array($v->item->tags->tag) ? $v->item->tags->tag : array($v->item->tags->tag)) : array(),
+        $this->actedItems[(string)$v->object->objectIdentifierValue] = array(
+          'voxbIdentifier' => (string)$v->voxbIdentifier,
+          'tags' => @$v->item->tags ? $this->prepareArray($v->item->tags->tag) : array(),
           'review' => array(
-            'title' => @$v->item->review->reviewTitle,
-            'data' => @$v->item->review->reviewData
+            'title' => (string)@$v->item->review->reviewTitle,
+            'data' => (string)@$v->item->review->reviewData
           ),
-          'rating' => @$v->item->rating
+          'rating' => (int)@$v->item->rating
         );
       }
     }
@@ -190,8 +189,27 @@ class VoxbProfile extends VoxbBase {
   }
 
   /**
-   * Update array of acted items
+   * Convert SimpleXML object to array representation.
    *
+   * Mainly used for tags array response.
+   *
+   * @param $arr
+   *   Input array containing mixed values.
+   * @return
+   *   Transformed array.
+   */
+  public function prepareArray($arr) {
+    $r = array();
+
+    foreach($arr as $k => $v) {
+      $r[] = (string)$v;
+    }
+
+    return $r;
+  }
+
+  /**
+   * Update array of acted items.
    */
   public function updateActedItems() {
     $this->actedItems = array();

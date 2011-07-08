@@ -49,7 +49,7 @@ class VoxbItem extends VoxbBase {
       $this->fetchData($o->totalItemData);
     }
 
-    if ($o->error) {
+    if ($o->Body->Fault->faultstring) {
       return FALSE;
     }
     return TRUE;
@@ -71,11 +71,12 @@ class VoxbItem extends VoxbBase {
     $this->reviews = new VoxbReviewsController($this->reviewHandlers);
 
     $o = $this->call('fetchData', $data);
-    if ($o->totalItemData) {
-      $this->fetchData($o->totalItemData);
+    
+    if ($o->Body->fetchDataResponse->totalItemData) {
+      $this->fetchData($o->Body->fetchDataResponse->totalItemData);
     }
 
-    if ($o->error) {
+    if ($o->Body->Fault->faultstring) {
       return FALSE;
     }
     return TRUE;
@@ -95,6 +96,7 @@ class VoxbItem extends VoxbBase {
    * Method is fetching data from a VoxB object.
    */
   private function fetchData($o) {
+   
     $this->objectIdentifierValue = $o->fetchData->objectIdentifierValue;
     $this->objectIdentifierType = $o->fetchData->objectIdentifierType;
 
@@ -107,8 +109,8 @@ class VoxbItem extends VoxbBase {
     $this->reviews->fetch($o->userItems);
 
     // Fetch Rating
-    $this->rating = $o->totalRatings->averageRating;
-    $this->ratingCount = $o->totalRatings->totalNumberOfRaters;
+    $this->rating = (int)$o->totalRatings->averageRating;
+    $this->ratingCount = (int)$o->totalRatings->totalNumberOfRaters;
   }
 
   /**
@@ -158,7 +160,7 @@ class VoxbItem extends VoxbBase {
       )
     ));
 
-    if (!$response || $response->error) {
+    if (!$response || $response->Body->Fault->faultstring) {
       return FALSE;
     }
     return TRUE;
@@ -178,7 +180,7 @@ class VoxbItem extends VoxbBase {
       ),
     ));
 
-    if (!$response || $response->error) {
+    if (!$response || $response->Body->Fault->faultstring) {
       return FALSE;
     }
 

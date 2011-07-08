@@ -60,7 +60,7 @@ class VoxbTagRecord extends VoxbBase {
       )
     ));
 
-    if (!$response || $response->error) {
+    if (!$response || $response->Body->Fault->faultstring) {
       return FALSE;
     }
     return TRUE;
@@ -80,11 +80,12 @@ class VoxbTagRecord extends VoxbBase {
  * This method updates tags list
  *
  * @param $voxbId
- * @param $tags - list of existing tags (obly added by one user)
+ * @param $tags - list of existing tags (only added by one user)
  * @param $tag - new tag
  */
   public function updateTags($voxbId, $tags, $tag) {
     $tags[] = $tag;
+
     $response = $this->call('updateMyData', array(
       'voxbIdentifier' => $voxbId,
       'item' => array(
@@ -94,7 +95,7 @@ class VoxbTagRecord extends VoxbBase {
       )
     ));
 
-    if (!$response || $response->error) {
+    if (!$response || $response->Body->Fault->faultstring) {
       return FALSE;
     }
     return TRUE;

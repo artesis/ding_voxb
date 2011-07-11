@@ -604,3 +604,14 @@ function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
     );
   }
 }
+
+/**
+ * Implements MODULE_ding_devel_timers().
+ */
+function ding_voxb_ding_devel_timers() {
+  return array(
+    'voxb' => array(
+      'title' => 'VoxB total request time was @time ms.',
+    )
+  );
+}

@@ -62,7 +62,9 @@ class VoxbBase {
     }
 
     try {
+      timer_start('voxb');
       $response = VoxbBase::$soapClient->$method($data);
+      timer_stop('voxb');
     } catch (Exception $e) {
       return FALSE;
     }

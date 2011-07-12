@@ -597,7 +597,7 @@ function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
     // Ting object local id
     $oid = explode(':', $entity->ding_entity_id);
     $oid = $oid[1];
-    
+
     $entity->content['voxb'] = array(
       '#markup' => theme('voxb', array('object_id' => $oid)),
       '#weight' => '10'

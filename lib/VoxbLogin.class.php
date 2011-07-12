@@ -35,7 +35,7 @@ class VoxbLogin {
       //Fetch user actions and put serialized profile object into session
       $profiles[0]->fetchMyData();
       $_SESSION['voxb']['profile'] = serialize($profiles[0]);
-      
+
       return TRUE;
     }
     else {

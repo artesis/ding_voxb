@@ -30,12 +30,12 @@ class VoxbBase {
       'soap_version' => SOAP_1_2,
       'exceptions' => TRUE,
       'trace' => 1,
-      'cache_wsdl' => WSDL_CACHE_NONE
+      'cache_wsdl' => WSDL_CACHE_NONE,
+      'namespaces' => array('voxb' => 'http://oss.dbc.dk/ns/voxb'),
     );
 
     try {
       VoxbBase::$soapClient = new NanoSOAPClient(variable_get('voxb_service_url', ''), $options);
-      VoxbBase::$soapClient->setNamespace('xmlns:voxb="http://oss.dbc.dk/ns/voxb"');
     } catch (Exception $e) {
       VoxbBase::$soapClient = NULL;
     }

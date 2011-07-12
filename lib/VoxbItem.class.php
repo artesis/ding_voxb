@@ -71,7 +71,7 @@ class VoxbItem extends VoxbBase {
     $this->reviews = new VoxbReviewsController($this->reviewHandlers);
 
     $o = $this->call('fetchData', $data);
-    
+
     if ($o->Body->fetchDataResponse->totalItemData) {
       $this->fetchData($o->Body->fetchDataResponse->totalItemData);
     }
@@ -96,7 +96,7 @@ class VoxbItem extends VoxbBase {
    * Method is fetching data from a VoxB object.
    */
   private function fetchData($o) {
-   
+
     $this->objectIdentifierValue = $o->fetchData->objectIdentifierValue;
     $this->objectIdentifierType = $o->fetchData->objectIdentifierType;
 

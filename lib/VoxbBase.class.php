@@ -70,11 +70,11 @@ class VoxbBase {
       $replace_to = array('', '');
       $response = str_replace($replace_what, $replace_to, $response);
       $response = simplexml_load_string($response);
-      
+
     } catch (Exception $e) {
       return FALSE;
     }
-    
+
     return $response;
   }
 

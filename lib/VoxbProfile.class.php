@@ -168,10 +168,10 @@ class VoxbProfile extends VoxbBase {
    */
   private function getActedItems() {
     $response = $this->call('fetchMyData', array('userId' => $this->userId));
-    
+
     if (!isset($response->Body->fetchMyDataResponse->result)) return array();
 
-    foreach ($response->Body->fetchMyDataResponse->result as $v) { 
+    foreach ($response->Body->fetchMyDataResponse->result as $v) {
       if ($v->object && $v->object->objectIdentifierType == 'FAUST') {
         $this->actedItems[(string)$v->object->objectIdentifierValue] = array(
           'voxbIdentifier' => (string)$v->voxbIdentifier,

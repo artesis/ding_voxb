@@ -35,7 +35,7 @@ class VoxbUser extends VoxbBase {
     if (!$response || isset($response->Body->fetchUserResponse->error)) {
       return FALSE;
     }
-    
+
     $this->fetchProfiles($cpr, $response->Body->fetchUserResponse->users);
     return TRUE;
   }

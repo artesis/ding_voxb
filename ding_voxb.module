@@ -15,11 +15,6 @@ define('VOXB_PATH', drupal_get_path('module', 'ding_voxb'));
 function ding_voxb_init() {
   drupal_add_library('system', 'drupal.ajax');
   drupal_add_library('system', 'jquery.form');
-
-  if (!isset($_SESSION['voxb']['profile'])) {
-    drupal_add_css(VOXB_PATH . '/css/voxb.css');
-    drupal_add_css(VOXB_PATH . '/css/voxb-pager.css');
-  }
 }
 
 /**

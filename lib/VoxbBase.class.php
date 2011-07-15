@@ -30,11 +30,12 @@ class VoxbBase {
       'soap_version' => SOAP_1_2,
       'exceptions' => TRUE,
       'trace' => 1,
-      'cache_wsdl' => WSDL_CACHE_NONE
+      'cache_wsdl' => WSDL_CACHE_NONE,
+      'namespaces' => array('voxb' => 'http://oss.dbc.dk/ns/voxb'),
     );
 
     try {
-      VoxbBase::$soapClient = new SoapClient(variable_get('voxb_service_url', ''), $options);
+      VoxbBase::$soapClient = new NanoSOAPClient(variable_get('voxb_service_url', ''), $options);
     } catch (Exception $e) {
       VoxbBase::$soapClient = NULL;
     }
@@ -62,10 +63,18 @@ class VoxbBase {
     }
 
     try {
-      $response = VoxbBase::$soapClient->$method($data);
+      $data = $this->replaceKeys($data, 'voxb');
+      $response = VoxbBase::$soapClient->call('voxb:' . $method . 'Request', $data);
+
+      $replace_what = array('SOAP-ENV:', 'voxb:');
+      $replace_to = array('', '');
+      $response = str_replace($replace_what, $replace_to, $response);
+      $response = simplexml_load_string($response);
+
     } catch (Exception $e) {
       return FALSE;
     }
+
     return $response;
   }
 
@@ -74,5 +83,34 @@ class VoxbBase {
    */
   public function isServiceAvailable() {
     return (VoxbBase::$soapClient == NULL ? FALSE : TRUE);
+  }
+
+  /**
+   * Set the request array keys according to namespace
+   *
+   * @param $ar
+   *   Array which keys should be modified
+   * @param $namespace
+   *   Namespace value to be used with
+   * @return type
+   *   Array with modified keys
+   */
+  private function replaceKeys($ar, $namespace) {
+    $return = array();
+
+    foreach ($ar as $key => $value) {
+
+      if (!is_numeric($key)) {
+        $key = $namespace . ':' . $key;
+      }
+
+      if (is_array($value)) {
+        $value = $this->replaceKeys($value, $namespace);
+      }
+
+      $return[$key] = $value;
+    }
+
+    return $return;
   }
 }

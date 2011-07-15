@@ -24,21 +24,21 @@ class VoxbLogin {
   public function login($account) {
     $obj = new VoxbUser();
     if ($obj->getUserBySSN($account->name, variable_get('voxb_identity_provider', ''), variable_get('voxb_institution_name', ''))) {
-
       /**
        * Each user in Voxb can have several profiles
        * but we take just the first one
        */
+
       $profiles = $obj->getProfiles();
       $_SESSION['voxb']['userId'] = $profiles[0]->getUserId();
       $_SESSION['voxb']['aliasName'] = $profiles[0]->getAliasName();
       //Fetch user actions and put serialized profile object into session
       $profiles[0]->fetchMyData();
       $_SESSION['voxb']['profile'] = serialize($profiles[0]);
+
       return TRUE;
     }
     else {
-
       /**
        * Create a new user
        *
@@ -48,7 +48,7 @@ class VoxbLogin {
        *
        * @todo Replace profile link with a real linkto users profiles in artesis system.
        */
-      $userId = $this->createUser($account->name, $account->name, $account->mail);
+      $userId = $this->createUser($account->name, $account->name . '_1', $account->mail);
 
       if ($userId != 0) {
         $_SESSION['voxb']['userId'] = $userId;
@@ -58,6 +58,7 @@ class VoxbLogin {
         $profile = new VoxbProfile();
         $profile->setUserId($userId);
         $profile->fetchMyData();
+
         $_SESSION['voxb']['profile'] = serialize($profile);
         return TRUE;
       }

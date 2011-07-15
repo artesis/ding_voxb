@@ -114,7 +114,7 @@ class VoxbReviewRecord extends VoxbBase{
       'voxbIdentifier' => $this->voxbId
     ));
 
-    if ($response->error) {
+    if ($response->Body->Fault->faultstring) {
       return FALSE;
     }
     return TRUE;
@@ -130,6 +130,7 @@ class VoxbReviewRecord extends VoxbBase{
   public function create($faustNum, $review, $profile) {
     // check if user has already reviewed this item
     $data = $profile->getVoxbUserData($faustNum);
+
     if ($data && ($data['review']['title'] == 'review' || !$data['review']['title'])) {
       // Update reviews
       return $this->update($data['voxbIdentifier'], $review);
@@ -150,7 +151,7 @@ class VoxbReviewRecord extends VoxbBase{
       )
     ));
 
-    if (!$response || $response->error) {
+    if (!$response || $response->Body->Fault->faultstring) {
       return FALSE;
     }
     return TRUE;
@@ -174,7 +175,7 @@ class VoxbReviewRecord extends VoxbBase{
       )
     ));
 
-    if (!$response || $response->error) {
+    if (!$response || $response->Body->Fault->faultstring) {
       return FALSE;
     }
     return TRUE;

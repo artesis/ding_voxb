@@ -64,13 +64,14 @@ class VoxbBase {
 
     try {
       $data = $this->replaceKeys($data, 'voxb');
+      timer_start('voxb');
       $response = VoxbBase::$soapClient->call('voxb:' . $method . 'Request', $data);
+      timer_stop('voxb');
 
       $replace_what = array('SOAP-ENV:', 'voxb:');
       $replace_to = array('', '');
       $response = str_replace($replace_what, $replace_to, $response);
       $response = simplexml_load_string($response);
-
     } catch (Exception $e) {
       return FALSE;
     }

@@ -13,8 +13,8 @@
     
     // update rating
     $('div.user-rate').each(function() {
-      $(this).find('div.rating:lt(' + response.rating + ')').removeClass('star-off').removeClass('star-black').addClass('star-on');
-      $(this).find('div.rating:gt(' + (response.rating - 1) + ')').removeClass('star-on').removeClass('star-black').addClass('star-off');
+      $(this).find('div.rating:lt(' + response.rating + ')').removeClass('star-off').removeClass('star-hover').addClass('star-on');
+      $(this).find('div.rating:gt(' + (response.rating - 1) + ')').removeClass('star-on').removeClass('star-hover').addClass('star-off');
     });
 
     $('.add-rating-container').cyclicFade({
@@ -54,16 +54,16 @@
       // Bind ratings on mouse over and out
       $('#voxb div.user-rate div.rating').mouseover(function() {
         if (!Drupal.voxb_item.rating_set) {
-          $('#voxb div.user-rate div.rating:lt(' + ($(this).index() + 1) + ')').removeClass('star-off').removeClass('star-on').addClass('star-black');
-          $('#voxb div.user-rate div.rating:gt(' + $(this).index() + ')').removeClass('star-black').removeClass('star-on').addClass('star-off');
+          $('#voxb div.user-rate div.rating:lt(' + ($(this).index() + 1) + ')').removeClass('star-off').removeClass('star-on').addClass('star-hover');
+          $('#voxb div.user-rate div.rating:gt(' + $(this).index() + ')').removeClass('star-hover').removeClass('star-on').addClass('star-off');
         }
       });
       
       // Restore the stars after mouseout
       $('#voxb div.user-rate').mouseleave(function() {
         if (!Drupal.voxb_item.rating_set) {
-          $('#voxb div.user-rate div.rating:lt(' + Drupal.voxb_item.initial_rating + ')').removeClass('star-off').removeClass('star-black').addClass('star-on');
-          $('#voxb div.user-rate div.rating:gt(' + (Drupal.voxb_item.initial_rating - 1) + ')').removeClass('star-on').removeClass('star-black').addClass('star-off');
+          $('#voxb div.user-rate div.rating:lt(' + Drupal.voxb_item.initial_rating + ')').removeClass('star-off').removeClass('star-hover').addClass('star-on');
+          $('#voxb div.user-rate div.rating:gt(' + (Drupal.voxb_item.initial_rating - 1) + ')').removeClass('star-on').removeClass('star-hover').addClass('star-off');
         }
       });
 

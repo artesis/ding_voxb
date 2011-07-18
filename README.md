@@ -4,8 +4,6 @@ This module provides capability for the user to review, tag and rate on an item 
 
 Improvements
 ----------------------------------
-* Replace the SOAP client with [NanoSOAP] [nanosoap].
-* Integrate the possibility of logging requests ([ding_devel]) [ding_devel].
 * Model the pagination over [theme_pager] [theme_pager].
 
 VoxB related issues
@@ -22,6 +20,4 @@ VoxB related issues
 * Lists and user lists (highest rated items, mostly reviewed items, popular items, etc.).
 * Rating of reviews in order to hide inappropriate reviews.
 
-[nanosoap]: http://drupal.org/project/nanosoap
 [theme_pager]: http://api.drupal.org/api/drupal/includes--pager.inc/function/theme_pager/5
-[ding_devel]: https://github.com/ding2/ding_devel

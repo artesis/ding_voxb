@@ -1,6 +1,15 @@
 VoxB module
 ==========
 
+### Version 2.0:
+* New: Replaced the SOAP client with [NanoSOAP] [nanosoap].
+* New: Integrated the possibility of logging requests ([ding_devel]) [ding_devel].
+* New: Implemented the module through [ding_entity] [ding_entity].
+* New: New rating images.
+* Enhancement: Refactored CSS class names to not use camelCase.
+* Enhancement: Refactored the JavaScript to the behavior of drupal.js.
+* Enhancement: Major template changes - sending HTML through AJAX.
+
 ### Version 1.1:
 
 * Fix: Various minor styling, AJAX, commenting and JS issues.
@@ -32,3 +41,6 @@ VoxB module
 [js_compatibility]: http://drupal.org/node/224333#javascript_compatibility
 [drupal_set_session]: http://drupal.org/node/224333#drupal_set_session
 [updateMyRequest]: https://voxb.addi.dk/1.0/doc/voxb.html#Link51 
+[nanosoap]: http://drupal.org/project/nanosoap
+[ding_devel]: https://github.com/ding2/ding_devel
+[ding_entity]: https://github.com/ding2/ding_entity

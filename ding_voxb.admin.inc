@@ -19,7 +19,7 @@ function ding_voxb_admin($form, $form_state) {
   $form['voxb']['voxb_service_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Service URL'),
-    '#description' => t('URL to the VoxB webservice, e.g. https://voxb.addi.dk/1.0/xml/voxb.wsdl'),
+    '#description' => t('URL to the VoxB webservice, e.g. https://voxb.addi.dk/1.0/'),
     '#default_value' => variable_get('voxb_service_url', ''),
     '#required' => TRUE,
   );

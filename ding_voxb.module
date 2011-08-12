@@ -641,8 +641,8 @@ function ding_voxb_ding_devel_timers() {
 function ding_voxb_details() {
   $request = $_REQUEST['items'];
 
-  $voxb = new VoxbItem();
-  $voxb->fetchByFaust($request, TRUE);
+  $voxb = new VoxbItems();
+  $voxb->fetchByFaust($request);
 
   //echo json_encode($request);
 }

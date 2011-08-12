@@ -59,31 +59,15 @@ class VoxbItem extends VoxbBase {
    * Fetching item from voxb server by faust number.
    *
    * @param string $faustNum
-   *   Item faust number
-   * @param bool $multiple
-   *   Whether to send a multiple request
    */
-  public function fetchByFaust($faustNum, $multiple = FALSE) {
-    $fetch = array();
-    
-    if($multiple && is_array($faustNum)) {
-      foreach($faustNum as $k => $v) {
-        $fetch[] = array(
-          'objectIdentifierValue' => $v,
-          'objectIdentifierType' => 'FAUST'
-        );
-      }
-    }
-    else {
-      $fetch['objectIdentifierValue'] = $faustNum;
-      $fetch['objectIdentifierType'] = 'FAUST';
-    }
-    
+  public function fetchByFaust($faustNum) {
     $data = array(
-      'fetchData' => $fetch,
+      'fetchData' => array(
+        'objectIdentifierValue' => $faustNum,
+        'objectIdentifierType' => 'FAUST'
+      ),
       'output' => array('contentType' => 'all')
     );
-
     $this->reviews = new VoxbReviewsController($this->reviewHandlers);
 
     $o = $this->call('fetchData', $data);
@@ -111,7 +95,7 @@ class VoxbItem extends VoxbBase {
   /**
    * Method is fetching data from a VoxB object.
    */
-  private function fetchData($o) {
+  public function fetchData($o) {
 
     $this->objectIdentifierValue = $o->fetchData->objectIdentifierValue;
     $this->objectIdentifierType = $o->fetchData->objectIdentifierType;

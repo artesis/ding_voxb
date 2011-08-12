@@ -654,6 +654,7 @@ function ding_voxb_details() {
       if ($item) {
         $response['items'][(string)$request[$i]] = array(
           'rating' => $item->getRating(),
+          'rating_count' => $item->getRatingCount(),
           'reviews' => $item->getReviews('review')->getCount(),
         );
       }

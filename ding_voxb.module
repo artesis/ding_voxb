@@ -640,9 +640,25 @@ function ding_voxb_ding_devel_timers() {
  */
 function ding_voxb_details() {
   $request = $_REQUEST['items'];
+  $response = array();
+  $response['status'] = FALSE;
 
-  $voxb = new VoxbItems();
-  $voxb->fetchByFaust($request);
+  $items = new VoxbItems();
+  $r = $items->fetchByFaust($request);
 
-  //echo json_encode($request);
+  if ($r) {
+    $response['status'] = TRUE;
+    for($i = 0; $i < $items->getCount(); $i++) {
+      $item = $items->getItem($request[$i]);
+
+      if ($item) {
+        $response['items'][(string)$request[$i]] = array(
+          'rating' => $item->getRating(),
+          'reviews' => $item->getReviews('review')->getCount(),
+        );
+      }
+    }
+  }
+
+  drupal_json_output($response);
 }

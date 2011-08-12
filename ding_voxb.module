@@ -48,7 +48,14 @@ function ding_voxb_menu() {
     'type' => MENU_CALLBACK,
     'access arguments' => array('search content'),
     'page callback' => 'ding_voxb_rating',
+  );
 
+  $items['voxb/ajax/details'] = array(
+    'title' => 'VoxB ting objects details handler',
+    'description' => '',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('search content'),
+    'page callback' => 'ding_voxb_details',
   );
 
   return $items;
@@ -591,6 +598,7 @@ function ding_voxb_ctools_plugin_directory($module, $plugin) {
  * Enrich ting object data array with voxb stuff.
  */
 function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
+  global $js_added;
   // Show only on full item page
   if ($view_mode == 'full') {
     // Ting object local id
@@ -601,6 +609,12 @@ function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
       '#markup' => theme('voxb', array('object_id' => $oid)),
       '#weight' => '10'
     );
+  }
+  elseif($view_mode == 'teaser') {
+    if (!$js_added) {
+      drupal_add_js(VOXB_PATH . '/js/voxb.details.js', 'file');
+      $js_added = TRUE;
+    }
   }
 }
 
@@ -613,4 +627,22 @@ function ding_voxb_ding_devel_timers() {
       'title' => 'VoxB total request time was @time ms.',
     )
   );
+}
+
+/**
+ * Request rating and review count for multiple items
+ *
+ * @param $items
+ *   Array of faust numbers
+ * @return
+ *   JSON encoded response
+ *   In format item:faust, rating:count, reviews:count
+ */
+function ding_voxb_details() {
+  $request = $_REQUEST['items'];
+
+  $voxb = new VoxbItem();
+  $voxb->fetchByFaust($request, TRUE);
+
+  //echo json_encode($request);
 }

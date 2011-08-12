@@ -61,7 +61,6 @@ class VoxbBase {
     if (VoxbBase::$soapClient == NULL) {
       return FALSE;
     }
-
     try {
       $data = $this->replaceKeys($data, 'voxb');
       timer_start('voxb');

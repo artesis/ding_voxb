@@ -182,6 +182,11 @@ function ding_voxb_theme() {
     'variables' => array('author' => NULL, 'review' => NULL),
     'template' => 'ding_voxb-review-record',
   );
+  
+  $hooks['voxb_search_result'] = array(
+    'variables' => NULL,
+    'template' => 'ding_voxb-search-result'
+  );
 
   return $hooks;
 }
@@ -598,7 +603,6 @@ function ding_voxb_ctools_plugin_directory($module, $plugin) {
  * Enrich ting object data array with voxb stuff.
  */
 function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
-  global $js_added;
   // Show only on full item page
   if ($view_mode == 'full') {
     // Ting object local id
@@ -611,10 +615,10 @@ function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
     );
   }
   elseif($view_mode == 'teaser') {
-    if (!$js_added) {
-      drupal_add_js(VOXB_PATH . '/js/voxb.details.js', 'file');
-      $js_added = TRUE;
-    }
+    drupal_add_js(VOXB_PATH . '/js/voxb.details.js');
+    $entity->content['voxb_search_result'] = array(
+      '#markup' => theme('voxb_search_result')
+    );
   }
 }
 

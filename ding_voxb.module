@@ -614,7 +614,17 @@ function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
       '#weight' => '10'
     );
   }
-  elseif($view_mode == 'teaser') {
+  
+  // For search result only
+  if ($view_mode == 'teaser') {
+    drupal_add_js(VOXB_PATH . '/js/voxb.details.js');
+    $entity->content['voxb_search_result'] = array(
+      '#markup' => theme('voxb_search_result')
+    );
+  }
+  
+  // For collection item only
+  if ($view_mode == 'collection_list') {
     drupal_add_js(VOXB_PATH . '/js/voxb.details.js');
     $entity->content['voxb_search_result'] = array(
       '#markup' => theme('voxb_search_result')

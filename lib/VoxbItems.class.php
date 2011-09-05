@@ -4,10 +4,8 @@
  *
  */
 
-error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
-
 /**
- * Fetch umultiple items with one request
+ * Items layer class
  */
 class VoxbItems extends VoxbBase {
 
@@ -20,7 +18,7 @@ class VoxbItems extends VoxbBase {
   }
 
   /**
-   * Fetching item from voxb server by faust number.
+   * Fetch multiple items with one request by list of faust numbers.
    *
    * @param string $faustNum
    *   Item faust number
@@ -61,6 +59,12 @@ class VoxbItems extends VoxbBase {
     return TRUE;
   }
 
+  /**
+   * Getter function. Returns voxbItem object by faust number
+   * 
+   * @param string $faust
+   * @return object
+   */
   public function getItem($faust) {
     if (isset($this->items[$faust])) {
       return $this->items[$faust];
@@ -69,6 +73,11 @@ class VoxbItems extends VoxbBase {
     return FALSE;
   }
 
+  /**
+   * Get amount of items in the layer
+   * 
+   * @return integer 
+   */
   public function getCount() {
     return count($this->items);
   }

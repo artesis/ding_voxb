@@ -95,7 +95,7 @@ class VoxbItem extends VoxbBase {
   /**
    * Method is fetching data from a VoxB object.
    */
-  private function fetchData($o) {
+  public function fetchData($o) {
 
     $this->objectIdentifierValue = $o->fetchData->objectIdentifierValue;
     $this->objectIdentifierType = $o->fetchData->objectIdentifierType;

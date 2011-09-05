@@ -1,6 +1,9 @@
 VoxB module
 ==========
 
+### Version 2.1:
+* New: Added rating and reviews on searchResult and collectionView.
+
 ### Version 2.0:
 * New: Replaced the SOAP client with [NanoSOAP] [nanosoap].
 * New: Integrated the possibility of logging requests ([ding_devel]) [ding_devel].

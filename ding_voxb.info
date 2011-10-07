@@ -15,6 +15,7 @@ files[] = lib/VoxbProfile.class.php
 files[] = lib/VoxbReviewsController.class.php
 files[] = lib/VoxbUser.class.php
 files[] = lib/VoxbItem.class.php
+files[] = lib/VoxbItems.class.php
 files[] = lib/VoxbReviewRecord.class.php
 files[] = lib/VoxbTagRecord.class.php
 files[] = lib/VoxbLogin.class.php

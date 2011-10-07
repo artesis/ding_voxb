@@ -48,7 +48,14 @@ function ding_voxb_menu() {
     'type' => MENU_CALLBACK,
     'access arguments' => array('search content'),
     'page callback' => 'ding_voxb_rating',
+  );
 
+  $items['voxb/ajax/details'] = array(
+    'title' => 'VoxB ting objects details handler',
+    'description' => '',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('search content'),
+    'page callback' => 'ding_voxb_details',
   );
 
   return $items;
@@ -176,6 +183,7 @@ function ding_voxb_theme() {
     'template' => 'ding_voxb-review-record',
   );
   
+<<<<<<< HEAD
   $hooks['voxb_rating'] = array(
     'variables' => array(
         'voxb_item' => NULL,
@@ -196,6 +204,13 @@ function ding_voxb_theme() {
         'object_id' => NULL),
     'template' => 'templates/ding_voxb-review'
   );
+=======
+  $hooks['voxb_search_result'] = array(
+    'variables' => NULL,
+    'template' => 'ding_voxb-search-result'
+  );
+
+>>>>>>> dev-line
   return $hooks;
 }
 
@@ -646,6 +661,22 @@ function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
       '#weight' => '10'
     );
   }
+  
+  // For search result only
+  if ($view_mode == 'teaser') {
+    drupal_add_js(VOXB_PATH . '/js/voxb.details.js');
+    $entity->content['voxb_search_result'] = array(
+      '#markup' => theme('voxb_search_result')
+    );
+  }
+  
+  // For collection item only
+  if ($view_mode == 'collection_list') {
+    drupal_add_js(VOXB_PATH . '/js/voxb.details.js');
+    $entity->content['voxb_search_result'] = array(
+      '#markup' => theme('voxb_search_result')
+    );
+  }
 }
 
 /**
@@ -657,4 +688,39 @@ function ding_voxb_ding_devel_timers() {
       'title' => 'VoxB total request time was @time ms.',
     )
   );
+}
+
+/**
+ * Request rating and review count for multiple items
+ *
+ * @param $items
+ *   Array of faust numbers
+ * @return
+ *   JSON encoded response
+ *   In format item:faust, rating:count, reviews:count
+ */
+function ding_voxb_details() {
+  $request = $_REQUEST['items'];
+  $response = array();
+  $response['status'] = FALSE;
+
+  $items = new VoxbItems();
+  $r = $items->fetchByFaust($request);
+
+  if ($r) {
+    $response['status'] = TRUE;
+    for($i = 0; $i < $items->getCount(); $i++) {
+      $item = $items->getItem($request[$i]);
+
+      if ($item) {
+        $response['items'][(string)$request[$i]] = array(
+          'rating' => $item->getRating(),
+          'rating_count' => $item->getRatingCount(),
+          'reviews' => $item->getReviews('review')->getCount(),
+        );
+      }
+    }
+  }
+
+  drupal_json_output($response);
 }

@@ -183,7 +183,6 @@ function ding_voxb_theme() {
     'template' => 'ding_voxb-review-record',
   );
   
-<<<<<<< HEAD
   $hooks['voxb_rating'] = array(
     'variables' => array(
         'voxb_item' => NULL,
@@ -204,13 +203,11 @@ function ding_voxb_theme() {
         'object_id' => NULL),
     'template' => 'templates/ding_voxb-review'
   );
-=======
   $hooks['voxb_search_result'] = array(
     'variables' => NULL,
     'template' => 'ding_voxb-search-result'
   );
 
->>>>>>> dev-line
   return $hooks;
 }
 

@@ -1,3 +1,9 @@
+<?php
+/**
+ * @file
+ *
+ */
+?>
 <div class="reviews-container">
   <h3><?php print t('User reviews'); ?></h3>
   <div class="user-reviews">

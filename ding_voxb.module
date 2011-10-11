@@ -177,27 +177,28 @@ function ding_voxb_theme() {
     'variables' => array('author' => NULL, 'review' => NULL),
     'template' => 'templates/ding_voxb-review-record',
   );
-  
+
   $hooks['voxb_rating'] = array(
     'variables' => array(
         'voxb_item' => NULL,
         'object_id' => NULL),
     'template' => 'templates/ding_voxb-rating'
   );
-  
+
   $hooks['voxb_tags'] = array(
     'variables' => array(
         'voxb_item' => NULL,
         'object_id' => NULL),
     'template' => 'templates/ding_voxb-tags'
   );
-  
+
   $hooks['voxb_review'] = array(
     'variables' => array(
         'voxb_item' => NULL,
         'object_id' => NULL),
     'template' => 'templates/ding_voxb-review'
   );
+
   $hooks['voxb_search_result'] = array(
     'variables' => NULL,
     'template' => 'templates/ding_voxb-search-result'

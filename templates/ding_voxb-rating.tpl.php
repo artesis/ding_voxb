@@ -1,3 +1,9 @@
+<?php
+/**
+ * @file
+ *
+ */
+?>
 <div class="voxb">
   <div class="ratings-container">
     <h3><?php print t('Ratings'); ?></h3>

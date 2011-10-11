@@ -168,19 +168,14 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
  * Implements hook_theme().
  */
 function ding_voxb_theme() {
-  $hooks['voxb'] = array(
-    'variables' => array('object_id' => NULL),
-    'template' => 'ding_voxb',
-  );
-
   $hooks['voxb_tag_record'] = array(
     'variables' => array('tag_name' => NULL),
-    'template' => 'ding_voxb-tag-record',
+    'template' => 'templates/ding_voxb-tag-record',
   );
 
   $hooks['voxb_review_record'] = array(
     'variables' => array('author' => NULL, 'review' => NULL),
-    'template' => 'ding_voxb-review-record',
+    'template' => 'templates/ding_voxb-review-record',
   );
   
   $hooks['voxb_rating'] = array(
@@ -205,7 +200,7 @@ function ding_voxb_theme() {
   );
   $hooks['voxb_search_result'] = array(
     'variables' => NULL,
-    'template' => 'ding_voxb-search-result'
+    'template' => 'templates/ding_voxb-search-result'
   );
 
   return $hooks;

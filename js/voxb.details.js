@@ -15,7 +15,7 @@
         ele.find('.voxb-rating .rating-count span').html(v.rating_count);
         e = ele.find('.voxb-reviews .count').html(v.reviews);
         if (parseInt(v.reviews) > 0) {
-          e.parent().parent().show();
+          e.parent().parent().parent().show();
         }
       });
     }

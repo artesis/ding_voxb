@@ -5,6 +5,7 @@
  */
 ?>
 <div class="reviews-container">
+  <a name="reviews"></a>
   <h3><?php print t('User reviews'); ?></h3>
   <div class="user-reviews">
     <?php print($reviews); ?>

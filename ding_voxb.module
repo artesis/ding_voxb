@@ -152,7 +152,7 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
               array('attributes' => array('class' => array('use-ajax')))));
         }
         else {
-          $commands[] = ajax_command_html('.page-num:eq(' . $k . ')', l('', '', array()));
+          $commands[] = ajax_command_html('.page-num:eq(' . $k . ')', '');
         }
       }
 
@@ -299,16 +299,17 @@ function ding_voxb_preprocess_voxb_review(&$variables) {
     $pagination .= '<li class="page-num';
     // Highlight the middle one
     if ($i == 2) {
-      $pagination .= '  active-page"';
+      $pagination .= ' active-page">';
     }
-
-    $pagination .= '">';
-
+    else {
+      $pagination .= '">';
+    }
+    
     if ($i > 1 && $i < $pages + 2) {
       $pagination .= l(($i - 1), 'voxb/ajax/reviews/' . $oid . '/page/' . ($i - 1) . '', array('attributes' => array('class' => array('use-ajax'))));
     }
     else {
-      $pagination .= '<a href="#"></a>';
+      $pagination .= '';
     }
 
     $pagination .= '</li>';

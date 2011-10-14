@@ -201,7 +201,7 @@ class VoxbProfile extends VoxbBase {
   public function prepareArray($arr) {
     $r = array();
 
-    foreach($arr as $k => $v) {
+    foreach ($arr as $k => $v) {
       $r[] = (string)$v;
     }
 

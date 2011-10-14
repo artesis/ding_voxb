@@ -28,7 +28,7 @@ class VoxbItems extends VoxbBase {
   public function fetchByFaust($faustNums) {
     $fetch = array();
 
-    foreach($faustNums as $k => $v) {
+    foreach ($faustNums as $k => $v) {
       $fetch[] = array(
         'objectIdentifierValue' => $v,
         'objectIdentifierType' => 'FAUST'
@@ -40,12 +40,12 @@ class VoxbItems extends VoxbBase {
       'output' => array('contentType' => 'all')
     );
 
-    $this->reviews = new VoxbReviewsController($this->reviewHandlers);
+    $this->reviews = new VoxbReviewsController(@$this->reviewHandlers);
 
     $o = $this->call('fetchData', $data);
 
     if ($o->Body->fetchDataResponse->totalItemData) {
-      foreach($o->Body->fetchDataResponse->totalItemData as $k => $v) {
+      foreach ($o->Body->fetchDataResponse->totalItemData as $k => $v) {
         $this->items[(string)$v->fetchData->objectIdentifierValue] = new VoxbItem();
         $this->items[(string)$v->fetchData->objectIdentifierValue]->addReviewHandler('review', new VoxbReviews());
         $this->items[(string)$v->fetchData->objectIdentifierValue]->fetchData($v);
@@ -55,13 +55,13 @@ class VoxbItems extends VoxbBase {
     if ($o->Body->Fault->faultstring) {
       return FALSE;
     }
-    
+
     return TRUE;
   }
 
   /**
    * Getter function. Returns voxbItem object by faust number
-   * 
+   *
    * @param string $faust
    * @return object
    */
@@ -75,8 +75,8 @@ class VoxbItems extends VoxbBase {
 
   /**
    * Get amount of items in the layer
-   * 
-   * @return integer 
+   *
+   * @return integer
    */
   public function getCount() {
     return count($this->items);

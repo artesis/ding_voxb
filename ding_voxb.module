@@ -214,7 +214,7 @@ function ding_voxb_preprocess_voxb_rating(&$variables) {
   $voxb_item = $variables['voxb_item'];
   $oid = $variables['object_id'];
   $profile = unserialize($_SESSION['voxb']['profile']);
-  
+
   // Rating section
   $ratings = '';
   $rating = (int)$voxb_item->getRating() / 20;
@@ -235,14 +235,14 @@ function ding_voxb_preprocess_voxb_rating(&$variables) {
 }
 
 /**
- * Implements MODULE_preprocess_THEME().
+ * Implements hook_preprocess_THEME().
  */
 function ding_voxb_preprocess_voxb_tags(&$variables) {
   $voxb_item = $variables['voxb_item'];
   $oid = $variables['object_id'];
   $profile = unserialize($_SESSION['voxb']['profile']);
-  
- // Tags section
+
+  // Tags section
   $tags = '';
   foreach ($voxb_item->getTags() as $v) {
     $tags .= theme('voxb_tag_record', array('tag_name' => $v->getName()));
@@ -253,21 +253,19 @@ function ding_voxb_preprocess_voxb_tags(&$variables) {
   if (($profile && $profile->isAbleToTag($oid))) {
     $tags_form = drupal_render(drupal_get_form('ding_voxb_tag_form', $oid));
   }
-  
+
   $variables['tags'] = $tags;
   $variables['tags_form'] = $tags_form;
-  
 }
 
 /**
- * Implements MODULE_preprocess_THEME().
+ * Implements hook_preprocess_THEME().
  */
 function ding_voxb_preprocess_voxb_review(&$variables) {
   $voxb_item = $variables['voxb_item'];
   $oid = $variables['object_id'];
   $profile = unserialize($_SESSION['voxb']['profile']);
-  
-  
+
   // Reviews section
   $reviews = '';
   $limit = variable_get('voxb_reviews_per_page', VOXB_DEFAULT_REVIEWS_PER_PAGE);
@@ -409,8 +407,7 @@ function ding_voxb_review_form_callback($form, &$form_state) {
     $commands[] = ajax_command_ding_popup('add_review_error', t('Error'), t('Wrong or empty faust number.'));
   }
   else {
-
-    // add review to to voxb
+    // add review to voxb
     $review = new VoxbReviewRecord();
 
     $profile = unserialize($_SESSION['voxb']['profile']);
@@ -544,6 +541,7 @@ function ding_voxb_add_tag_callback($form, &$form_state) {
       );
     }
   }
+
   return array('#type' => 'ajax', '#commands' => $commands);
 }
 
@@ -611,7 +609,7 @@ function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
 }
 
 /**
- * Implements MODULE_ding_entity_view().
+ * Implements hook_ding_entity_view().
  *
  * Enrich ting object data array with voxb stuff.
  */
@@ -621,7 +619,7 @@ function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
     // Ting object local id
     $oid = explode(':', $entity->ding_entity_id);
     $oid = $oid[1];
-    
+
     drupal_add_css(VOXB_PATH . '/css/voxb-pager.css');
     drupal_add_css(VOXB_PATH . '/css/voxb.css');
     drupal_add_js(VOXB_PATH . '/js/cyclic.fade.js');
@@ -639,14 +637,14 @@ function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
           'object_id' => $oid)),
       '#weight' => '10'
     );
-    
+
     $entity->content['voxb_rating'] = array(
       '#markup' => theme('voxb_rating', array(
           'voxb_item' => $voxb_item,
           'object_id' => $oid)),
       '#weight' => '10'
     );
-    
+
     $entity->content['voxb_review'] = array(
       '#markup' => theme('voxb_review', array(
           'voxb_item' => $voxb_item,
@@ -654,7 +652,7 @@ function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
       '#weight' => '10'
     );
   }
-  
+
   // For search result only
   if ($view_mode == 'teaser') {
     drupal_add_js(VOXB_PATH . '/js/voxb.details.js');
@@ -662,7 +660,7 @@ function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
       '#markup' => theme('voxb_search_result')
     );
   }
-  
+
   // For collection item only
   if ($view_mode == 'collection_list') {
     drupal_add_js(VOXB_PATH . '/js/voxb.details.js');
@@ -673,7 +671,7 @@ function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
 }
 
 /**
- * Implements MODULE_ding_devel_timers().
+ * Implements hook_ding_devel_timers().
  */
 function ding_voxb_ding_devel_timers() {
   return array(
@@ -702,7 +700,7 @@ function ding_voxb_details() {
 
   if ($r) {
     $response['status'] = TRUE;
-    for($i = 0; $i < $items->getCount(); $i++) {
+    for ($i = 0; $i < $items->getCount(); $i++) {
       $item = $items->getItem($request[$i]);
 
       if ($item) {

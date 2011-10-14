@@ -81,4 +81,14 @@ class VoxbItems extends VoxbBase {
   public function getCount() {
     return count($this->items);
   }
+
+  /**
+   * Add review handlers to factory
+   *
+   * @param string $name
+   * @param object $object
+   */
+  public function addReviewHandler($name, $object) {
+    $this->reviewHandlers[$name] = $object;
+  }
 }

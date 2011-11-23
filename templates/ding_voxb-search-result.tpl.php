@@ -17,7 +17,7 @@
     <p class="rating-count left">(<span>0</span>)</p>
   </div>
   <div class="voxb-reviews left" style="display: none;">
-    <p class="review-count"><?php print t('Anmeldelser'); ?> (<span class="count">0</span>)</p>
+    <p class="review-count"><?php print t('User reviews'); ?> (<span class="count">0</span>)</p>
   </div>
   <div class="clear"></div>
 </div>

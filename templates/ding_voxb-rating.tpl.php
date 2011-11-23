@@ -6,7 +6,7 @@
 ?>
 <div class="voxb">
   <div class="ratings-container">
-    <h3><?php print t('Ratings'); ?></h3>
+    <h2><?php print t('Rating'); ?></h2>
     <?php print($ratings); ?>
   </div>
 </div>

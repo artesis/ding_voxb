@@ -4,26 +4,19 @@
  * General markup of the module.
  */
 
-#voxb {
+.voxb {
   clear: both;
   background-color: #F6F6F2;
+  width: 100%;
 }
 
 .voxb-review {
   margin-bottom: 15px;
 }
 
-.add-rating-container {
-  float: left;
-}
-
 .add-review-textarea {
   width: 100%;
   height: 100px;
-}
-.tags-container, .ratings-container {
-  float: left;
-  width: 50%;
 }
 
 #edit-rating, div.ajax-anim, #voxb-item {

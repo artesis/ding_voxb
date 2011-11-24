@@ -8,8 +8,8 @@
 
   // Insert voxb into the page
   Drupal.insertVoxbDetails = function(e) {
-    if (e['status'] == true) {
-      $.each(e['items'], function(k, v) {
+    if (e.status == true && e.items) {
+      $.each(e.items, function(k, v) {
         var ele = $('.ting-object-id-' + k).find('.voxb-details');
         ele.find('.voxb-rating .rating-star:lt(' + Math.round(v.rating / 20) + ')').removeClass('inactive').addClass('active');
         ele.find('.voxb-rating .rating-count span').html(v.rating_count);

@@ -609,68 +609,6 @@ function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
 }
 
 /**
- * Implements hook_ding_entity_view().
- *
- * Enrich ting object data array with voxb stuff.
- */
-function ding_voxb_ding_entity_view($entity, $view_mode, $langcode = NULL) {
-  // Show only on full item page
-  if ($view_mode == 'full') {
-    // Ting object local id
-    $oid = explode(':', $entity->ding_entity_id);
-    $oid = $oid[1];
-
-    drupal_add_css(VOXB_PATH . '/css/voxb-pager.css');
-    drupal_add_css(VOXB_PATH . '/css/voxb.css');
-    drupal_add_js(VOXB_PATH . '/js/cyclic.fade.js');
-    drupal_add_js(VOXB_PATH . '/js/voxb.item.js');
-
-    // Fetch data from VoxB service
-    $voxb_item = new VoxbItem();
-    $voxb_item->addReviewHandler('review', new VoxbReviews());
-    $voxb_item->fetchByFaust($oid);
-    $profile = unserialize($_SESSION['voxb']['profile']);
-
-    $entity->content['voxb_tags'] = array(
-      '#markup' => theme('voxb_tags', array(
-          'voxb_item' => $voxb_item,
-          'object_id' => $oid)),
-      '#weight' => '10'
-    );
-
-    $entity->content['voxb_rating'] = array(
-      '#markup' => theme('voxb_rating', array(
-          'voxb_item' => $voxb_item,
-          'object_id' => $oid)),
-      '#weight' => '10'
-    );
-
-    $entity->content['voxb_review'] = array(
-      '#markup' => theme('voxb_review', array(
-          'voxb_item' => $voxb_item,
-          'object_id' => $oid)),
-      '#weight' => '10'
-    );
-  }
-
-  // For search result only
-  if ($view_mode == 'teaser') {
-    drupal_add_js(VOXB_PATH . '/js/voxb.details.js');
-    $entity->content['voxb_search_result'] = array(
-      '#markup' => theme('voxb_search_result')
-    );
-  }
-
-  // For collection item only
-  if ($view_mode == 'collection_list') {
-    drupal_add_js(VOXB_PATH . '/js/voxb.details.js');
-    $entity->content['voxb_search_result'] = array(
-      '#markup' => theme('voxb_search_result')
-    );
-  }
-}
-
-/**
  * Implements hook_ding_devel_timers().
  */
 function ding_voxb_ding_devel_timers() {
@@ -714,4 +652,299 @@ function ding_voxb_details() {
   }
 
   drupal_json_output($response);
+}
+
+/**
+ * Implements hook_field_info().
+ */
+function ding_voxb_field_info() {
+  $fields = array();
+
+  $fields['voxb_rating'] = array(
+    'label' => t('Voxb rating'),
+    'description' => t('Voxb rating'),
+    'default_widget' => 'hidden',
+    'default_formatter' => 'voxb_rating_default',
+    'no_ui' => TRUE,
+  );
+
+  $fields['voxb_tags'] = array(
+    'label' => t('Voxb tags'),
+    'description' => t('Voxb tags'),
+    'default_widget' => 'hidden',
+    'default_formatter' => 'voxb_tags_default',
+    'no_ui' => TRUE,
+  );
+
+  $fields['voxb_review'] = array(
+    'label' => t('Voxb review'),
+    'description' => t('Voxb review'),
+    'default_widget' => 'hidden',
+    'default_formatter' => 'voxb_review_default',
+    'no_ui' => TRUE,
+  );
+
+  return $fields;
+}
+
+/**
+ * Implements hook_field_default_field().
+ */
+function ding_voxb_field_default_fields() {
+  $fields = array();
+  
+  $fields['ting_object-ting_object-voxb_rating'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'voxb_rating',
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'module' => 'ting',
+      'settings' => array(),
+      'storage' => array(
+        'active' => '1',
+        'module' => 'blackhole',
+        'settings' => array(),
+        'type' => 'blackhole',
+      ),
+      'translatable' => '0',
+      'type' => 'voxb_rating',
+    ),
+    'field_instance' => array(
+      'bundle' => 'ting_object',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'ding_entity_type' => 'ding_entity',
+      'display' => array(
+        'default' => array(
+          'label' => 'hidden',
+          'module' => 'ting',
+          'settings' => array(
+            'link_type' => 'object',
+          ),
+          'type' => 'voxb_rating_default',
+          'weight' => '0',
+        ),
+      ),
+      'entity_type' => 'ting_object',
+      'field_name' => 'voxb_rating',
+      'label' => 'VoxB Rating',
+      'required' => FALSE,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'module' => 'blackhole',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => '1',
+      ),
+    ),
+  );
+
+  $fields['ting_object-ting_object-voxb_tags'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'voxb_tags',
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'module' => 'ting',
+      'settings' => array(),
+      'storage' => array(
+        'active' => '1',
+        'module' => 'blackhole',
+        'settings' => array(),
+        'type' => 'blackhole',
+      ),
+      'translatable' => '0',
+      'type' => 'voxb_tags',
+    ),
+    'field_instance' => array(
+      'bundle' => 'ting_object',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'ding_entity_type' => 'ding_entity',
+      'display' => array(
+        'default' => array(
+          'label' => 'hidden',
+          'module' => 'ting',
+          'settings' => array(
+            'link_type' => 'object',
+          ),
+          'type' => 'voxb_tags_default',
+          'weight' => '0',
+        ),
+      ),
+      'entity_type' => 'ting_object',
+      'field_name' => 'voxb_tags',
+      'label' => 'VoxB Tags',
+      'required' => FALSE,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'module' => 'blackhole',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => '1',
+      ),
+    ),
+  );
+
+  $fields['ting_object-ting_object-voxb_review'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'voxb_review',
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'module' => 'ting',
+      'settings' => array(),
+      'storage' => array(
+        'active' => '1',
+        'module' => 'blackhole',
+        'settings' => array(),
+        'type' => 'blackhole',
+      ),
+      'translatable' => '0',
+      'type' => 'voxb_review',
+    ),
+    'field_instance' => array(
+      'bundle' => 'ting_object',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'ding_entity_type' => 'ding_entity',
+      'display' => array(
+        'default' => array(
+          'label' => 'hidden',
+          'module' => 'ting',
+          'settings' => array(
+            'link_type' => 'object',
+          ),
+          'type' => 'voxb_review_default',
+          'weight' => '0',
+        ),
+      ),
+      'entity_type' => 'ting_object',
+      'field_name' => 'voxb_review',
+      'label' => 'VoxB Review',
+      'required' => FALSE,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'module' => 'blackhole',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => '1',
+      ),
+    ),
+  );
+
+  return $fields;
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function ding_voxb_field_formatter_info() {
+  $format = array();
+
+  $format['voxb_rating_default'] = array(
+    'label' => t('Default'),
+    'field types' => array('voxb_rating'),
+    'settings' => array('link_type' => 'none'),
+  );
+
+  $format['voxb_tags_default'] = array(
+    'label' => t('Default'),
+    'field types' => array('voxb_tags'),
+    'settings' => array('link_type' => 'none'),
+  );
+
+  $format['voxb_review_default'] = array(
+    'label' => t('Default'),
+    'field types' => array('voxb_review'),
+    'settings' => array('link_type' => 'none'),
+  );
+
+  return $format;
+}
+
+/**
+ * Implements hook_field_load().
+ */
+function ding_voxb_field_load($entity_type, $entities, $field, $instances, $langcode, &$items, $age) {
+  if ($field['type'] == 'voxb_rating' || $field['type'] == 'voxb_tags' || $field['type'] == 'voxb_review') {
+    foreach ($entities as $id => $entity) {
+      $items[$id][0] = array(
+        'id' => $entity->id,
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  drupal_add_css(VOXB_PATH . '/css/voxb-pager.css');
+  drupal_add_css(VOXB_PATH . '/css/voxb.css');
+  drupal_add_js(VOXB_PATH . '/js/cyclic.fade.js');
+  drupal_add_js(VOXB_PATH . '/js/voxb.item.js');
+
+  // Fetch data from VoxB service
+  $voxb_item = new VoxbItem();
+  $voxb_item->addReviewHandler('review', new VoxbReviews());
+  $voxb_item->fetchByFaust($entity->localId);
+  $profile = unserialize($_SESSION['voxb']['profile']);
+
+  foreach ($items as $delta => $item) {
+    switch ($display['type']) {
+      case 'voxb_rating_default':
+        $element[$delta] = array(
+          '#prefix' => '<div>',
+          '#suffix' => '</div>',
+          '#markup' => theme('voxb_rating', array(
+            'voxb_item' => $voxb_item,
+            'object_id' => $entity->localId)),
+        );
+        break;
+
+      case 'voxb_tags_default':
+        $element[$delta] = array(
+          '#prefix' => '<div>',
+          '#suffix' => '</div>',
+          '#markup' => theme('voxb_tags', array(
+            'voxb_item' => $voxb_item,
+            'object_id' => $entity->localId)),
+        );
+        break;
+
+      case 'voxb_review_default':
+        $element[$delta] = array(
+          '#prefix' => '<div>',
+          '#suffix' => '</div>',
+          '#markup' => theme('voxb_review', array(
+            'voxb_item' => $voxb_item,
+            'object_id' => $entity->localId)),
+        );
+        break;
+    }
+  }
+
+  return $element;
 }

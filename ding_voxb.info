@@ -21,3 +21,7 @@ files[] = lib/VoxbTagRecord.class.php
 files[] = lib/VoxbLogin.class.php
 files[] = lib/VoxbReviews.class.php
 files[] = lib/VoxbTags.class.php
+
+features[field][] = "ting_object-ting_object-voxb_rating"
+features[field][] = "ting_object-ting_object-voxb_tags"
+features[field][] = "ting_object-ting_object-voxb_review"

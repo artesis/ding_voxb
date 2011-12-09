@@ -28,7 +28,7 @@ function ding_voxb_menu() {
     'description' => 'VoxB module settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ding_voxb_admin'),
-    'access arguments' => array('access administration pages'),
+    'access arguments' => array('administer voxb'),
     'file' => 'ding_voxb.admin.inc'
   );
 
@@ -59,6 +59,17 @@ function ding_voxb_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ding_voxb_permission() {
+  return array(
+    'administer voxb' => array(
+      'title' => t('Administer voxb settings'),
+    ),
+  );
 }
 
 /**

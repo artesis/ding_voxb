@@ -196,6 +196,11 @@ function ding_voxb_theme() {
     'template' => 'templates/ding_voxb-rating'
   );
 
+  $hooks['voxb_rating_display_only'] = array(
+    'variables' => array('object_id' => NULL, 'object_local_id' => NULL),
+    'template' => 'templates/ding_voxb-rating-display_only'
+  );
+
   $hooks['voxb_tags'] = array(
     'variables' => array(
         'voxb_item' => NULL,
@@ -208,6 +213,13 @@ function ding_voxb_theme() {
         'voxb_item' => NULL,
         'object_id' => NULL),
     'template' => 'templates/ding_voxb-review'
+  );
+
+  $hooks['voxb_review_count'] = array(
+    'variables' => array(
+        'voxb_item' => NULL,
+        'object_id' => NULL),
+    'template' => 'templates/ding_voxb-review-count'
   );
 
   $hooks['voxb_search_result'] = array(
@@ -741,6 +753,15 @@ function ding_voxb_field_default_fields() {
           'type' => 'voxb_rating_default',
           'weight' => '0',
         ),
+        'display_only' => array(
+          'label' => 'hidden',
+          'module' => 'ting',
+          'settings' => array(
+            'link_type' => 'object',
+          ),
+          'type' => 'voxb_rating_display_only',
+          'weight' => '0',
+        ),
       ),
       'entity_type' => 'ting_object',
       'field_name' => 'voxb_rating',
@@ -847,6 +868,15 @@ function ding_voxb_field_default_fields() {
           'type' => 'voxb_review_default',
           'weight' => '0',
         ),
+        'count_only' => array(
+          'label' => 'hidden',
+          'module' => 'ting',
+          'settings' => array(
+            'link_type' => 'object',
+          ),
+          'type' => 'voxb_review_count_only',
+          'weight' => '0',
+        ),
       ),
       'entity_type' => 'ting_object',
       'field_name' => 'voxb_review',
@@ -879,6 +909,12 @@ function ding_voxb_field_formatter_info() {
     'settings' => array('link_type' => 'none'),
   );
 
+  $format['voxb_rating_display_only'] = array(
+    'label' => t('Display only'),
+    'field types' => array('voxb_rating'),
+    'settings' => array('link_type' => 'none'),
+  );
+
   $format['voxb_tags_default'] = array(
     'label' => t('Default'),
     'field types' => array('voxb_tags'),
@@ -887,6 +923,12 @@ function ding_voxb_field_formatter_info() {
 
   $format['voxb_review_default'] = array(
     'label' => t('Default'),
+    'field types' => array('voxb_review'),
+    'settings' => array('link_type' => 'none'),
+  );
+
+  $format['voxb_review_count_only'] = array(
+    'label' => t('Count only'),
     'field types' => array('voxb_review'),
     'settings' => array('link_type' => 'none'),
   );
@@ -913,10 +955,24 @@ function ding_voxb_field_load($entity_type, $entities, $field, $instances, $lang
 function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   $element = array();
 
-  drupal_add_css(VOXB_PATH . '/css/voxb-pager.css');
+  
   drupal_add_css(VOXB_PATH . '/css/voxb.css');
-  drupal_add_js(VOXB_PATH . '/js/cyclic.fade.js');
-  drupal_add_js(VOXB_PATH . '/js/voxb.item.js');
+
+  if ($display['type'] == 'voxb_rating_default' || $display['type'] == 'voxb_tags_default' || $display['type'] == 'voxb_review_default') {
+    drupal_add_js(VOXB_PATH . '/js/voxb.item.js');
+  }
+
+  if ($display['type'] == 'voxb_rating_default' || $display['type'] == 'voxb_tags_default') {
+    drupal_add_js(VOXB_PATH . '/js/cyclic.fade.js');
+  }
+
+  if ($display['type'] == 'voxb_review_default') {
+    drupal_add_css(VOXB_PATH . '/css/voxb-pager.css');
+  }
+
+  if ($display['type'] == 'voxb_rating_display_only') {
+    drupal_add_js(VOXB_PATH . '/js/voxb.details.js', 'file');
+  }
 
   // Fetch data from VoxB service
   $voxb_item = new VoxbItem();
@@ -936,6 +992,16 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
         );
         break;
 
+      case 'voxb_rating_display_only':
+        $element[$delta] = array(
+          '#prefix' => '<div>',
+          '#suffix' => '</div>',
+          '#markup' => theme('voxb_rating_display_only', array(
+            'object_id' => $entity->id,
+            'object_local_id' => $entity->localId))
+          );
+        break;
+      
       case 'voxb_tags_default':
         $element[$delta] = array(
           '#prefix' => '<div>',
@@ -953,6 +1019,16 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
           '#markup' => theme('voxb_review', array(
             'voxb_item' => $voxb_item,
             'object_id' => $entity->localId)),
+        );
+        break;
+
+      case 'voxb_review_count_only':
+        $element[$delta] = array(
+          '#prefix' => '<div>',
+          '#suffix' => '</div>',
+          '#markup' => theme('voxb_review_count', array(
+            'object_id' => $entity->id,
+            'object_local_id' => $entity->localId)),
         );
         break;
     }

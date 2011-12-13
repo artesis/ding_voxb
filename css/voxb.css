@@ -4,6 +4,11 @@
  * General markup of the module.
  */
 
+ .clear {
+   clear: both;
+   float: none;
+}
+
 .voxb {
   clear: both;
   background-color: #F6F6F2;

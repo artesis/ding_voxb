@@ -970,7 +970,7 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
     drupal_add_css(VOXB_PATH . '/css/voxb-pager.css');
   }
 
-  if ($display['type'] == 'voxb_rating_display_only') {
+  if ($display['type'] == 'voxb_rating_display_only' || $display['type'] == 'voxb_review_count_only') {
     drupal_add_js(VOXB_PATH . '/js/voxb.details.js', 'file');
   }
 

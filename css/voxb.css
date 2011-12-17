@@ -4,6 +4,11 @@
  * General markup of the module.
  */
 
+ .clear {
+   clear: both;
+   float: none;
+}
+
 .voxb {
   clear: both;
   background-color: #F6F6F2;
@@ -33,25 +38,22 @@ div.ajax-anim {
   width: 15px;
 }
 
-.rating-count-span {
-  float: left;
-}
-
-.rating {
+.voxb-rating .rating {
   width: 16px;
   height: 16px;
   float: left;
+  margin-top: 4px;
 }
 
-.star-on {
+.voxb-rating .rating.star-on {
   background-image: url('../img/star-on.png');
 }
 
-.star-off {
+.voxb-rating .rating.star-off {
   background-image: url('../img/star-off.png');
 }
 
-.star-hover {
+.voxb-rating .rating.star-hover {
   background-image: url('../img/star-hover.png');
 }
 

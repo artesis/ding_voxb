@@ -4,26 +4,24 @@
  * General markup of the module.
  */
 
-#voxb {
+ .clear {
+   clear: both;
+   float: none;
+}
+
+.voxb {
   clear: both;
   background-color: #F6F6F2;
+  width: 100%;
 }
 
 .voxb-review {
   margin-bottom: 15px;
 }
 
-.add-rating-container {
-  float: left;
-}
-
 .add-review-textarea {
   width: 100%;
   height: 100px;
-}
-.tags-container, .ratings-container {
-  float: left;
-  width: 50%;
 }
 
 #edit-rating, div.ajax-anim, #voxb-item {
@@ -40,25 +38,22 @@ div.ajax-anim {
   width: 15px;
 }
 
-.rating-count-span {
-  float: left;
-}
-
-.rating {
+.voxb-rating .rating {
   width: 16px;
   height: 16px;
   float: left;
+  margin-top: 4px;
 }
 
-.star-on {
+.voxb-rating .rating.star-on {
   background-image: url('../img/star-on.png');
 }
 
-.star-off {
+.voxb-rating .rating.star-off {
   background-image: url('../img/star-off.png');
 }
 
-.star-hover {
+.voxb-rating .rating.star-hover {
   background-image: url('../img/star-hover.png');
 }
 

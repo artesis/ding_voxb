@@ -45,13 +45,16 @@ function ding_voxb_field_default_fields() {
             'link_type' => 'none',
           ),
           'type' => 'voxb_rating_default',
-          'weight' => '5',
+          'weight' => '6',
         ),
         'collection_primary' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => '0',
+          'label' => 'hidden',
+          'module' => 'ding_voxb',
+          'settings' => array(
+            'link_type' => 'none',
+          ),
+          'type' => 'voxb_rating_default',
+          'weight' => '6',
         ),
         'default' => array(
           'label' => 'hidden',
@@ -60,7 +63,7 @@ function ding_voxb_field_default_fields() {
             'link_type' => 'object',
           ),
           'type' => 'voxb_rating_default',
-          'weight' => '0',
+          'weight' => '6',
         ),
         'display_only' => array(
           'label' => 'hidden',
@@ -237,7 +240,7 @@ function ding_voxb_field_default_fields() {
             'link_type' => 'object',
           ),
           'type' => 'voxb_tags_default',
-          'weight' => '0',
+          'weight' => '3',
         ),
         'teaser' => array(
           'label' => 'above',

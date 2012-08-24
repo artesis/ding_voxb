@@ -793,6 +793,7 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
   $voxb_item->addReviewHandler('review', new VoxbReviews());
   $voxb_item->fetchByFaust($entity->localId);
   $profile = unserialize($_SESSION['voxb']['profile']);
+  global $user;
 
   foreach ($items as $delta => $item) {
     switch ($display['type']) {
@@ -817,23 +818,27 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
         break;
       
       case 'voxb_tags_default':
-        $element[$delta] = array(
-          '#prefix' => '<div>',
-          '#suffix' => '</div>',
-          '#markup' => theme('voxb_tags', array(
-            'voxb_item' => $voxb_item,
-            'object_id' => $entity->localId)),
-        );
+        if (($user->uid == 0 && $voxb_item->getTags()->getCount() > 0) || $user->uid != 0) {
+          $element[$delta] = array(
+            '#prefix' => '<div>',
+            '#suffix' => '</div>',
+            '#markup' => theme('voxb_tags', array(
+              'voxb_item' => $voxb_item,
+              'object_id' => $entity->localId)),
+          );
+        }
         break;
 
       case 'voxb_review_default':
-        $element[$delta] = array(
-          '#prefix' => '<div>',
-          '#suffix' => '</div>',
-          '#markup' => theme('voxb_review', array(
-            'voxb_item' => $voxb_item,
-            'object_id' => $entity->localId)),
-        );
+        if (($user->uid == 0 && $voxb_item->getReviews('review')->getCount() > 0) || $user->uid != 0) {
+          $element[$delta] = array(
+            '#prefix' => '<div>',
+            '#suffix' => '</div>',
+            '#markup' => theme('voxb_review', array(
+              'voxb_item' => $voxb_item,
+              'object_id' => $entity->localId)),
+          );
+        }
         break;
 
       case 'voxb_review_count_only':

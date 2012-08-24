@@ -10,8 +10,7 @@ class VoxbLogin {
   /**
    * Empty contructor
    */
-  public function __construct() {
-  }
+  public function __construct() { }
 
   /**
    * User authentification in VoxB.

@@ -14,7 +14,7 @@ class VoxbRateTest extends VoxbTest {
     parent::createUser(5);
   }
 
-  public function  tearDown() {
+  public function tearDown() {
     parent::tearDown();
   }
 

@@ -18,7 +18,8 @@ function drupal_get_path($a, $b) {
 
 function variable_get($param) {
   switch ($param) {
-    case 'voxb_service_url': return 'https://voxb.addi.dk/1.0/';
+    case 'voxb_service_url':
+      return 'https://voxb.addi.dk/1.0/';
       break;
   }
 }

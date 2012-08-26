@@ -36,7 +36,8 @@ class VoxbBase {
 
     try {
       VoxbBase::$soapClient = new NanoSOAPClient(variable_get('voxb_service_url', ''), $options);
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       VoxbBase::$soapClient = NULL;
     }
   }
@@ -72,7 +73,8 @@ class VoxbBase {
       $replace_to = array('', '');
       $response = str_replace($replace_what, $replace_to, $response);
       $response = simplexml_load_string($response);
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       return FALSE;
     }
 

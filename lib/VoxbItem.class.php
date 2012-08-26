@@ -109,8 +109,8 @@ class VoxbItem extends VoxbBase {
     $this->reviews->fetch($o->userItems);
 
     // Fetch Rating
-    $this->rating = (int)$o->totalRatings->averageRating;
-    $this->ratingCount = (int)$o->totalRatings->totalNumberOfRaters;
+    $this->rating = (int) $o->totalRatings->averageRating;
+    $this->ratingCount = (int) $o->totalRatings->totalNumberOfRaters;
   }
 
   /**

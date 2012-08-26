@@ -6,7 +6,7 @@
  * This object is storing reviews attributes.
  */
 
-class VoxbReviewRecord extends VoxbBase{
+class VoxbReviewRecord extends VoxbBase {
 
   private $title;
   private $text;
@@ -23,11 +23,11 @@ class VoxbReviewRecord extends VoxbBase{
   public function __construct($voxbObj = NULL) {
     parent::getInstance();
     if ($voxbObj) {
-      $this->title = (string)$voxbObj->review->reviewTitle;
-      $this->text = (string)$voxbObj->review->reviewData;
+      $this->title = (string) $voxbObj->review->reviewTitle;
+      $this->text = (string) $voxbObj->review->reviewData;
       $this->created = date('d.m.Y H:i:s', strtotime($voxbObj->timestamp));
-      $this->authorVoxbId = (int)$voxbObj->userId;
-      $this->authorName = (string)$voxbObj->userAlias->aliasName;
+      $this->authorVoxbId = (int) $voxbObj->userId;
+      $this->authorName = (string) $voxbObj->userAlias->aliasName;
       $this->voxbId = intval($voxbObj->voxbIdentifier);
     }
   }

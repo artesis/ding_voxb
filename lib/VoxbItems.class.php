@@ -46,9 +46,9 @@ class VoxbItems extends VoxbBase {
 
     if ($o->Body->fetchDataResponse->totalItemData) {
       foreach ($o->Body->fetchDataResponse->totalItemData as $k => $v) {
-        $this->items[(string)$v->fetchData->objectIdentifierValue] = new VoxbItem();
-        $this->items[(string)$v->fetchData->objectIdentifierValue]->addReviewHandler('review', new VoxbReviews());
-        $this->items[(string)$v->fetchData->objectIdentifierValue]->fetchData($v);
+        $this->items[(string) $v->fetchData->objectIdentifierValue] = new VoxbItem();
+        $this->items[(string) $v->fetchData->objectIdentifierValue]->addReviewHandler('review', new VoxbReviews());
+        $this->items[(string) $v->fetchData->objectIdentifierValue]->fetchData($v);
       }
     }
 

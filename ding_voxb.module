@@ -240,7 +240,7 @@ function ding_voxb_preprocess_voxb_rating(&$variables) {
 
   // Rating section
   $ratings = '';
-  $rating = (int)$voxb_item->getRating() / 20;
+  $rating = (int) $voxb_item->getRating() / 20;
 
   $ratings .= '<div class="add-rating-container">';
   $ratings .= '<div' . ($profile && $profile->isAbleToRate($oid) ? ' class="user-rate"' : '') . '>';
@@ -325,7 +325,7 @@ function ding_voxb_preprocess_voxb_review(&$variables) {
     else {
       $pagination .= '">';
     }
-    
+
     if ($i > 1 && $i < $pages + 2) {
       $pagination .= l(($i - 1), 'voxb/ajax/reviews/' . $oid . '/page/' . ($i - 1) . '', array('attributes' => array('class' => array('use-ajax'))));
     }
@@ -580,8 +580,8 @@ function ding_voxb_add_tag_callback($form, &$form_state) {
  *   Item rating
  */
 function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
-   // We check if it's an ajax call
-   // this can be used if we will ipmlement NO-JS functionality in FE.
+  // We check if it's an ajax call
+  // this can be used if we will ipmlement NO-JS functionality in FE.
   if ($type == 'ajax') {
     $commands = array();
     $rating = intval($rating);
@@ -666,7 +666,7 @@ function ding_voxb_details() {
       $item = $items->getItem($request[$i]);
 
       if ($item) {
-        $response['items'][(string)$request[$i]] = array(
+        $response['items'][(string) $request[$i]] = array(
           'rating' => $item->getRating(),
           'rating_count' => $item->getRatingCount(),
           'reviews' => $item->getReviews('review')->getCount(),
@@ -769,7 +769,7 @@ function ding_voxb_field_load($entity_type, $entities, $field, $instances, $lang
 function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   $element = array();
 
-  
+
   drupal_add_css(VOXB_PATH . '/css/voxb.css');
 
   if ($display['type'] == 'voxb_rating_default' || $display['type'] == 'voxb_tags_default' || $display['type'] == 'voxb_review_default') {
@@ -816,7 +816,7 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
             'object_local_id' => $entity->localId))
           );
         break;
-      
+
       case 'voxb_tags_default':
         if (($user->uid == 0 && $voxb_item->getTags()->getCount() > 0) || $user->uid != 0) {
           $element[$delta] = array(

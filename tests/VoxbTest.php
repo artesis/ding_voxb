@@ -126,7 +126,7 @@ class VoxbTest extends PHPUnit_Framework_TestCase {
       $obj->call('deleteUser', array('userId' => $v));
     }
 
-    $response = $obj->call('fetchData',  array(
+    $response = $obj->call('fetchData',   array(
       'fetchData' => array(
         'objectIdentifierValue' => '111111111',
         'objectIdentifierType' => 'FAUST'

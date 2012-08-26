@@ -6,7 +6,7 @@
  * This class handles reviews colection.
  */
 
-class VoxbReviews extends VoxbBase implements Iterator{
+class VoxbReviews extends VoxbBase implements Iterator {
 
   private $items = array();
   private $position;

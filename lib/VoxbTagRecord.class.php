@@ -33,13 +33,13 @@ class VoxbTagRecord extends VoxbBase {
     return $this->count;
   }
 
- /**
-  * Create a tag.
-  *
-  * @param string $faustNum
-  * @param string $tag
-  * @param integer $userId
-  */
+  /**
+   * Create a tag.
+   *
+   * @param string $faustNum
+   * @param string $tag
+   * @param integer $userId
+   */
   public function create($faustNum, $tag, $profile) {
     // check if user has already added tags to this item
     if ($profile && $data = $profile->getVoxbUserData($faustNum)) {
@@ -76,13 +76,13 @@ class VoxbTagRecord extends VoxbBase {
     );
   }
 
-/**
- * This method updates tags list
- *
- * @param $voxbId
- * @param $tags - list of existing tags (only added by one user)
- * @param $tag - new tag
- */
+  /**
+   * This method updates tags list
+   *
+   * @param $voxbId
+   * @param $tags - list of existing tags (only added by one user)
+   * @param $tag - new tag
+   */
   public function updateTags($voxbId, $tags, $tag) {
     $tags[] = $tag;
 

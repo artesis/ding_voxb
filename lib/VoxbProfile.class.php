@@ -38,9 +38,9 @@ class VoxbProfile extends VoxbBase {
    * @param object $xml
    */
   private function fetch($xml) {
-    $this->userId = (int)($xml->userId);
-    $this->aliasName = (string)$xml->userAlias->aliasName;
-    $this->profileLInk = (string)$xml->userAlias->profileLink;
+    $this->userId = (int) ($xml->userId);
+    $this->aliasName = (string) $xml->userAlias->aliasName;
+    $this->profileLInk = (string) $xml->userAlias->profileLink;
   }
 
   /**
@@ -109,7 +109,7 @@ class VoxbProfile extends VoxbBase {
     ));
 
     if (isset($response->Body->createUserResponse->userId)) {
-      $this->userId = (int)$response->Body->createUserResponse->userId;
+      $this->userId = (int) $response->Body->createUserResponse->userId;
       return TRUE;
     }
 
@@ -169,18 +169,20 @@ class VoxbProfile extends VoxbBase {
   private function getActedItems() {
     $response = $this->call('fetchMyData', array('userId' => $this->userId));
 
-    if (!isset($response->Body->fetchMyDataResponse->result)) return array();
+    if (!isset($response->Body->fetchMyDataResponse->result)) {
+      return array();
+    }
 
     foreach ($response->Body->fetchMyDataResponse->result as $v) {
       if ($v->object && $v->object->objectIdentifierType == 'FAUST') {
-        $this->actedItems[(string)$v->object->objectIdentifierValue] = array(
-          'voxbIdentifier' => (string)$v->voxbIdentifier,
+        $this->actedItems[(string) $v->object->objectIdentifierValue] = array(
+          'voxbIdentifier' => (string) $v->voxbIdentifier,
           'tags' => @$v->item->tags ? $this->prepareArray($v->item->tags->tag) : array(),
           'review' => array(
-            'title' => (string)@$v->item->review->reviewTitle,
-            'data' => (string)@$v->item->review->reviewData
+            'title' => (string) @$v->item->review->reviewTitle,
+            'data' => (string) @$v->item->review->reviewData
           ),
-          'rating' => (int)@$v->item->rating
+          'rating' => (int) @$v->item->rating
         );
       }
     }
@@ -202,7 +204,7 @@ class VoxbProfile extends VoxbBase {
     $r = array();
 
     foreach ($arr as $k => $v) {
-      $r[] = (string)$v;
+      $r[] = (string) $v;
     }
 
     return $r;
@@ -230,7 +232,9 @@ class VoxbProfile extends VoxbBase {
    * to be used after successfull authntication to store VoxbIdentifiers in the SESSION
    */
   public function fetchMyData() {
-    if (!$this->userId) return FALSE;
+    if (!$this->userId) {
+      return FALSE;
+    }
     $this->getActedItems();
     return TRUE;
   }

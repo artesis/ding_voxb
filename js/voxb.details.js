@@ -3,17 +3,22 @@
   Drupal.extractTingId = function(e) {
     classname = $(e).attr('class');
     id = classname.match(/ting-cover-object-id-(\S+)/);
+    if (!id) {
+      id = classname.match(/ting-object-id-(\S+)/);
+    }
+
     return id[1];
   };
 
   // Insert voxb into the page
   Drupal.insertVoxbDetails = function(e) {
     if (e.status == true && e.items) {
+      Drupal.voxb_item.details = e.items;
       $.each(e.items, function(k, v) {
-        var ele = $('.voxb-details.ting-object-id-' + k);
-        ele.find('.voxb-rating .rating:lt(' + Math.round(v.rating / 20) + ')').removeClass('star-off').addClass('star-on');
+        var ele = $('.voxb-details .ting-object-id-' + k);
+        ele.find('.rating:lt(' + Math.round(v.rating / 20) + ')').removeClass('star-off').addClass('star-on');
         if (v.rating_count > 0) {
-          ele.find('.voxb-rating .rating-count span').html('(' + v.rating_count + ')');
+          ele.find('.rating-count span').html('(' + v.rating_count + ')');
         }
         
         e = ele.find('.voxb-reviews .count').html('(' + v.reviews + ')');

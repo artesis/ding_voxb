@@ -15,20 +15,22 @@
     if (e.status == true && e.items) {
       Drupal.voxb_item.details = e.items;
       $.each(e.items, function(k, v) {
-        var ele = $('.voxb-details .ting-object-id-' + k);
+        var ele = $('.voxb-details.ting-object-id-' + k);
         ele.find('.rating:lt(' + Math.round(v.rating / 20) + ')').removeClass('star-off').addClass('star-on');
         if (v.rating_count > 0) {
           ele.find('.rating-count span').html('(' + v.rating_count + ')');
         }
-        
-        e = ele.find('.voxb-reviews .count').html('(' + v.reviews + ')');
+
+        var e = ele.find('.voxb-reviews');
+        e.find('.count').html('(' + v.reviews + ')');
+        e.hide();
         if (parseInt(v.reviews) > 0) {
-          e.parent().parent().parent().show();
+          e.show();
         }
       });
     }
   };
-  
+
   Drupal.behaviors.voxb_details = {
     attach : function(context) {
       var item_ids = [];
@@ -53,5 +55,4 @@
       }
     }
   }
-
 })(jQuery);

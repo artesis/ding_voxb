@@ -7,7 +7,7 @@
 (function ($) {
   Drupal.ajax.prototype.commands['voxb_rating_callback'] = function (ajax, response, status) {
    // update rating count
-    var parent = $('.voxb-rating.ting-object-id-' + response.item_id);
+    var parent = $('.voxb-details.ting-object-id-' + response.item_id + ' .voxb-rating');
     parent.find('.rating-count span').html('(' + response.rating_count + ')');
     // Update the rating in the previousle fetched details.
     Drupal.voxb_item.details[response.item_id].rating = response.rating * 20;
@@ -50,7 +50,7 @@
     init: function() {
       
       $('.voxb-rating.rate-enabled').mouseenter(function() {
-        var item_id = Drupal.extractTingId($(this));
+        var item_id = Drupal.extractTingId($(this).parent());
         // Divide by 20 since, rating is up to 100 and we have 5 stars.
         Drupal.voxb_item.initial_rating = (Drupal.voxb_item.details[item_id].rating) / 20;
       });
@@ -66,13 +66,13 @@
       // Restore the stars after mouseout
       $('.voxb-rating.rate-enabled').mouseleave(function() {
         if (!Drupal.voxb_item.rating_set) {
-          var parent = $(this);
+          var ele = $(this);
           if (Drupal.voxb_item.initial_rating == 0) {
-            parent.find('.rating').removeClass('star-on').removeClass('star-hover').addClass('star-off');
+            ele.find('.rating').removeClass('star-on').removeClass('star-hover').addClass('star-off');
           }
           else {
-            parent.find('.rating:lt(' + Drupal.voxb_item.initial_rating + ')').removeClass('star-off').removeClass('star-hover').addClass('star-on');
-            parent.find('.rating:gt(' + (Drupal.voxb_item.initial_rating - 1) + ')').removeClass('star-on').removeClass('star-hover').addClass('star-off');
+            ele.find('.rating:lt(' + Drupal.voxb_item.initial_rating + ')').removeClass('star-off').removeClass('star-hover').addClass('star-on');
+            ele.find('.rating:gt(' + (Drupal.voxb_item.initial_rating - 1) + ')').removeClass('star-on').removeClass('star-hover').addClass('star-off');
           }
         }
       });

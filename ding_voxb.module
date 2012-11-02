@@ -1,21 +1,13 @@
 <?php
 /**
  * @file
- *
+ * Main module file.
  */
 
 // Define reviews per page
 define('VOXB_DEFAULT_REVIEWS_PER_PAGE', 3);
 // Define path to Voxb module
 define('VOXB_PATH', drupal_get_path('module', 'ding_voxb'));
-
-/**
- * Implements hook_init().
- */
-function ding_voxb_init() {
-  drupal_add_library('system', 'drupal.ajax');
-  drupal_add_library('system', 'jquery.form');
-}
 
 /**
  * Implements hook_menu().
@@ -51,11 +43,25 @@ function ding_voxb_menu() {
   );
 
   $items['voxb/ajax/details'] = array(
-    'title' => 'VoxB ting objects details handler',
-    'description' => '',
     'type' => MENU_CALLBACK,
     'access arguments' => array('search content'),
     'page callback' => 'ding_voxb_details',
+  );
+
+  $items['voxb/ajax/reviews/%'] = array(
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('search content'),
+    'page arguments' => array(1, 3),
+    'page callback' => 'ding_voxb_ajax_reviews',
+    'delivery callback' => 'ajax_deliver',
+  );
+
+  $items['voxb/ajax/tags/%'] = array(
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('search content'),
+    'page arguments' => array(1, 3),
+    'page callback' => 'ding_voxb_ajax_tags',
+    'delivery callback' => 'ajax_deliver',
   );
 
   return $items;
@@ -218,8 +224,8 @@ function ding_voxb_theme() {
 
   $hooks['voxb_review_count'] = array(
     'variables' => array(
-      'voxb_item' => NULL,
-      'object_id' => NULL),
+      'object' => NULL,
+     ),
     'template' => 'templates/ding_voxb-review-count'
   );
 
@@ -238,11 +244,9 @@ function ding_voxb_preprocess_voxb_rating(&$variables) {
   $profile = unserialize($_SESSION['voxb']['profile']);
   $rating_block_class = array();
   $star_class = array();
-
-  $rating_block_class[] = 'ting-object-id-' . $variables['object']->localId;
   $star_class[] = 'star-off';
   // In case the user has the ability to rate, assign respective classes.
-  if (!$variables['display_only'] && is_object($profile) && $profile->isAbleToRate($oid)) {
+  if (!$variables['display_only'] && is_object($profile)) {
     $rating_block_class[] = 'rate-enabled';
     $star_class[] = 'use-ajax';
   }
@@ -674,6 +678,67 @@ function ding_voxb_details() {
 }
 
 /**
+ * Fetches and creates markup for reviews form
+ * and reviews themselves using ajax.
+ * @see ding_voxb_menu().
+ *
+ * @param $type
+ *   Request type. Generally it should be always ajax.
+ * @param $item_id
+ *   Ting object local_id value.
+ * @return
+ *   Array of ajax commands.
+ */
+function ding_voxb_ajax_reviews($type = 'ajax', $item_id) {
+  if ($type == 'ajax' && !empty($item_id)) {
+    $commands = array();
+    
+    $voxb_item = new VoxbItem();
+    $voxb_item->addReviewHandler('review', new VoxbReviews());
+    $voxb_item->fetchByFaust($item_id);
+    
+    $markup = theme('voxb_review', array(
+      'voxb_item' => $voxb_item,
+      'object_id' => $item_id)
+    );
+    
+    $commands[] = ajax_command_html('.voxb-reviews-placeholder', $markup);
+    
+    return array('#type' => 'ajax', '#commands' => $commands);
+  }
+}
+
+/**
+ * Fetches and creates markup for tags form
+ * and tags themselves using ajax.
+ * @see ding_voxb_menu().
+ *
+ * @param $type
+ *   Request type. Generally it should be always ajax.
+ * @param $item_id
+ *   Ting object local_id value.
+ * @return
+ *   Array of ajax commands.
+ */
+function ding_voxb_ajax_tags($type = 'ajax', $item_id) {
+  if ($type == 'ajax' && !empty($item_id)) {
+    $commands = array();
+    
+    $voxb_item = new VoxbItem();
+    $voxb_item->fetchByFaust($item_id);
+    
+    $markup = theme('voxb_tags', array(
+      'voxb_item' => $voxb_item,
+      'object_id' => $item_id)
+    );
+    
+    $commands[] = ajax_command_html('.voxb-tags-placeholder', $markup);
+    
+    return array('#type' => 'ajax', '#commands' => $commands);
+  }
+}
+
+/**
  * Implements hook_field_info().
  */
 function ding_voxb_field_info() {
@@ -769,19 +834,14 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
   drupal_add_js(VOXB_PATH . '/js/voxb.details.js', 'file');
   drupal_add_css(VOXB_PATH . '/css/voxb.css');
   drupal_add_css(VOXB_PATH . '/css/voxb-pager.css');
-
-  // Fetch data from VoxB service
-  $voxb_item = new VoxbItem();
-  $voxb_item->addReviewHandler('review', new VoxbReviews());
-  $voxb_item->fetchByFaust($entity->localId);
-  $profile = unserialize($_SESSION['voxb']['profile']);
-  global $user;
+  drupal_add_library('system', 'drupal.ajax');
+  drupal_add_library('system', 'jquery.form');
 
   foreach ($items as $delta => $item) {
     switch ($display['type']) {
       case 'voxb_rating_default':
         $element[$delta] = array(
-          '#prefix' => '<div>',
+          '#prefix' => '<div class="ding-voxb-rating-placeholder">',
           '#suffix' => '</div>',
           '#markup' => theme('voxb_rating', array(
             'object' => $entity,
@@ -791,7 +851,7 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
 
       case 'voxb_rating_display_only':
         $element[$delta] = array(
-          '#prefix' => '<div>',
+          '#prefix' => '<div class="ding-voxb-rating-display-only-placeholder">',
           '#suffix' => '</div>',
           '#markup' => theme('voxb_rating', array(
             'object' => $entity,
@@ -800,36 +860,30 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
         break;
 
       case 'voxb_tags_default':
-        if (($user->uid == 0 && $voxb_item->getTags()->getCount() > 0) || $user->uid != 0) {
-          $element[$delta] = array(
-            '#prefix' => '<div>',
-            '#suffix' => '</div>',
-            '#markup' => theme('voxb_tags', array(
-              'voxb_item' => $voxb_item,
-              'object_id' => $entity->localId)),
-          );
-        }
+        drupal_add_js(VOXB_PATH . '/js/voxb.ajax.tags.js', 'file');
+        $element[$delta] = array(
+          '#prefix' => '<div class="voxb-tags-placeholder" id="voxb-tags-placeholder">',
+          '#suffix' => '</div>',
+          '#markup' => '',
+        );
         break;
 
       case 'voxb_review_default':
-        if (($user->uid == 0 && $voxb_item->getReviews('review')->getCount() > 0) || $user->uid != 0) {
-          $element[$delta] = array(
-            '#prefix' => '<div>',
-            '#suffix' => '</div>',
-            '#markup' => theme('voxb_review', array(
-              'voxb_item' => $voxb_item,
-              'object_id' => $entity->localId)),
-          );
-        }
+        drupal_add_js(VOXB_PATH . '/js/voxb.ajax.reviews.js', 'file');
+        $element[$delta] = array(
+          '#prefix' => '<div class="voxb-reviews-placeholder" id="voxb-reviews-placeholder">',
+          '#suffix' => '</div>',
+          '#markup' => '',
+        );
         break;
 
       case 'voxb_review_count_only':
         $element[$delta] = array(
-          '#prefix' => '<div>',
+          '#prefix' => '<div class="ding-voxb-review-count-only-placeholder">',
           '#suffix' => '</div>',
           '#markup' => theme('voxb_review_count', array(
-            'object_id' => $entity->id,
-            'object_local_id' => $entity->localId)),
+            'object' => $entity,
+          )),
         );
         break;
     }

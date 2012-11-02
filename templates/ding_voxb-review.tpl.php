@@ -1,13 +1,12 @@
 <?php
 /**
  * @file
- *
+ * Template file for reviews block.
  */
 ?>
 <div class="voxb">
   <div class="reviews-container">
     <a name="reviews"></a>
-    <h2><?php print t('User reviews'); ?></h2>
     <div class="user-reviews">
       <?php print($reviews); ?>
     </div>

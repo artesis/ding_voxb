@@ -4,7 +4,7 @@
  *
  */
 ?>
-<div class="voxb-details">
+<div class="voxb-details ting-object-id-<?php echo $object->localId; ?>">
   <div class="voxb-rating <?php echo $rating_block_class; ?>">
     <?php for ($i = 1; $i <= 5; $i++): ?>
     <div href="/voxb/ajax/rating/<?php echo $object->localId; ?>/<?php echo $i; ?>" class="rating left <?php echo $star_class; ?>"></div>

@@ -7,17 +7,14 @@
 (function ($) {
   Drupal.ajax.prototype.commands['voxb_rating_callback'] = function (ajax, response, status) {
    // update rating count
-    $('.rating-count-span').each(function() {
-      $(this).html('(' + response.rating_count + ')');
-    });
+    var parent = $('.voxb-details.ting-object-id-' + response.item_id + ' .voxb-rating');
+    parent.find('.rating-count span').html('(' + response.rating_count + ')');
+    // Update the rating in the previousle fetched details.
+    Drupal.voxb_item.details[response.item_id].rating = response.rating * 20;
+    parent.find('div.rating:lt(' + response.rating + ')').removeClass('star-off').removeClass('star-hover').addClass('star-on');
+    parent.find('div.rating:gt(' + (response.rating - 1) + ')').removeClass('star-on').removeClass('star-hover').addClass('star-off');
     
-    // update rating
-    $('div.user-rate').each(function() {
-      $(this).find('div.rating:lt(' + response.rating + ')').removeClass('star-off').removeClass('star-hover').addClass('star-on');
-      $(this).find('div.rating:gt(' + (response.rating - 1) + ')').removeClass('star-on').removeClass('star-hover').addClass('star-off');
-    });
-
-    $('.add-rating-container').cyclicFade({
+    parent.cyclicFade({
       repeat: 3,
       params: [
         {fadeout:200, stayout:100, opout:0, fadein:200, stayin:100, opin:1},
@@ -47,28 +44,41 @@
   Drupal.voxb_item = {
     initial_rating : 0,
     rating_set : false,
+    details : null,
 
     // Init function, binds method to user input and sets variables
     init: function() {
-      Drupal.voxb_item.initial_rating = $('div.user-rate:first div.star-on').length;
+      
+      $('.voxb-rating.rate-enabled').mouseenter(function() {
+        var item_id = Drupal.extractTingId($(this).parent());
+        // Divide by 20 since, rating is up to 100 and we have 5 stars.
+        Drupal.voxb_item.initial_rating = (Drupal.voxb_item.details[item_id].rating) / 20;
+      });
       // Bind ratings on mouse over and out
-      $('.voxb div.user-rate div.rating').mouseover(function() {
+      $('.voxb-rating.rate-enabled .rating').mouseover(function() {
         if (!Drupal.voxb_item.rating_set) {
-          $('.voxb div.user-rate div.rating:lt(' + ($(this).index() + 1) + ')').removeClass('star-off').removeClass('star-on').addClass('star-hover');
-          $('.voxb div.user-rate div.rating:gt(' + $(this).index() + ')').removeClass('star-hover').removeClass('star-on').addClass('star-off');
+          var parent = $(this).parent();
+          parent.find('.rating:lt(' + ($(this).index() + 1) + ')').removeClass('star-off').removeClass('star-on').addClass('star-hover');
+          parent.find('.rating:gt(' + $(this).index() + ')').removeClass('star-hover').removeClass('star-on').addClass('star-off');
         }
       });
       
       // Restore the stars after mouseout
-      $('.voxb div.user-rate').mouseleave(function() {
+      $('.voxb-rating.rate-enabled').mouseleave(function() {
         if (!Drupal.voxb_item.rating_set) {
-          $('.voxb div.user-rate div.rating:lt(' + Drupal.voxb_item.initial_rating + ')').removeClass('star-off').removeClass('star-hover').addClass('star-on');
-          $('.voxb div.user-rate div.rating:gt(' + (Drupal.voxb_item.initial_rating - 1) + ')').removeClass('star-on').removeClass('star-hover').addClass('star-off');
+          var ele = $(this);
+          if (Drupal.voxb_item.initial_rating == 0) {
+            ele.find('.rating').removeClass('star-on').removeClass('star-hover').addClass('star-off');
+          }
+          else {
+            ele.find('.rating:lt(' + Drupal.voxb_item.initial_rating + ')').removeClass('star-off').removeClass('star-hover').addClass('star-on');
+            ele.find('.rating:gt(' + (Drupal.voxb_item.initial_rating - 1) + ')').removeClass('star-on').removeClass('star-hover').addClass('star-off');
+          }
         }
       });
 
       // Show the rating ajax animation
-      $('.voxb div.user-rate div.rating').click(function() {
+      $('.voxb-rating.rate-enabled .rating').click(function() {
         if (!Drupal.voxb_item.rating_set) {
           $('.voxb div.ratings-container .ajax-anim').show();
           Drupal.voxb_item.rating_set = true;

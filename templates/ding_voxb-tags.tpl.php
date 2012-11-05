@@ -1,12 +1,11 @@
 <?php
 /**
  * @file
- *
+ * Template file for tags block.
  */
 ?>
 <div class="voxb">
   <div class="tags-container">
-    <h2><?php print t('Tags'); ?></h2>
     <div class="record-tag-highlight">
       <?php print($tags); ?>
     </div>

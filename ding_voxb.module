@@ -241,7 +241,7 @@ function ding_voxb_theme() {
  * Implements MODULE_preprocess_THEME().
  */
 function ding_voxb_preprocess_voxb_rating(&$variables) {
-  $profile = unserialize($_SESSION['voxb']['profile']);
+  $profile = isset($_SESSION['voxb']['profile']) ? unserialize($_SESSION['voxb']['profile']) : NULL;
   $rating_block_class = array();
   $star_class = array();
   $star_class[] = 'star-off';
@@ -261,7 +261,7 @@ function ding_voxb_preprocess_voxb_rating(&$variables) {
 function ding_voxb_preprocess_voxb_tags(&$variables) {
   $voxb_item = $variables['voxb_item'];
   $oid = $variables['object_id'];
-  $profile = unserialize($_SESSION['voxb']['profile']);
+  $profile = isset($_SESSION['voxb']['profile']) ? unserialize($_SESSION['voxb']['profile']) : NULL;
 
   // Tags section
   $tags = '';
@@ -271,7 +271,7 @@ function ding_voxb_preprocess_voxb_tags(&$variables) {
 
   // Tags form section
   $tags_form = '';
-  if (($profile && $profile->isAbleToTag($oid))) {
+  if ((is_object($profile) && $profile->isAbleToTag($oid))) {
     $tags_form = drupal_render(drupal_get_form('ding_voxb_tag_form', $oid));
   }
 
@@ -285,7 +285,7 @@ function ding_voxb_preprocess_voxb_tags(&$variables) {
 function ding_voxb_preprocess_voxb_review(&$variables) {
   $voxb_item = $variables['voxb_item'];
   $oid = $variables['object_id'];
-  $profile = unserialize($_SESSION['voxb']['profile']);
+  $profile = isset($_SESSION['voxb']['profile']) ? unserialize($_SESSION['voxb']['profile']) : NULL;
 
   // Reviews section
   $reviews = '';
@@ -342,7 +342,7 @@ function ding_voxb_preprocess_voxb_review(&$variables) {
   // Add review form section
   $review_form = '';
   $params = array();
-  if ($profile) {
+  if (is_object($profile)) {
     // Form params, specific if user reviewed already or not
     $data = $profile->getVoxbUserData($oid);
 

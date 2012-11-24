@@ -4,10 +4,12 @@
  *
  */
 ?>
-<div class="voxb">
-  <div class="ratings-container">
-    <h2><?php print t('Rating'); ?></h2>
-    <?php print($ratings); ?>
+<div class="voxb-details ting-object-id-<?php echo $object->localId; ?>">
+  <div class="voxb-rating <?php echo $rating_block_class; ?>">
+    <?php for ($i = 1; $i <= 5; $i++): ?>
+    <div href="/voxb/ajax/rating/<?php echo $object->localId; ?>/<?php echo $i; ?>" class="rating left <?php echo $star_class; ?>"></div>
+    <?php ;endfor ?>
+    <p class="rating-count left"><span></span></p>
   </div>
+  <div class="clear"></div>
 </div>
-<div class="clearfix">&nbsp;</div>

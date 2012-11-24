@@ -692,18 +692,18 @@ function ding_voxb_details() {
 function ding_voxb_ajax_reviews($type = 'ajax', $item_id) {
   if ($type == 'ajax' && !empty($item_id)) {
     $commands = array();
-    
+
     $voxb_item = new VoxbItem();
     $voxb_item->addReviewHandler('review', new VoxbReviews());
     $voxb_item->fetchByFaust($item_id);
-    
+
     $markup = theme('voxb_review', array(
       'voxb_item' => $voxb_item,
       'object_id' => $item_id)
     );
-    
+
     $commands[] = ajax_command_html('.voxb-reviews-placeholder', $markup);
-    
+
     return array('#type' => 'ajax', '#commands' => $commands);
   }
 }
@@ -723,17 +723,17 @@ function ding_voxb_ajax_reviews($type = 'ajax', $item_id) {
 function ding_voxb_ajax_tags($type = 'ajax', $item_id) {
   if ($type == 'ajax' && !empty($item_id)) {
     $commands = array();
-    
+
     $voxb_item = new VoxbItem();
     $voxb_item->fetchByFaust($item_id);
-    
+
     $markup = theme('voxb_tags', array(
       'voxb_item' => $voxb_item,
       'object_id' => $item_id)
     );
-    
+
     $commands[] = ajax_command_html('.voxb-tags-placeholder', $markup);
-    
+
     return array('#type' => 'ajax', '#commands' => $commands);
   }
 }

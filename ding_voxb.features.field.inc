@@ -10,7 +10,7 @@
 function ding_voxb_field_default_fields() {
   $fields = array();
 
-  // Exported field: 'ting_object-ting_object-voxb_rating'
+  // Exported field: 'ting_object-ting_object-voxb_rating'.
   $fields['ting_object-ting_object-voxb_rating'] = array(
     'field_config' => array(
       'active' => '1',
@@ -20,6 +20,7 @@ function ding_voxb_field_default_fields() {
       'field_name' => 'voxb_rating',
       'foreign keys' => array(),
       'indexes' => array(),
+      'locked' => '0',
       'module' => 'ding_voxb',
       'settings' => array(),
       'storage' => array(
@@ -81,7 +82,7 @@ function ding_voxb_field_default_fields() {
             'link_type' => 'none',
           ),
           'type' => 'voxb_rating_default',
-          'weight' => '7',
+          'weight' => '4',
         ),
         'user_list' => array(
           'label' => 'above',
@@ -98,7 +99,7 @@ function ding_voxb_field_default_fields() {
         'user_register_form' => FALSE,
       ),
       'widget' => array(
-        'module' => 'blackhole',
+        'module' => 'virtual_field',
         'settings' => array(),
         'type' => 'hidden',
         'weight' => '1',
@@ -106,7 +107,7 @@ function ding_voxb_field_default_fields() {
     ),
   );
 
-  // Exported field: 'ting_object-ting_object-voxb_review'
+  // Exported field: 'ting_object-ting_object-voxb_review'.
   $fields['ting_object-ting_object-voxb_review'] = array(
     'field_config' => array(
       'active' => '1',
@@ -116,6 +117,7 @@ function ding_voxb_field_default_fields() {
       'field_name' => 'voxb_review',
       'foreign keys' => array(),
       'indexes' => array(),
+      'locked' => '0',
       'module' => 'ding_voxb',
       'settings' => array(),
       'storage' => array(
@@ -185,7 +187,7 @@ function ding_voxb_field_default_fields() {
         'user_register_form' => FALSE,
       ),
       'widget' => array(
-        'module' => 'blackhole',
+        'module' => 'virtual_field',
         'settings' => array(),
         'type' => 'hidden',
         'weight' => '1',
@@ -193,7 +195,7 @@ function ding_voxb_field_default_fields() {
     ),
   );
 
-  // Exported field: 'ting_object-ting_object-voxb_tags'
+  // Exported field: 'ting_object-ting_object-voxb_tags'.
   $fields['ting_object-ting_object-voxb_tags'] = array(
     'field_config' => array(
       'active' => '1',
@@ -203,6 +205,7 @@ function ding_voxb_field_default_fields() {
       'field_name' => 'voxb_tags',
       'foreign keys' => array(),
       'indexes' => array(),
+      'locked' => '0',
       'module' => 'ding_voxb',
       'settings' => array(),
       'storage' => array(
@@ -263,7 +266,7 @@ function ding_voxb_field_default_fields() {
         'user_register_form' => FALSE,
       ),
       'widget' => array(
-        'module' => 'blackhole',
+        'module' => 'virtual_field',
         'settings' => array(),
         'type' => 'hidden',
         'weight' => '1',

@@ -1,17 +1,27 @@
-name = "VoxB module"
-description = "Implementation of VoxB to Artesis."
-package = "Ding!"
-version = "7.x-1.9"
-core = "7.x"
-
-configure = admin/config/ding/voxb
+name = VoxB module
+description = Implementation of VoxB to Artesis.
+core = 7.x
+package = Ding!
+php = 5.2.4
+version = 7.x-1.9
+project = ding_voxb
+dependencies[] = blackhole
+dependencies[] = ding_popup
+dependencies[] = ding_user
+dependencies[] = features
+dependencies[] = field_group
 dependencies[] = ting
 dependencies[] = ting_search
-dependencies[] = ding_user
-dependencies[] = ding_popup
-dependencies[] = "blackhole"
-dependencies[] = "features"
-
+dependencies[] = virtual_field
+configure = admin/config/ding/voxb
+explanation = Field type(s) in use - see <a href="/en/admin/reports/fields">Field list</a>
+features[features_api][] = api:1
+features[field][] = ting_object-ting_object-voxb_rating
+features[field][] = ting_object-ting_object-voxb_review
+features[field][] = ting_object-ting_object-voxb_tags
+features[field_group][] = group_collection_list|ting_object|ting_object|collection_list
+features[field_group][] = group_collection_object|ting_object|ting_object|collection_primary
+features[field_group][] = group_content|ting_object|ting_object|teaser
 files[] = lib/VoxbBase.class.php
 files[] = lib/VoxbProfile.class.php
 files[] = lib/VoxbReviewsController.class.php
@@ -23,7 +33,3 @@ files[] = lib/VoxbTagRecord.class.php
 files[] = lib/VoxbLogin.class.php
 files[] = lib/VoxbReviews.class.php
 files[] = lib/VoxbTags.class.php
-
-features[field][] = "ting_object-ting_object-voxb_rating"
-features[field][] = "ting_object-ting_object-voxb_tags"
-features[field][] = "ting_object-ting_object-voxb_review"

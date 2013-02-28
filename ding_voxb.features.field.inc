@@ -46,7 +46,7 @@ function ding_voxb_field_default_fields() {
             'link_type' => 'none',
           ),
           'type' => 'voxb_rating_default',
-          'weight' => '6',
+          'weight' => '10',
         ),
         'collection_primary' => array(
           'label' => 'hidden',
@@ -55,7 +55,7 @@ function ding_voxb_field_default_fields() {
             'link_type' => 'none',
           ),
           'type' => 'voxb_rating_default',
-          'weight' => '6',
+          'weight' => '3',
         ),
         'default' => array(
           'label' => 'hidden',
@@ -81,7 +81,7 @@ function ding_voxb_field_default_fields() {
           'settings' => array(
             'link_type' => 'none',
           ),
-          'type' => 'voxb_rating_default',
+          'type' => 'voxb_rating_display_only',
           'weight' => '4',
         ),
         'user_list' => array(

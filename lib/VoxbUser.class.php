@@ -33,6 +33,7 @@ class VoxbUser extends VoxbBase {
     );
 
     if (!$response || isset($response->Body->fetchUserResponse->error)) {
+      ding_voxb_log(WATCHDOG_ERROR, $response->Body->fetchUserResponse->error);
       return FALSE;
     }
 

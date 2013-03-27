@@ -44,6 +44,7 @@ class VoxbBase {
       VoxbBase::$soapClient = new NanoSOAPClient(variable_get('voxb_service_url', ''), $options);
     }
     catch (Exception $e) {
+      ding_voxb_log(WATCHDOG_DEBUG, "NanoSOAPClient caused error: @error", array('@error'=>$e->getMessage()));
       VoxbBase::$soapClient = NULL;
     }
   }
@@ -78,6 +79,9 @@ class VoxbBase {
       $replace_what = array('SOAP-ENV:', 'voxb:');
       $replace_to = array('', '');
       $response = str_replace($replace_what, $replace_to, $response);
+
+      ding_voxb_log(WATCHDOG_DEBUG, "Request: @method with data <pre>@params</pre><br />\r\nResponse: <pre>@response</pre>", array('@method'=>$method, '@params'=>print_r($data, TRUE), '@response'=>$response));
+
       $response = simplexml_load_string($response);
     }
     catch (Exception $e) {

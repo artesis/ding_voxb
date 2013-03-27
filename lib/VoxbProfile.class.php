@@ -112,7 +112,7 @@ class VoxbProfile extends VoxbBase {
       $this->userId = (int) $response->Body->createUserResponse->userId;
       return TRUE;
     }
-
+    ding_voxb_log(WATCHDOG_WARNING, "VoxB failed to create user for @alias", array('@alias'=>$this->aliasName));
     return FALSE;
   }
 

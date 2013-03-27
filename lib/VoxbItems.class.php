@@ -53,6 +53,7 @@ class VoxbItems extends VoxbBase {
     }
 
     if ($o->Body->Fault->faultstring) {
+      ding_voxb_log(WATCHDOG_ERROR, $o->Body->Fault->faultstring);
       return FALSE;
     }
 

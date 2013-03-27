@@ -96,6 +96,7 @@ class VoxbTagRecord extends VoxbBase {
     ));
 
     if (!$response || $response->Body->Fault->faultstring) {
+      ding_voxb_log(WATCHDOG_ERROR, $response->Body->Fault->faultstring);
       return FALSE;
     }
     return TRUE;

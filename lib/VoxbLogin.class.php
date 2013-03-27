@@ -19,10 +19,16 @@ class VoxbLogin {
    * and save his voxb userId to _SESSION to use it in user actions rating/reviewing etc.
    *
    * @param object $account
+   *   Global user object.
    */
   public function login($account) {
+
+    // VoxB has limit of name by 32 characters,
+    // ding providers puts in name long hash,
+    // so we shorterning it by rehashing.
+    $name = md5($account->name);
     $obj = new VoxbUser();
-    if ($obj->getUserBySSN($account->name, variable_get('voxb_identity_provider', ''), variable_get('voxb_institution_name', ''))) {
+    if ($obj->getUserBySSN($name, variable_get('voxb_identity_provider', ''), variable_get('voxb_institution_name', ''))) {
       /**
        * Each user in Voxb can have several profiles
        * but we take just the first one
@@ -47,11 +53,11 @@ class VoxbLogin {
        *
        * @todo Replace profile link with a real linkto users profiles in artesis system.
        */
-      $userId = $this->createUser($account->name, $account->name . '_1', $account->mail);
+      $userId = $this->createUser($name, $name, $account->mail);
 
       if ($userId != 0) {
         $_SESSION['voxb']['userId'] = $userId;
-        $_SESSION['voxb']['aliasName'] = $account->name;
+        $_SESSION['voxb']['aliasName'] = $name;
 
         //Fetch user actions and put serialized profile object into session
         $profile = new VoxbProfile();

@@ -908,7 +908,7 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
  * @param array $variables
  *   Variables to replace in the message.
  */
-function ding_voxb_log($severity, $message, $variables = array()) {
+function ding_voxb_log($severity, $message, array $variables = array()) {
   $logging = variable_get('voxb_logging', 0);
   // Log only if enabled.
   if ($logging) {

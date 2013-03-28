@@ -95,24 +95,35 @@ class VoxbProfile extends VoxbBase {
    * @param string $institutionName
    */
   public function createUser($identityProvider, $institutionName) {
-    $response = $this->call('createUser', array(
-      'userAlias' => array(
-        'aliasName' => $this->aliasName,
-        'profileLink' => $this->profileLink
-      ),
-      'authenticationFingerprint' => array(
-        'userIdentifierValue' => $this->cpr,
-        'userIdentifierType' => 'CPR',
-        'identityProvider' => $identityProvider,
-        'institutionName' => $institutionName
-      )
-    ));
+    try {
+      $response = $this->call('createUser', array(
+        'userAlias' => array(
+          'aliasName' => $this->aliasName,
+          'profileLink' => $this->profileLink
+        ),
+        'authenticationFingerprint' => array(
+          'userIdentifierValue' => $this->cpr,
+          'userIdentifierType' => 'CPR',
+          'identityProvider' => $identityProvider,
+          'institutionName' => $institutionName
+        )
+      ));
 
-    if (isset($response->Body->createUserResponse->userId)) {
-      $this->userId = (int) $response->Body->createUserResponse->userId;
-      return TRUE;
+      if (isset($response->Body->createUserResponse->userId)) {
+        $this->userId = (int) $response->Body->createUserResponse->userId;
+        return TRUE;
+      }
     }
-    ding_voxb_log(WATCHDOG_WARNING, "VoxB failed to create user for @alias", array('@alias'=>$this->aliasName));
+    catch (Exception $e) {
+      // Return false anyway.
+    }
+
+    ding_voxb_log(
+      WATCHDOG_WARNING,
+      "VoxB failed to create user for @alias",
+      array('@alias' => $this->aliasName)
+    );
+
     return FALSE;
   }
 
@@ -167,26 +178,34 @@ class VoxbProfile extends VoxbBase {
    * @return array
    */
   private function getActedItems() {
-    $response = $this->call('fetchMyData', array('userId' => $this->userId));
+    try {
+      $response = $this->call('fetchMyData', array('userId' => $this->userId));
 
-    if (!isset($response->Body->fetchMyDataResponse->result)) {
-      return array();
-    }
-
-    foreach ($response->Body->fetchMyDataResponse->result as $v) {
-      if ($v->object && $v->object->objectIdentifierType == 'FAUST') {
-        $this->actedItems[(string) $v->object->objectIdentifierValue] = array(
-          'voxbIdentifier' => (string) $v->voxbIdentifier,
-          'tags' => @$v->item->tags ? $this->prepareArray($v->item->tags->tag) : array(),
-          'review' => array(
-            'title' => (string) @$v->item->review->reviewTitle,
-            'data' => (string) @$v->item->review->reviewData
-          ),
-          'rating' => (int) @$v->item->rating
+      if (!isset($response->Body->fetchMyDataResponse->result)) {
+        ding_voxb_log(
+          WATCHDOG_DEBUG,
+          __METHOD__ . ': No results'
         );
+        return array();
+      }
+
+      foreach ($response->Body->fetchMyDataResponse->result as $v) {
+        if ($v->object && $v->object->objectIdentifierType == 'FAUST') {
+          $this->actedItems[(string) $v->object->objectIdentifierValue] = array(
+            'voxbIdentifier' => (string) $v->voxbIdentifier,
+            'tags' => @$v->item->tags ? $this->prepareArray($v->item->tags->tag) : array(),
+            'review' => array(
+              'title' => (string) @$v->item->review->reviewTitle,
+              'data' => (string) @$v->item->review->reviewData
+            ),
+            'rating' => (int) @$v->item->rating
+          );
+        }
       }
     }
-
+    catch (Exception $e) {
+      return array();
+    }
     return $this->actedItems;
   }
 

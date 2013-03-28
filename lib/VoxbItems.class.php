@@ -41,22 +41,20 @@ class VoxbItems extends VoxbBase {
     );
 
     $this->reviews = new VoxbReviewsController(@$this->reviewHandlers);
+    try{
+      $o = $this->call('fetchData', $data);
 
-    $o = $this->call('fetchData', $data);
-
-    if ($o->Body->fetchDataResponse->totalItemData) {
-      foreach ($o->Body->fetchDataResponse->totalItemData as $k => $v) {
-        $this->items[(string) $v->fetchData->objectIdentifierValue] = new VoxbItem();
-        $this->items[(string) $v->fetchData->objectIdentifierValue]->addReviewHandler('review', new VoxbReviews());
-        $this->items[(string) $v->fetchData->objectIdentifierValue]->fetchData($v);
+      if ($o->Body->fetchDataResponse->totalItemData) {
+        foreach ($o->Body->fetchDataResponse->totalItemData as $k => $v) {
+          $this->items[(string) $v->fetchData->objectIdentifierValue] = new VoxbItem();
+          $this->items[(string) $v->fetchData->objectIdentifierValue]->addReviewHandler('review', new VoxbReviews());
+          $this->items[(string) $v->fetchData->objectIdentifierValue]->fetchData($v);
+        }
       }
     }
-
-    if ($o->Body->Fault->faultstring) {
-      ding_voxb_log(WATCHDOG_ERROR, $o->Body->Fault->faultstring);
+    catch (Exception $e) {
       return FALSE;
     }
-
     return TRUE;
   }
 

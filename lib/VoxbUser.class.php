@@ -28,10 +28,9 @@ class VoxbUser extends VoxbBase {
           'userIdentifierValue' => $cpr,
           'userIdentifierType' => 'CPR',
           'identityProvider' => $identityProvider,
-          'institutionName' => $institutionName
-        )
-      )
-      );
+          'institutionName' => $institutionName,
+        ),
+      ));
 
       if (isset($response->Body->fetchUserResponse->error)) {
         ding_voxb_log(WATCHDOG_ERROR, $response->Body->fetchUserResponse->error);

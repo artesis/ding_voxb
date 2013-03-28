@@ -95,19 +95,21 @@ class VoxbProfile extends VoxbBase {
    * @param string $institutionName
    */
   public function createUser($identityProvider, $institutionName) {
+    $params = array(
+      'userAlias' => array(
+        'aliasName' => $this->aliasName,
+        'profileLink' => $this->profileLink,
+      ),
+      'authenticationFingerprint' => array(
+        'userIdentifierValue' => $this->cpr,
+        'userIdentifierType' => 'CPR',
+        'identityProvider' => $identityProvider,
+        'institutionName' => $institutionName,
+      ),
+    );
+
     try {
-      $response = $this->call('createUser', array(
-        'userAlias' => array(
-          'aliasName' => $this->aliasName,
-          'profileLink' => $this->profileLink
-        ),
-        'authenticationFingerprint' => array(
-          'userIdentifierValue' => $this->cpr,
-          'userIdentifierType' => 'CPR',
-          'identityProvider' => $identityProvider,
-          'institutionName' => $institutionName
-        )
-      ));
+      $response = $this->call('createUser', $params);
 
       if (isset($response->Body->createUserResponse->userId)) {
         $this->userId = (int) $response->Body->createUserResponse->userId;
@@ -120,8 +122,8 @@ class VoxbProfile extends VoxbBase {
 
     ding_voxb_log(
       WATCHDOG_WARNING,
-      "VoxB failed to create user for @alias",
-      array('@alias' => $this->aliasName)
+      "VoxB failed to create user with: <pre>@params</pre>",
+      array('@params' => $params)
     );
 
     return FALSE;
@@ -184,7 +186,8 @@ class VoxbProfile extends VoxbBase {
       if (!isset($response->Body->fetchMyDataResponse->result)) {
         ding_voxb_log(
           WATCHDOG_DEBUG,
-          __METHOD__ . ': No results'
+          __METHOD__ . ': No results for userId: @user',
+          array('@user' => $this->userId)
         );
         return array();
       }

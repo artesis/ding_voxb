@@ -48,6 +48,13 @@ function ding_voxb_admin($form, $form_state) {
     '#default_value' => variable_get('voxb_reviews_per_page', VOXB_DEFAULT_REVIEWS_PER_PAGE),
   );
 
+  $form['voxb']['voxb_logging'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable logging'),
+    '#default_value' => variable_get('voxb_logging', 0),
+    '#description' => t("Log all errors to watchdog."),
+  );
+
   $form['#submit'] = array('ding_voxb_admin_submit');
 
   return system_settings_form($form);

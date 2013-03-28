@@ -22,21 +22,25 @@ class VoxbUser extends VoxbBase {
    * @return boolean
    */
   public function getUserBySSN($cpr, $identityProvider, $institutionName) {
-    $response = $this->call('fetchUser', array(
+    try {
+      $response = $this->call('fetchUser', array(
         'authenticationFingerprint' => array(
           'userIdentifierValue' => $cpr,
           'userIdentifierType' => 'CPR',
           'identityProvider' => $identityProvider,
-          'institutionName' => $institutionName
-        )
-      )
-    );
+          'institutionName' => $institutionName,
+        ),
+      ));
 
-    if (!$response || isset($response->Body->fetchUserResponse->error)) {
+      if (isset($response->Body->fetchUserResponse->error)) {
+        ding_voxb_log(WATCHDOG_ERROR, $response->Body->fetchUserResponse->error);
+        return FALSE;
+      }
+      $this->fetchProfiles($cpr, $response->Body->fetchUserResponse->users);
+    }
+    catch (Exception $e) {
       return FALSE;
     }
-
-    $this->fetchProfiles($cpr, $response->Body->fetchUserResponse->users);
     return TRUE;
   }
 

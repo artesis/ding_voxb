@@ -897,3 +897,21 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
 
   return $element;
 }
+
+/**
+ * Write log to watchdog.
+ *
+ * @param int $severity
+ *   Severity of the message (see WATCHDOG_*).
+ * @param string $message
+ *   Message to store in log.
+ * @param array $variables
+ *   Variables to replace in the message.
+ */
+function ding_voxb_log($severity, $message, array $variables = array()) {
+  $logging = variable_get('voxb_logging', 0);
+  // Log only if enabled.
+  if ($logging) {
+    watchdog('voxb', $message, $variables, $severity);
+  }
+}

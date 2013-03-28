@@ -47,20 +47,21 @@ class VoxbTagRecord extends VoxbBase {
       return $this->updateTags($data['voxbIdentifier'], $data['tags'], $tag);
     }
     // create a new tag
-    $response = $this->call('createMyData', array(
-      'userId' => $profile->getUserId(),
-      'item' => array(
-        'tags' => array(
-          'tag' => $tag
+    try {
+      $this->call('createMyData', array(
+        'userId' => $profile->getUserId(),
+        'item' => array(
+          'tags' => array(
+            'tag' => $tag
+          )
+        ),
+        'object' => array(
+          'objectIdentifierValue' => $faustNum,
+          'objectIdentifierType' => 'FAUST'
         )
-      ),
-      'object' => array(
-        'objectIdentifierValue' => $faustNum,
-        'objectIdentifierType' => 'FAUST'
-      )
-    ));
-
-    if (!$response || $response->Body->Fault->faultstring) {
+      ));
+    }
+    catch (Exception $e) {
       return FALSE;
     }
     return TRUE;
@@ -86,16 +87,17 @@ class VoxbTagRecord extends VoxbBase {
   public function updateTags($voxbId, $tags, $tag) {
     $tags[] = $tag;
 
-    $response = $this->call('updateMyData', array(
-      'voxbIdentifier' => $voxbId,
-      'item' => array(
-        'tags' => array(
-          'tag' => $tags
+    try {
+      $this->call('updateMyData', array(
+        'voxbIdentifier' => $voxbId,
+        'item' => array(
+          'tags' => array(
+            'tag' => $tags
+          )
         )
-      )
-    ));
-
-    if (!$response || $response->Body->Fault->faultstring) {
+      ));
+    }
+    catch (Exception $e) {
       return FALSE;
     }
     return TRUE;

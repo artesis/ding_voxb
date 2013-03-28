@@ -44,6 +44,11 @@ class VoxbBase {
       VoxbBase::$soapClient = new NanoSOAPClient(variable_get('voxb_service_url', ''), $options);
     }
     catch (Exception $e) {
+      ding_voxb_log(
+        WATCHDOG_DEBUG,
+        "NanoSOAPClient caused error: @error",
+        array('@error' => $e->getMessage())
+      );
       VoxbBase::$soapClient = NULL;
     }
   }
@@ -66,7 +71,8 @@ class VoxbBase {
    */
   public function call($method, $data) {
     if (VoxbBase::$soapClient == NULL) {
-      return FALSE;
+      ding_voxb_log(WATCHDOG_ERROR, 'No SOAP client');
+      throw new Exception();
     }
 
     try {
@@ -78,10 +84,44 @@ class VoxbBase {
       $replace_what = array('SOAP-ENV:', 'voxb:');
       $replace_to = array('', '');
       $response = str_replace($replace_what, $replace_to, $response);
+
+      ding_voxb_log(
+        WATCHDOG_DEBUG,
+        'Request: @method with data <pre>@params</pre><br />' . PHP_EOL
+        . ' Response: <pre>@response</pre>',
+        array(
+          '@method' => $method,
+          '@params' => print_r($data, TRUE),
+          '@response' => $response,
+        )
+      );
+
+      // Catch all XML errors.
+      libxml_use_internal_errors(true);
       $response = simplexml_load_string($response);
+
+      if (!$response) {
+        $errors = libxml_get_errors();
+        libxml_clear_errors();
+        throw new Exception($errors[0]->message);
+      }
+
     }
     catch (Exception $e) {
-      return FALSE;
+      ding_voxb_log(
+        WATCHDOG_ERROR,
+        "Calling @method returned error: @error",
+        array('@method' => $method, '@error' => $e->getMessage())
+      );
+      throw new Exception();
+    }
+
+    if (!empty($response->Body->Fault->faultstring)) {
+      ding_voxb_log(
+        WATCHDOG_ERROR,
+        $response->Body->Fault->faultstring
+      );
+      throw new Exception();
     }
 
     return $response;

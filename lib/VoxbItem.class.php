@@ -44,14 +44,17 @@ class VoxbItem extends VoxbBase {
       ),
       'output' => array('contentType' => 'all')
     );
-    $o = $this->call('fetchData', $data);
-    if ($o->totalItemData) {
-      $this->fetchData($o->totalItemData);
-    }
 
-    if ($o->Body->Fault->faultstring) {
+    try {
+      $o = $this->call('fetchData', $data);
+      if ($o->totalItemData) {
+        $this->fetchData($o->totalItemData);
+      }
+    }
+    catch (Exception $e) {
       return FALSE;
     }
+
     return TRUE;
   }
 
@@ -70,15 +73,17 @@ class VoxbItem extends VoxbBase {
     );
     $this->reviews = new VoxbReviewsController($this->reviewHandlers);
 
-    $o = $this->call('fetchData', $data);
+    try {
+      $o = $this->call('fetchData', $data);
 
-    if ($o->Body->fetchDataResponse->totalItemData) {
-      $this->fetchData($o->Body->fetchDataResponse->totalItemData);
+      if ($o->Body->fetchDataResponse->totalItemData) {
+        $this->fetchData($o->Body->fetchDataResponse->totalItemData);
+      }
     }
-
-    if ($o->Body->Fault->faultstring) {
+    catch (Exception $e) {
       return FALSE;
     }
+
     return TRUE;
   }
 
@@ -149,20 +154,22 @@ class VoxbItem extends VoxbBase {
    * @param integer $userId
    */
   public function rateItem($faustNum, $rating, $userId) {
-    $response = $this->call('createMyData', array(
-      'userId' => $userId,
-      'item' => array(
-        'rating' => $rating
-      ),
-      'object' => array(
-        'objectIdentifierValue' => $faustNum,
-        'objectIdentifierType' => 'FAUST'
-      )
-    ));
-
-    if (!$response || $response->Body->Fault->faultstring) {
+    try {
+      $this->call('createMyData', array(
+        'userId' => $userId,
+        'item' => array(
+          'rating' => $rating,
+        ),
+        'object' => array(
+          'objectIdentifierValue' => $faustNum,
+          'objectIdentifierType' => 'FAUST',
+        )
+      ));
+    }
+    catch (Exception $e) {
       return FALSE;
     }
+
     return TRUE;
   }
 
@@ -173,14 +180,15 @@ class VoxbItem extends VoxbBase {
    * @param $rating
    */
   public function updateRateItem($record_id, $rating) {
-    $response = $this->call('updateMyData', array(
-      'voxbIdentifier' => $record_id,
-      'item' => array(
-        'rating' => $rating,
-      ),
-    ));
-
-    if (!$response || $response->Body->Fault->faultstring) {
+    try {
+      $this->call('updateMyData', array(
+        'voxbIdentifier' => $record_id,
+        'item' => array(
+          'rating' => $rating,
+        ),
+      ));
+    }
+    catch (Exception $e) {
       return FALSE;
     }
 

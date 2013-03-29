@@ -110,11 +110,12 @@ class VoxbReviewRecord extends VoxbBase {
    * @return boolean
    */
   public function delete() {
-    $response = $this->call('deleteMyData', array(
-      'voxbIdentifier' => $this->voxbId
-    ));
-
-    if ($response->Body->Fault->faultstring) {
+    try {
+      $this->call('deleteMyData', array(
+        'voxbIdentifier' => $this->voxbId
+      ));
+    }
+    catch (Exception $e) {
       return FALSE;
     }
     return TRUE;
@@ -136,22 +137,23 @@ class VoxbReviewRecord extends VoxbBase {
       return $this->update($data['voxbIdentifier'], $review);
     }
 
-    $response = $this->call('createMyData', array(
-      'userId' => $profile->getUserId(),
-      'item' => array(
-        'review' => array(
-          'reviewTitle' => 'review',
-          'reviewData' => $review,
-          'reviewType' => 'TXT'
+    try {
+      $this->call('createMyData', array(
+        'userId' => $profile->getUserId(),
+        'item' => array(
+          'review' => array(
+            'reviewTitle' => 'review',
+            'reviewData' => $review,
+            'reviewType' => 'TXT'
+          )
+        ),
+        'object' => array(
+          'objectIdentifierValue' => $faustNum,
+          'objectIdentifierType' => 'FAUST'
         )
-      ),
-      'object' => array(
-        'objectIdentifierValue' => $faustNum,
-        'objectIdentifierType' => 'FAUST'
-      )
-    ));
-
-    if (!$response || $response->Body->Fault->faultstring) {
+      ));
+    }
+    catch (Exception $e) {
       return FALSE;
     }
     return TRUE;
@@ -164,20 +166,22 @@ class VoxbReviewRecord extends VoxbBase {
    * @param string $review
    */
   private function update($voxbId, $review) {
-    $response = $this->call('updateMyData', array(
-      'voxbIdentifier' => $voxbId,
-      'item' => array(
-        'review' => array(
-          'reviewTitle' => 'review',
-          'reviewData' => $review,
-          'reviewType' => 'TXT'
+    try {
+      $this->call('updateMyData', array(
+        'voxbIdentifier' => $voxbId,
+        'item' => array(
+          'review' => array(
+            'reviewTitle' => 'review',
+            'reviewData' => $review,
+            'reviewType' => 'TXT'
+          )
         )
-      )
-    ));
-
-    if (!$response || $response->Body->Fault->faultstring) {
+      ));
+    }
+    catch (Exception $e) {
       return FALSE;
     }
+
     return TRUE;
   }
 }

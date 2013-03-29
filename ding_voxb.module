@@ -21,7 +21,7 @@ function ding_voxb_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ding_voxb_admin'),
     'access arguments' => array('administer voxb'),
-    'file' => 'ding_voxb.admin.inc'
+    'file' => 'ding_voxb.admin.inc',
   );
 
   $items['voxb/ajax/reviews/%/page/%'] = array(
@@ -119,11 +119,10 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
       // Place the reviews
       for ($i = $start; $i < $end; $i++) {
         if (isset($reviews[$i]['text'])) {
-          $commands[] = ajax_command_append('.user-reviews', theme(
-            'voxb_review_record',
-            array(
-              'author' => $reviews[$i]['authorName'],
-              'review' => $reviews[$i]['text'])));
+          $commands[] = ajax_command_append('.user-reviews', theme('voxb_review_record', array(
+            'author' => $reviews[$i]['authorName'],
+            'review' => $reviews[$i]['text'],
+          )));
         }
       }
 
@@ -133,12 +132,7 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
         $page_to_set = $page - 1;
       }
 
-      $commands[] = ajax_command_html(
-        '.prev-page',
-        l(
-          '<<',
-          'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_to_set . '',
-          array('attributes' => array('class' => array('use-ajax')))));
+      $commands[] = ajax_command_html('.prev-page', l('<<', 'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_to_set . '', array('attributes' => array('class' => array('use-ajax')))));
 
       $pages_total = ceil(count($reviews) / $per_page);
       $page_to_set = $pages_total;
@@ -148,12 +142,7 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
         $page_to_set = $page + 1;
       }
 
-      $commands[] = ajax_command_html(
-        '.next-page',
-        l(
-          '>>',
-          'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_to_set . '',
-          array('attributes' => array('class' => array('use-ajax')))));
+      $commands[] = ajax_command_html('.next-page', l('>>', 'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_to_set . '', array('attributes' => array('class' => array('use-ajax')))));
 
       // Update the pagination 'numbered' links
       for ($i = $page - 1, $k = 0; $k < 5; $i++, $k++) {
@@ -161,19 +150,17 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
 
         // Check the link index bounds, recreate if true, remove if otherwise
         if ($page_link > 0 && $page_link <= $pages_total) {
-          $commands[] = ajax_command_html(
-            '.page-num:eq(' . $k . ')',
-            l(
-              $page_link,
-              'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_link . '',
-              array('attributes' => array('class' => array('use-ajax')))));
+          $commands[] = ajax_command_html('.page-num:eq(' . $k . ')', l($page_link, 'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_link . '', array('attributes' => array('class' => array('use-ajax')))));
         }
         else {
           $commands[] = ajax_command_html('.page-num:eq(' . $k . ')', '');
         }
       }
 
-      $result = array('#type' => 'ajax', '#commands' => $commands);
+      $result = array(
+        '#type' => 'ajax',
+        '#commands' => $commands
+      );
 
       // Show the changes
       ajax_deliver($result);
@@ -187,7 +174,7 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
 function ding_voxb_theme() {
   $hooks['voxb_tag_record'] = array(
     'variables' => array(
-      'tag_name' => NULL
+      'tag_name' => NULL,
     ),
     'template' => 'templates/ding_voxb-tag-record',
   );
@@ -195,7 +182,7 @@ function ding_voxb_theme() {
   $hooks['voxb_review_record'] = array(
     'variables' => array(
       'author' => NULL,
-      'review' => NULL
+      'review' => NULL,
     ),
     'template' => 'templates/ding_voxb-review-record',
   );
@@ -211,27 +198,29 @@ function ding_voxb_theme() {
   $hooks['voxb_tags'] = array(
     'variables' => array(
       'voxb_item' => NULL,
-      'object_id' => NULL),
-    'template' => 'templates/ding_voxb-tags'
+      'object_id' => NULL,
+    ),
+    'template' => 'templates/ding_voxb-tags',
   );
 
   $hooks['voxb_review'] = array(
     'variables' => array(
       'voxb_item' => NULL,
-      'object_id' => NULL),
-    'template' => 'templates/ding_voxb-review'
+      'object_id' => NULL,
+    ),
+    'template' => 'templates/ding_voxb-review',
   );
 
   $hooks['voxb_review_count'] = array(
     'variables' => array(
       'object' => NULL,
-     ),
-    'template' => 'templates/ding_voxb-review-count'
+    ),
+    'template' => 'templates/ding_voxb-review-count',
   );
 
   $hooks['voxb_search_result'] = array(
     'variables' => NULL,
-    'template' => 'templates/ding_voxb-search-result'
+    'template' => 'templates/ding_voxb-search-result',
   );
 
   return $hooks;
@@ -295,9 +284,10 @@ function ding_voxb_preprocess_voxb_review(&$variables) {
     if ($k >= $limit) {
       break;
     }
-    $reviews .= theme('voxb_review_record',
-      array('author' => $v->getAuthorName(), 'review' => $v->getText())
-    );
+    $reviews .= theme('voxb_review_record', array(
+      'author' => $v->getAuthorName(),
+      'review' => $v->getText(),
+    ));
   }
 
   // Pagination section
@@ -465,13 +455,10 @@ function ding_voxb_review_form_callback($form, &$form_state) {
           break;
         }
 
-        $commands[] = ajax_command_prepend('.user-reviews', theme(
-          'voxb_review_record',
-          array(
-            'author' => $review->getAuthorName(),
-            'review' => $review->getText())
-          )
-        );
+        $commands[] = ajax_command_prepend('.user-reviews', theme('voxb_review_record', array(
+          'author' => $review->getAuthorName(),
+          'review' => $review->getText()
+        )));
       }
 
       if ($reviews_count > $limit) {
@@ -484,7 +471,10 @@ function ding_voxb_review_form_callback($form, &$form_state) {
     }
   }
 
-  return array('#type' => 'ajax', '#commands' => $commands);
+  return array(
+    '#type' => 'ajax',
+    '#commands' => $commands
+  );
 }
 
 /**
@@ -505,21 +495,21 @@ function ding_voxb_tag_form($form, $form_state, $faust_number) {
     '#ajax' => array(
       'event' => 'submit',
       'keypress' => TRUE,
-      'callback' => 'ding_voxb_add_tag_callback'
-    )
+      'callback' => 'ding_voxb_add_tag_callback',
+    ),
   );
 
   $form['faustNumber'] = array(
     '#type' => 'hidden',
     '#name' => 'faustNumber',
-    '#value' => $faust_number
+    '#value' => $faust_number,
   );
 
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
     '#ajax' => array(
-      'callback' => 'ding_voxb_add_tag_callback'
+      'callback' => 'ding_voxb_add_tag_callback',
     ),
     '#attributes' => array('class' => array('rounded-corners')),
   );
@@ -564,7 +554,10 @@ function ding_voxb_add_tag_callback($form, &$form_state) {
     }
   }
 
-  return array('#type' => 'ajax', '#commands' => $commands);
+  return array(
+    '#type' => 'ajax',
+    '#commands' => $commands
+  );
 }
 
 /**
@@ -626,7 +619,10 @@ function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
 
     $commands[] = ajax_command_invoke('.ratings-container .ajax-anim', 'hide', array());
 
-    $result = array('#type' => 'ajax', '#commands' => $commands);
+    $result = array(
+      '#type' => 'ajax',
+      '#commands' => $commands,
+    );
     ajax_deliver($result);
   }
 }
@@ -638,7 +634,7 @@ function ding_voxb_ding_devel_timers() {
   return array(
     'voxb' => array(
       'title' => 'VoxB total request time was @time ms.',
-    )
+    ),
   );
 }
 
@@ -699,12 +695,15 @@ function ding_voxb_ajax_reviews($type = 'ajax', $item_id) {
 
     $markup = theme('voxb_review', array(
       'voxb_item' => $voxb_item,
-      'object_id' => $item_id)
-    );
+      'object_id' => $item_id,
+    ));
 
     $commands[] = ajax_command_html('.voxb-reviews-placeholder', $markup);
 
-    return array('#type' => 'ajax', '#commands' => $commands);
+    return array(
+      '#type' => 'ajax',
+      '#commands' => $commands
+    );
   }
 }
 
@@ -734,13 +733,16 @@ function ding_voxb_ajax_tags($type = 'ajax', $item_id) {
     else {
       $markup = theme('voxb_tags', array(
         'voxb_item' => $voxb_item,
-        'object_id' => $item_id)
-      );
+        'object_id' => $item_id,
+      ));
 
       $command = ajax_command_html('.voxb-tags-placeholder', $markup);
     }
 
-    return array('#type' => 'ajax', '#commands' => array($command));
+    return array(
+      '#type' => 'ajax',
+      '#commands' => array($command),
+    );
   }
 }
 
@@ -851,7 +853,8 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
           '#suffix' => '</div>',
           '#markup' => theme('voxb_rating', array(
             'object' => $entity,
-            'display_only' => FALSE)),
+            'display_only' => FALSE,
+          )),
         );
         break;
 
@@ -861,7 +864,8 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
           '#suffix' => '</div>',
           '#markup' => theme('voxb_rating', array(
             'object' => $entity,
-            'display_only' => TRUE)),
+            'display_only' => TRUE,
+          )),
         );
         break;
 

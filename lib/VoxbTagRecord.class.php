@@ -52,13 +52,13 @@ class VoxbTagRecord extends VoxbBase {
         'userId' => $profile->getUserId(),
         'item' => array(
           'tags' => array(
-            'tag' => $tag
-          )
+            'tag' => $tag,
+          ),
         ),
         'object' => array(
           'objectIdentifierValue' => $faustNum,
-          'objectIdentifierType' => 'FAUST'
-        )
+          'objectIdentifierType' => 'FAUST',
+        ),
       ));
     }
     catch (Exception $e) {
@@ -73,7 +73,7 @@ class VoxbTagRecord extends VoxbBase {
   public function toArray() {
     return array(
       'name' => $this->name,
-      'count' => $this->count
+      'count' => $this->count,
     );
   }
 
@@ -92,9 +92,9 @@ class VoxbTagRecord extends VoxbBase {
         'voxbIdentifier' => $voxbId,
         'item' => array(
           'tags' => array(
-            'tag' => $tags
-          )
-        )
+            'tag' => $tags,
+          ),
+        ),
       ));
     }
     catch (Exception $e) {

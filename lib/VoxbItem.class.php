@@ -40,9 +40,9 @@ class VoxbItem extends VoxbBase {
     $data = array(
       'fetchData' => array(
         'objectIdentifierValue' => $isbn,
-        'objectIdentifierType' => 'ISBN'
+        'objectIdentifierType' => 'ISBN',
       ),
-      'output' => array('contentType' => 'all')
+      'output' => array('contentType' => 'all'),
     );
 
     try {
@@ -163,7 +163,7 @@ class VoxbItem extends VoxbBase {
         'object' => array(
           'objectIdentifierValue' => $faustNum,
           'objectIdentifierType' => 'FAUST',
-        )
+        ),
       ));
     }
     catch (Exception $e) {

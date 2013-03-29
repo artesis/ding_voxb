@@ -32,12 +32,12 @@ class VoxbBase {
       'trace' => 1,
       'cache_wsdl' => WSDL_CACHE_NONE,
       'namespaces' => array(
-        'voxb' => 'http://oss.dbc.dk/ns/voxb'
+        'voxb' => 'http://oss.dbc.dk/ns/voxb',
       ),
       'curl' => array(
         // In some environments VoxB responds with different certificate.
         CURLOPT_SSL_VERIFYHOST => false,
-      )
+      ),
     );
 
     try {

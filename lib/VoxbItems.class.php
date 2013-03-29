@@ -31,17 +31,17 @@ class VoxbItems extends VoxbBase {
     foreach ($faustNums as $k => $v) {
       $fetch[] = array(
         'objectIdentifierValue' => $v,
-        'objectIdentifierType' => 'FAUST'
+        'objectIdentifierType' => 'FAUST',
       );
     }
 
     $data = array(
       'fetchData' => $fetch,
-      'output' => array('contentType' => 'all')
+      'output' => array('contentType' => 'all'),
     );
 
     $this->reviews = new VoxbReviewsController(@$this->reviewHandlers);
-    try{
+    try {
       $o = $this->call('fetchData', $data);
 
       if ($o->Body->fetchDataResponse->totalItemData) {

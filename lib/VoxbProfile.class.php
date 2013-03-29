@@ -199,9 +199,9 @@ class VoxbProfile extends VoxbBase {
             'tags' => @$v->item->tags ? $this->prepareArray($v->item->tags->tag) : array(),
             'review' => array(
               'title' => (string) @$v->item->review->reviewTitle,
-              'data' => (string) @$v->item->review->reviewData
+              'data' => (string) @$v->item->review->reviewData,
             ),
-            'rating' => (int) @$v->item->rating
+            'rating' => (int) @$v->item->rating,
           );
         }
       }

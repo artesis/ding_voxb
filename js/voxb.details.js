@@ -7,7 +7,7 @@
       id = classname.match(/ting-object-id-(\S+)/);
     }
 
-    return id[1];
+    return (id != null && typeof id[1] != 'undefined') ? id[1] : 0;
   };
 
   // Insert voxb into the page
@@ -34,10 +34,10 @@
   Drupal.behaviors.voxb_details = {
     attach : function(context) {
       var item_ids = [];
-      
+
       $('.ting-cover', context).each(function(i, e) {
         id = Drupal.extractTingId(e);
-        
+
         if (id != undefined) {
           item_ids.push(id);
         }

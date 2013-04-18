@@ -4,8 +4,6 @@
  *
  */
 
-error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
-
 /**
  * This is the main VoxB-client class.
  * It has a method to fetch item information from VoxB server.
@@ -15,7 +13,7 @@ class VoxbItem extends VoxbBase {
   private $tags;
   private $reviews;
 
-  private $reviewHandlers;
+  private $reviewHandlers = array();
   private $objectIdentifierValue;
   private $objectIdentifierType;
   private $rating = 0;
@@ -40,7 +38,7 @@ class VoxbItem extends VoxbBase {
     $data = array(
       'fetchData' => array(
         'objectIdentifierValue' => $isbn,
-        'objectIdentifierType' => 'ISBN',
+        'objectIdentifierType'  => 'ISBN',
       ),
       'output' => array('contentType' => 'all'),
     );

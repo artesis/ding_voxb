@@ -9,7 +9,7 @@
 class VoxbBase {
 
   /**
-   * Singleton template attribure.
+   * Singleton template attribute.
    *
    * @var object
    */
@@ -80,6 +80,8 @@ class VoxbBase {
       timer_start('voxb');
       $response = VoxbBase::$soapClient->call('voxb:' . $method . 'Request', $data);
       timer_stop('voxb');
+
+      ding_voxb_log(WATCHDOG_DEBUG, 'SOAP Responce: ' . $response);
 
       $replace_what = array('SOAP-ENV:', 'voxb:');
       $replace_to = array('', '');

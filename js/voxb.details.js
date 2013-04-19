@@ -2,10 +2,7 @@
   // Extract ting id from classname
   Drupal.extractTingId = function(e) {
     classname = $(e).attr('class');
-    id = classname.match(/ting-cover-object-id-(\S+)/);
-    if (!id) {
-      id = classname.match(/ting-object-id-(\S+)/);
-    }
+    id = classname.match(/isbn-(\S+)/);
 
     return (id != null && typeof id[1] != 'undefined') ? id[1] : 0;
   };
@@ -15,7 +12,7 @@
     if (e.status == true && e.items) {
       Drupal.voxb_item.details = e.items;
       $.each(e.items, function(k, v) {
-        var ele = $('.voxb-details.ting-object-id-' + k);
+        var ele = $('.voxb-details.isbn-' + k);
         ele.find('.rating:lt(' + Math.round(v.rating / 20) + ')').removeClass('star-off').addClass('star-on');
         if (v.rating_count > 0) {
           ele.find('.rating-count span').html('(' + v.rating_count + ')');
@@ -38,7 +35,7 @@
       $('.ting-cover', context).each(function(i, e) {
         id = Drupal.extractTingId(e);
 
-        if (id != undefined) {
+        if (id != undefined && id != 0) {
           item_ids.push(id);
         }
       });

@@ -100,7 +100,7 @@ class VoxbItems extends VoxbBase {
    * @param string $id
    *   Object identifier.
    *
-   * @return object
+   * @return object|bool
    */
   public function getItem($id) {
     if (isset($this->items[$id])) {

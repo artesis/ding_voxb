@@ -98,7 +98,7 @@ class VoxbReviewRecord extends VoxbBase {
       'text' => $this->text,
       'authorId' => $this->authorVoxbId,
       'authorName' => $this->authorName,
-      'voxbId' => $this->voxbId
+      'voxbId' => $this->voxbId,
     );
   }
 
@@ -112,7 +112,7 @@ class VoxbReviewRecord extends VoxbBase {
   public function delete() {
     try {
       $this->call('deleteMyData', array(
-        'voxbIdentifier' => $this->voxbId
+        'voxbIdentifier' => $this->voxbId,
       ));
     }
     catch (Exception $e) {
@@ -144,13 +144,13 @@ class VoxbReviewRecord extends VoxbBase {
           'review' => array(
             'reviewTitle' => 'review',
             'reviewData' => $review,
-            'reviewType' => 'TXT'
-          )
+            'reviewType' => 'TXT',
+          ),
         ),
         'object' => array(
           'objectIdentifierValue' => $faustNum,
-          'objectIdentifierType' => 'FAUST'
-        )
+          'objectIdentifierType' => 'FAUST',
+        ),
       ));
     }
     catch (Exception $e) {
@@ -173,9 +173,9 @@ class VoxbReviewRecord extends VoxbBase {
           'review' => array(
             'reviewTitle' => 'review',
             'reviewData' => $review,
-            'reviewType' => 'TXT'
-          )
-        )
+            'reviewType' => 'TXT',
+          ),
+        ),
       ));
     }
     catch (Exception $e) {

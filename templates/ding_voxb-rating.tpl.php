@@ -3,13 +3,16 @@
  * @file
  *
  */
+if (!empty($object->isbn)):
 ?>
-<div class="voxb-details ting-object-id-<?php echo $object->localId; ?>">
+<div class="voxb-details isbn-<?php echo $object->isbn[0]; ?>">
   <div class="voxb-rating <?php echo $rating_block_class; ?>">
     <?php for ($i = 1; $i <= 5; $i++): ?>
-    <div href="/voxb/ajax/rating/<?php echo $object->localId; ?>/<?php echo $i; ?>" class="rating left <?php echo $star_class; ?>"></div>
-    <?php ;endfor ?>
+    <a href="/voxb/ajax/rating/<?php echo $object->isbn[0]; ?>/<?php echo $i; ?>" class="rating left <?php echo $star_class; ?>"></a>
+    <?php endfor; ?>
     <p class="rating-count left"><span></span></p>
   </div>
   <div class="clear"></div>
 </div>
+<?php
+endif;

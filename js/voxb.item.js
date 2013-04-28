@@ -7,7 +7,7 @@
 (function ($) {
   Drupal.ajax.prototype.commands['voxb_rating_callback'] = function (ajax, response, status) {
    // update rating count
-    var parent = $('.voxb-details.ting-object-id-' + response.item_id + ' .voxb-rating');
+    var parent = $('.voxb-details.isbn-' + response.item_id + ' .voxb-rating');
     parent.find('.rating-count span').html('(' + response.rating_count + ')');
     // Update the rating in the previousle fetched details.
     Drupal.voxb_item.details[response.item_id].rating = response.rating * 20;

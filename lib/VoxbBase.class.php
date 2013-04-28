@@ -9,7 +9,7 @@
 class VoxbBase {
 
   /**
-   * Singleton template attribure.
+   * Singleton template attribute.
    *
    * @var object
    */
@@ -32,12 +32,12 @@ class VoxbBase {
       'trace' => 1,
       'cache_wsdl' => WSDL_CACHE_NONE,
       'namespaces' => array(
-        'voxb' => 'http://oss.dbc.dk/ns/voxb'
+        'voxb' => 'http://oss.dbc.dk/ns/voxb',
       ),
       'curl' => array(
         // In some environments VoxB responds with different certificate.
         CURLOPT_SSL_VERIFYHOST => false,
-      )
+      ),
     );
 
     try {
@@ -80,6 +80,8 @@ class VoxbBase {
       timer_start('voxb');
       $response = VoxbBase::$soapClient->call('voxb:' . $method . 'Request', $data);
       timer_stop('voxb');
+
+      ding_voxb_log(WATCHDOG_DEBUG, 'SOAP Responce: ' . $response);
 
       $replace_what = array('SOAP-ENV:', 'voxb:');
       $replace_to = array('', '');

@@ -9,7 +9,7 @@
 class VoxbReviewsController {
   private $handlers;
 
-  public function __construct($handlers) {
+  public function __construct(array $handlers = array()) {
     $this->handlers = $handlers;
   }
 

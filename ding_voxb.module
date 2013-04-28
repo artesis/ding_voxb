@@ -21,7 +21,7 @@ function ding_voxb_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ding_voxb_admin'),
     'access arguments' => array('administer voxb'),
-    'file' => 'ding_voxb.admin.inc'
+    'file' => 'ding_voxb.admin.inc',
   );
 
   $items['voxb/ajax/reviews/%/page/%'] = array(
@@ -93,15 +93,15 @@ function ding_voxb_user_login($edit, $account) {
  *
  * @param $type
  *   Type of the request, e.g. ajax or else
- * @param $faust_number
+ * @param $isbn_number
  *   Item ID
  * @param $page
  *   Clicked page number
  */
-function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
+function ding_voxb_paginator($type = 'ajax', $isbn_number = '', $page = 1) {
   // In case we have an ajax call
   if ($type == 'ajax') {
-    if ($faust_number != '') {
+    if ($isbn_number != '') {
       // Calculate the reviews array fetch limits
       $per_page = variable_get('voxb_reviews_per_page', VOXB_DEFAULT_REVIEWS_PER_PAGE);
       $start = ($page - 1) * $per_page;
@@ -110,7 +110,7 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
       // Get the reviews
       $item = new VoxbItem();
       $item->addReviewHandler('review', new VoxbReviews());
-      $item->fetchByFaust($faust_number);
+      $item->fetchByISBN($isbn_number);
       $reviews = $item->getReviews('review')->toArray();
 
       // Remove the reviews
@@ -119,11 +119,10 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
       // Place the reviews
       for ($i = $start; $i < $end; $i++) {
         if (isset($reviews[$i]['text'])) {
-          $commands[] = ajax_command_append('.user-reviews', theme(
-            'voxb_review_record',
-            array(
-              'author' => $reviews[$i]['authorName'],
-              'review' => $reviews[$i]['text'])));
+          $commands[] = ajax_command_append('.user-reviews', theme('voxb_review_record', array(
+            'author' => $reviews[$i]['authorName'],
+            'review' => $reviews[$i]['text'],
+          )));
         }
       }
 
@@ -133,12 +132,7 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
         $page_to_set = $page - 1;
       }
 
-      $commands[] = ajax_command_html(
-        '.prev-page',
-        l(
-          '<<',
-          'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_to_set . '',
-          array('attributes' => array('class' => array('use-ajax')))));
+      $commands[] = ajax_command_html('.prev-page', l('<<', 'voxb/ajax/reviews/' . $isbn_number . '/page/' . $page_to_set . '', array('attributes' => array('class' => array('use-ajax')))));
 
       $pages_total = ceil(count($reviews) / $per_page);
       $page_to_set = $pages_total;
@@ -148,12 +142,7 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
         $page_to_set = $page + 1;
       }
 
-      $commands[] = ajax_command_html(
-        '.next-page',
-        l(
-          '>>',
-          'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_to_set . '',
-          array('attributes' => array('class' => array('use-ajax')))));
+      $commands[] = ajax_command_html('.next-page', l('>>', 'voxb/ajax/reviews/' . $isbn_number . '/page/' . $page_to_set . '', array('attributes' => array('class' => array('use-ajax')))));
 
       // Update the pagination 'numbered' links
       for ($i = $page - 1, $k = 0; $k < 5; $i++, $k++) {
@@ -161,19 +150,17 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
 
         // Check the link index bounds, recreate if true, remove if otherwise
         if ($page_link > 0 && $page_link <= $pages_total) {
-          $commands[] = ajax_command_html(
-            '.page-num:eq(' . $k . ')',
-            l(
-              $page_link,
-              'voxb/ajax/reviews/' . $faust_number . '/page/' . $page_link . '',
-              array('attributes' => array('class' => array('use-ajax')))));
+          $commands[] = ajax_command_html('.page-num:eq(' . $k . ')', l($page_link, 'voxb/ajax/reviews/' . $isbn_number . '/page/' . $page_link . '', array('attributes' => array('class' => array('use-ajax')))));
         }
         else {
           $commands[] = ajax_command_html('.page-num:eq(' . $k . ')', '');
         }
       }
 
-      $result = array('#type' => 'ajax', '#commands' => $commands);
+      $result = array(
+        '#type' => 'ajax',
+        '#commands' => $commands
+      );
 
       // Show the changes
       ajax_deliver($result);
@@ -187,7 +174,7 @@ function ding_voxb_paginator($type = 'ajax', $faust_number = '', $page = 1) {
 function ding_voxb_theme() {
   $hooks['voxb_tag_record'] = array(
     'variables' => array(
-      'tag_name' => NULL
+      'tag_name' => NULL,
     ),
     'template' => 'templates/ding_voxb-tag-record',
   );
@@ -195,7 +182,7 @@ function ding_voxb_theme() {
   $hooks['voxb_review_record'] = array(
     'variables' => array(
       'author' => NULL,
-      'review' => NULL
+      'review' => NULL,
     ),
     'template' => 'templates/ding_voxb-review-record',
   );
@@ -211,27 +198,29 @@ function ding_voxb_theme() {
   $hooks['voxb_tags'] = array(
     'variables' => array(
       'voxb_item' => NULL,
-      'object_id' => NULL),
-    'template' => 'templates/ding_voxb-tags'
+      'object_id' => NULL,
+    ),
+    'template' => 'templates/ding_voxb-tags',
   );
 
   $hooks['voxb_review'] = array(
     'variables' => array(
       'voxb_item' => NULL,
-      'object_id' => NULL),
-    'template' => 'templates/ding_voxb-review'
+      'object_id' => NULL,
+    ),
+    'template' => 'templates/ding_voxb-review',
   );
 
   $hooks['voxb_review_count'] = array(
     'variables' => array(
       'object' => NULL,
-     ),
-    'template' => 'templates/ding_voxb-review-count'
+    ),
+    'template' => 'templates/ding_voxb-review-count',
   );
 
   $hooks['voxb_search_result'] = array(
     'variables' => NULL,
-    'template' => 'templates/ding_voxb-search-result'
+    'template' => 'templates/ding_voxb-search-result',
   );
 
   return $hooks;
@@ -272,7 +261,8 @@ function ding_voxb_preprocess_voxb_tags(&$variables) {
   // Tags form section
   $tags_form = '';
   if ((is_object($profile) && $profile->isAbleToTag($oid))) {
-    $tags_form = drupal_render(drupal_get_form('ding_voxb_tag_form', $oid));
+    $form = drupal_get_form('ding_voxb_tag_form', $oid);
+    $tags_form = drupal_render($form);
   }
 
   $variables['tags'] = $tags;
@@ -295,9 +285,10 @@ function ding_voxb_preprocess_voxb_review(&$variables) {
     if ($k >= $limit) {
       break;
     }
-    $reviews .= theme('voxb_review_record',
-      array('author' => $v->getAuthorName(), 'review' => $v->getText())
-    );
+    $reviews .= theme('voxb_review_record', array(
+      'author' => $v->getAuthorName(),
+      'review' => $v->getText(),
+    ));
   }
 
   // Pagination section
@@ -349,20 +340,21 @@ function ding_voxb_preprocess_voxb_review(&$variables) {
     if ($data['review']['title'] != 'videoreview') {
       if ($data['review']['title'] == 'review') {
         $params = array(
-          'faust_number' => $oid,
+          'isbn_number' => $oid,
           'review_content' => $data['review']['data'],
           'action' => 'update',
         );
       }
       else {
         $params = array(
-          'faust_number' => $oid,
+          'isbn_number' => $oid,
           'review_content' => '',
           'action' => 'submit',
         );
       }
 
-      $review_form .= drupal_render(drupal_get_form('ding_voxb_review_form', $params));
+      $form = drupal_get_form('ding_voxb_review_form', $params);
+      $review_form .= drupal_render($form);
     }
   }
 
@@ -375,12 +367,13 @@ function ding_voxb_preprocess_voxb_review(&$variables) {
 /**
  * Build the text review form
  *
- * @param $form
+ * @param array $form
  *   The form and it's fields
- * @param $form_state
+ * @param array $form_state
  *   Form state
- * @param $faustNumber
- *   Item's faust number, e.g. ID
+ * @param array $params
+ *   Array containing isbn_number, review_content, action.
+ *
  * @return
  *   Form structure
  */
@@ -390,9 +383,9 @@ function ding_voxb_review_form($form, &$form_state, $params) {
     '#default_value' => ($params['action'] == 'update') ? $params['review_content'] : '',
   );
 
-  $form['faust_number'] = array(
+  $form['isbn_number'] = array(
     '#type' => 'hidden',
-    '#value' => $params['faust_number'],
+    '#value' => $params['isbn_number'],
   );
 
   $form['review_submit'] = array(
@@ -420,13 +413,13 @@ function ding_voxb_review_form_callback($form, &$form_state) {
   $commands = array();
 
   /**
-   * Check if we have review message and faustNumber
+   * Check if we have review message and isbnNumber
    */
   if (empty($form['review_content']['#value'])) {
     $commands[] = ajax_command_ding_popup('add_review_error', t('Error'), t('Please fill in your review message.'));
   }
-  elseif (empty($form['faust_number']['#value'])) {
-    $commands[] = ajax_command_ding_popup('add_review_error', t('Error'), t('Wrong or empty faust number.'));
+  elseif (empty($form['isbn_number']['#value'])) {
+    $commands[] = ajax_command_ding_popup('add_review_error', t('Error'), t('Wrong or empty ISBN number.'));
   }
   else {
     // add review to voxb
@@ -434,7 +427,7 @@ function ding_voxb_review_form_callback($form, &$form_state) {
 
     $profile = unserialize($_SESSION['voxb']['profile']);
 
-    if (!$review->create($form['faust_number']['#value'], $form['review_content']['#value'], $profile)) {
+    if (!$review->create($form['isbn_number']['#value'], $form['review_content']['#value'], $profile)) {
       // add ding_popup command with notice message
       $commands[] = ajax_command_ding_popup('voxb_error', t('Error'), t('Service temporary unavailable.'));
     }
@@ -452,7 +445,7 @@ function ding_voxb_review_form_callback($form, &$form_state) {
 
       $item = new VoxbItem();
       $item->addReviewHandler('review', new VoxbReviews());
-      $item->fetchByFaust($form['faust_number']['#value']);
+      $item->fetchByISBN($form['isbn_number']['#value']);
       $reviews = $item->getReviews('review');
       $reviews_count = $reviews->getCount();
 
@@ -465,13 +458,10 @@ function ding_voxb_review_form_callback($form, &$form_state) {
           break;
         }
 
-        $commands[] = ajax_command_prepend('.user-reviews', theme(
-          'voxb_review_record',
-          array(
-            'author' => $review->getAuthorName(),
-            'review' => $review->getText())
-          )
-        );
+        $commands[] = ajax_command_prepend('.user-reviews', theme('voxb_review_record', array(
+          'author' => $review->getAuthorName(),
+          'review' => $review->getText()
+        )));
       }
 
       if ($reviews_count > $limit) {
@@ -484,7 +474,10 @@ function ding_voxb_review_form_callback($form, &$form_state) {
     }
   }
 
-  return array('#type' => 'ajax', '#commands' => $commands);
+  return array(
+    '#type' => 'ajax',
+    '#commands' => $commands
+  );
 }
 
 /**
@@ -494,10 +487,10 @@ function ding_voxb_review_form_callback($form, &$form_state) {
  *   Form structure
  * @param $form_state
  *   Form state
- * @param $faust_number
+ * @param $isbn_number
  *   Item ID
  */
-function ding_voxb_tag_form($form, $form_state, $faust_number) {
+function ding_voxb_tag_form($form, $form_state, $isbn_number) {
   $form['name'] = array(
     '#type' => 'textfield',
     '#size' => 20,
@@ -505,21 +498,21 @@ function ding_voxb_tag_form($form, $form_state, $faust_number) {
     '#ajax' => array(
       'event' => 'submit',
       'keypress' => TRUE,
-      'callback' => 'ding_voxb_add_tag_callback'
-    )
+      'callback' => 'ding_voxb_add_tag_callback',
+    ),
   );
 
-  $form['faustNumber'] = array(
+  $form['isbnNumber'] = array(
     '#type' => 'hidden',
-    '#name' => 'faustNumber',
-    '#value' => $faust_number
+    '#name' => 'isbnNumber',
+    '#value' => $isbn_number,
   );
 
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
     '#ajax' => array(
-      'callback' => 'ding_voxb_add_tag_callback'
+      'callback' => 'ding_voxb_add_tag_callback',
     ),
     '#attributes' => array('class' => array('rounded-corners')),
   );
@@ -547,7 +540,7 @@ function ding_voxb_add_tag_callback($form, &$form_state) {
     $tag = new VoxbTagRecord();
     $profile = unserialize($_SESSION['voxb']['profile']);
 
-    if (!$tag->create($form['faustNumber']['#value'], $form['name']['#value'], $profile)) {
+    if (!$tag->create($form['isbnNumber']['#value'], $form['name']['#value'], $profile)) {
       // add popup notice
       $commands[] = ajax_command_ding_popup('voxb_error', t('Error'), t('Service temporary unavailable.'));
     }
@@ -564,7 +557,10 @@ function ding_voxb_add_tag_callback($form, &$form_state) {
     }
   }
 
-  return array('#type' => 'ajax', '#commands' => $commands);
+  return array(
+    '#type' => 'ajax',
+    '#commands' => $commands
+  );
 }
 
 /**
@@ -572,12 +568,12 @@ function ding_voxb_add_tag_callback($form, &$form_state) {
  *
  * @param $type
  *   Type of request
- * @param $faust_number
+ * @param $isbn_number
  *   Item ID
  * @param $rating
  *   Item rating
  */
-function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
+function ding_voxb_rating($type = 'ajax', $isbn_number = NULL, $rating = 0) {
   // We check if it's an ajax call
   // this can be used if we will ipmlement NO-JS functionality in FE.
   if ($type == 'ajax') {
@@ -587,18 +583,18 @@ function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
     if ($rating == 0) {
       $commands[] = ajax_command_ding_popup('add_rate_error', t('Error'), t('Nothing selected.'));
     }
-    elseif (empty($faust_number)) {
-      $commands[] = ajax_command_ding_popup('add_rate_error', t('Error'), t('Wrong or empty faust number.'));
+    elseif (empty($isbn_number)) {
+      $commands[] = ajax_command_ding_popup('add_rate_error', t('Error'), t('Wrong or empty ISBN number.'));
     }
     else {
       $item = new VoxbItem();
 
       $profile = unserialize($_SESSION['voxb']['profile']);
-      $record_id = $profile->getVoxbUserData($faust_number);
+      $record_id = $profile->getVoxbUserData($isbn_number);
       $r = NULL;
 
       if ($record_id == NULL) {
-        $r = $item->rateItem($faust_number, $rating * 20, $_SESSION['voxb']['userId']);
+        $r = $item->rateItem($isbn_number, $rating * 20, $_SESSION['voxb']['userId']);
       }
       else {
         $r = $item->updateRateItem($record_id['voxbIdentifier'], $rating * 20);
@@ -610,13 +606,13 @@ function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
       if ($r) {
         // Rating is successfully submited
         // Now we need to fetch new rating form Voxb
-        $item->fetchByFaust($faust_number);
+        $item->fetchByISBN($isbn_number);
 
         $commands[] = array(
           'command' => 'voxb_rating_callback',
           'rating' => intval($item->getRating() / 20),
           'rating_count' => $item->getRatingCount(),
-          'item_id' => $faust_number,
+          'item_id' => $isbn_number,
         );
       }
       else {
@@ -626,7 +622,10 @@ function ding_voxb_rating($type = 'ajax', $faust_number = NULL, $rating = 0) {
 
     $commands[] = ajax_command_invoke('.ratings-container .ajax-anim', 'hide', array());
 
-    $result = array('#type' => 'ajax', '#commands' => $commands);
+    $result = array(
+      '#type' => 'ajax',
+      '#commands' => $commands,
+    );
     ajax_deliver($result);
   }
 }
@@ -638,18 +637,18 @@ function ding_voxb_ding_devel_timers() {
   return array(
     'voxb' => array(
       'title' => 'VoxB total request time was @time ms.',
-    )
+    ),
   );
 }
 
 /**
- * Request rating and review count for multiple items
+ * Request rating and review count for multiple items.
  *
  * @param $items
- *   Array of faust numbers
+ *   Array of ISBN numbers.
  * @return
  *   JSON encoded response
- *   In format item:faust, rating:count, reviews:count
+ *   In format item:isbn, rating:count, reviews:count
  */
 function ding_voxb_details() {
   $request = $_REQUEST['items'];
@@ -657,7 +656,7 @@ function ding_voxb_details() {
   $response['status'] = FALSE;
 
   $items = new VoxbItems();
-  $r = $items->fetchByFaust($request);
+  $r = $items->fetchByISBN($request);
 
   if ($r) {
     $response['status'] = TRUE;
@@ -695,16 +694,19 @@ function ding_voxb_ajax_reviews($type = 'ajax', $item_id) {
 
     $voxb_item = new VoxbItem();
     $voxb_item->addReviewHandler('review', new VoxbReviews());
-    $voxb_item->fetchByFaust($item_id);
+    $voxb_item->fetchByISBN($item_id);
 
     $markup = theme('voxb_review', array(
       'voxb_item' => $voxb_item,
-      'object_id' => $item_id)
-    );
+      'object_id' => $item_id,
+    ));
 
     $commands[] = ajax_command_html('.voxb-reviews-placeholder', $markup);
 
-    return array('#type' => 'ajax', '#commands' => $commands);
+    return array(
+      '#type' => 'ajax',
+      '#commands' => $commands
+    );
   }
 }
 
@@ -725,7 +727,7 @@ function ding_voxb_ajax_tags($type = 'ajax', $item_id) {
     $command = array();
 
     $voxb_item = new VoxbItem();
-    $voxb_item->fetchByFaust($item_id);
+    $voxb_item->fetchByISBN($item_id);
 
     if ($voxb_item->getTags()->getCount() == 0 && user_is_anonymous()) {
       // Hide pane container.
@@ -734,13 +736,16 @@ function ding_voxb_ajax_tags($type = 'ajax', $item_id) {
     else {
       $markup = theme('voxb_tags', array(
         'voxb_item' => $voxb_item,
-        'object_id' => $item_id)
-      );
+        'object_id' => $item_id,
+      ));
 
       $command = ajax_command_html('.voxb-tags-placeholder', $markup);
     }
 
-    return array('#type' => 'ajax', '#commands' => array($command));
+    return array(
+      '#type' => 'ajax',
+      '#commands' => array($command),
+    );
   }
 }
 
@@ -851,7 +856,8 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
           '#suffix' => '</div>',
           '#markup' => theme('voxb_rating', array(
             'object' => $entity,
-            'display_only' => FALSE)),
+            'display_only' => FALSE,
+          )),
         );
         break;
 
@@ -861,7 +867,8 @@ function ding_voxb_field_formatter_view($entity_type, $entity, $field, $instance
           '#suffix' => '</div>',
           '#markup' => theme('voxb_rating', array(
             'object' => $entity,
-            'display_only' => TRUE)),
+            'display_only' => TRUE,
+          )),
         );
         break;
 

@@ -60,14 +60,12 @@ function ding_voxb_field_group_info() {
     'weight' => '1',
     'children' => array(
       0 => 'ting_title',
-      1 => 'ting_series',
-      2 => 'ting_abstract',
-      3 => 'ting_author',
-      4 => 'ting_subjects',
-      5 => 'ting_details_classification',
-      6 => 'ting_details_isbn',
-      7 => 'ting_details_series_description',
-      8 => 'voxb_rating',
+      1 => 'ting_abstract',
+      2 => 'ting_author',
+      3 => 'ting_subjects',
+      4 => 'ting_details_series_description',
+      5 => 'voxb_rating',
+      6 => 'ting_details_description',
     ),
     'format_type' => 'fieldset',
     'format_settings' => array(
@@ -92,7 +90,7 @@ function ding_voxb_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Content group',
-    'weight' => '1',
+    'weight' => '2',
     'children' => array(
       0 => 'ting_title',
       1 => 'ting_series',

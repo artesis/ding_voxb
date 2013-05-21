@@ -82,7 +82,7 @@ function ding_voxb_field_default_fields() {
             'link_type' => 'none',
           ),
           'type' => 'voxb_rating_display_only',
-          'weight' => '4',
+          'weight' => '6',
         ),
         'user_list' => array(
           'label' => 'above',

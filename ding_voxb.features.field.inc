@@ -46,7 +46,7 @@ function ding_voxb_field_default_fields() {
             'link_type' => 'none',
           ),
           'type' => 'voxb_rating_default',
-          'weight' => '10',
+          'weight' => '12',
         ),
         'collection_primary' => array(
           'label' => 'hidden',

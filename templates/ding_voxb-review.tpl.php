@@ -6,8 +6,7 @@
 ?>
 <div class="voxb">
   <div class="reviews-container">
-    <a name="reviews"></a>
-    <div class="user-reviews">
+    <div id="<?php echo drupal_html_id('reviews') ?>" class="user-reviews">
       <?php print($reviews); ?>
     </div>
     <?php print($pagination); ?>

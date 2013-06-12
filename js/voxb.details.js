@@ -32,6 +32,10 @@
     attach : function(context) {
       var item_ids = [];
 
+      $('.ding-voxb-rating-display-only-placeholder a.rating').click(function() {
+        return false;
+      });
+
       $('.ting-cover', context).each(function(i, e) {
         id = Drupal.extractTingId(e);
 

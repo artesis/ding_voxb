@@ -22,6 +22,8 @@ class VoxbUser extends VoxbBase {
    * @return boolean
    */
   public function getUserBySSN($cpr, $identityProvider, $institutionName) {
+    $response = NULL;
+
     try {
       $response = $this->call('fetchUser', array(
         'authenticationFingerprint' => array(
@@ -31,7 +33,6 @@ class VoxbUser extends VoxbBase {
           'institutionName' => $institutionName,
         ),
       ));
-
       if (isset($response->Body->fetchUserResponse->error)) {
         ding_voxb_log(WATCHDOG_ERROR, $response->Body->fetchUserResponse->error);
         return FALSE;
@@ -39,6 +40,7 @@ class VoxbUser extends VoxbBase {
       $this->fetchProfiles($cpr, $response->Body->fetchUserResponse->users);
     }
     catch (Exception $e) {
+      ding_voxb_log(WATCHDOG_ERROR, $response->Body->fetchUserResponse->error);
       return FALSE;
     }
     return TRUE;

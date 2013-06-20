@@ -45,8 +45,9 @@ class VoxbItem extends VoxbBase {
 
     try {
       $o = $this->call('fetchData', $data);
-      if ($o->totalItemData) {
-        $this->fetchData($o->totalItemData);
+
+      if ($o->Body->fetchDataResponse->totalItemData) {
+        $this->fetchData($o->Body->fetchDataResponse->totalItemData);
       }
     }
     catch (Exception $e) {
@@ -99,7 +100,6 @@ class VoxbItem extends VoxbBase {
    * Method is fetching data from a VoxB object.
    */
   public function fetchData($o) {
-
     $this->objectIdentifierValue = $o->fetchData->objectIdentifierValue;
     $this->objectIdentifierType = $o->fetchData->objectIdentifierType;
 
@@ -151,18 +151,22 @@ class VoxbItem extends VoxbBase {
    * @param integer $rating (0 to 100)
    * @param integer $userId
    */
-  public function rateItem($faustNum, $rating, $userId) {
+  public function rateItem($isbn, $rating, $userId) {
     try {
-      $this->call('createMyData', array(
+      $response = $this->call('createMyData', array(
         'userId' => $userId,
         'item' => array(
           'rating' => $rating,
         ),
         'object' => array(
-          'objectIdentifierValue' => $faustNum,
-          'objectIdentifierType' => 'FAUST',
+          'objectIdentifierValue' => $isbn,
+          'objectIdentifierType' => 'ISBN',
         ),
       ));
+
+      if (isset($response->Body->createMyDataResponse->error)) {
+        ding_voxb_log(WATCHDOG_ERROR, $response->Body->createMyDataResponse->error);
+      }
     }
     catch (Exception $e) {
       return FALSE;
@@ -179,7 +183,7 @@ class VoxbItem extends VoxbBase {
    */
   public function updateRateItem($record_id, $rating) {
     try {
-      $this->call('updateMyData', array(
+      $response = $this->call('updateMyData', array(
         'voxbIdentifier' => $record_id,
         'item' => array(
           'rating' => $rating,

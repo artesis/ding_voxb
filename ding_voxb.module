@@ -587,37 +587,39 @@ function ding_voxb_rating($type = 'ajax', $isbn_number = NULL, $rating = 0) {
       $commands[] = ajax_command_ding_popup('add_rate_error', t('Error'), t('Wrong or empty ISBN number.'));
     }
     else {
-      $item = new VoxbItem();
+      if (!empty($_SESSION['voxb']) && !empty($_SESSION['voxb']['profile'])) {
+        $item = new VoxbItem();
 
-      $profile = unserialize($_SESSION['voxb']['profile']);
-      $record_id = $profile->getVoxbUserData($isbn_number);
-      $r = NULL;
+        $profile = unserialize($_SESSION['voxb']['profile']);
+        $record_id = $profile->getVoxbUserData($isbn_number);
+        $r = NULL;
 
-      if ($record_id == NULL) {
-        $r = $item->rateItem($isbn_number, $rating * 20, $_SESSION['voxb']['userId']);
-      }
-      else {
-        $r = $item->updateRateItem($record_id['voxbIdentifier'], $rating * 20);
-        // update profile object in session
-      }
-      $profile->updateActedItems();
-      $_SESSION['voxb']['profile'] = serialize($profile);
+        if ($record_id == NULL) {
+          $r = $item->rateItem($isbn_number, $rating * 20, $_SESSION['voxb']['userId']);
+        }
+        else {
+          $r = $item->updateRateItem($record_id['voxbIdentifier'], $rating * 20);
+          // update profile object in session
+        }
+        $profile->updateActedItems();
+        $_SESSION['voxb']['profile'] = serialize($profile);
 
-      if ($r) {
-        // Rating is successfully submited
-        // Now we need to fetch new rating form Voxb
-        $item->fetchByISBN($isbn_number);
+        if ($r) {
+          // Rating is successfully submited
+          // Now we need to fetch new rating form Voxb
+          $item->fetchByISBN($isbn_number);
 
-        $commands[] = array(
-          'command' => 'voxb_rating_callback',
-          'rating' => intval($item->getRating() / 20),
-          'rating_count' => $item->getRatingCount(),
-          'item_id' => $isbn_number,
-        );
-      }
-      else {
-        $commands[] = ajax_command_ding_popup('voxb_error', t('Error'), t('Service temporary unavailable.'));
-      }
+          $commands[] = array(
+            'command' => 'voxb_rating_callback',
+            'rating' => intval($item->getRating() / 20),
+            'rating_count' => $item->getRatingCount(),
+            'item_id' => $isbn_number,
+          );
+        }
+        else {
+          $commands[] = ajax_command_ding_popup('voxb_error', t('Error'), t('Service temporary unavailable.'));
+        }
+      } // If profile is empty.
     }
 
     $commands[] = ajax_command_invoke('.ratings-container .ajax-anim', 'hide', array());

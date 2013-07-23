@@ -924,3 +924,21 @@ function ding_voxb_log($severity, $message, array $variables = array()) {
     watchdog('voxb', $message, $variables, $severity);
   }
 }
+
+/**
+ * Implements hook_requirements().
+ */
+function ding_voxb_requirements($phase) {
+  if ($phase == 'runtime') {
+    $service_uri = trim(variable_get('voxb_service_url', NULL), '/');
+    if ($service_uri != trim('https://voxb.addi.dk/1.0/', '/')) {
+      return array('ding_voxb' =>
+        array(
+          'title' => t('VoxB module'),
+          'value' => t('Version 1.0 of voxb.addi.dk service is required (https://voxb.addi.dk/1.0/)'),
+          'severity' => REQUIREMENT_ERROR,
+        ),
+      );
+    }
+  }
+}

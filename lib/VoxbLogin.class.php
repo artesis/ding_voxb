@@ -29,7 +29,9 @@ class VoxbLogin {
     // so we shorterning it by rehashing.
     $name = md5($account->name);
     $obj = new VoxbUser();
-    if ($obj->getUserBySSN($name, variable_get('voxb_identity_provider', ''), variable_get('voxb_institution_name', ''))) {
+    $voxb_user_object = $obj->getUserBySSN($name, variable_get('voxb_identity_provider', ''), variable_get('voxb_institution_name', ''));
+
+    if ($voxb_user_object) {
       /**
        * Each user in Voxb can have several profiles
        * but we take just the first one

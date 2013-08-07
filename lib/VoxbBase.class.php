@@ -36,7 +36,8 @@ class VoxbBase {
       ),
       'curl' => array(
         // In some environments VoxB responds with different certificate.
-        CURLOPT_SSL_VERIFYHOST => false,
+        CURLOPT_SSL_VERIFYHOST => FALSE,
+        CURLOPT_SSL_VERIFYPEER => FALSE,
       ),
     );
 

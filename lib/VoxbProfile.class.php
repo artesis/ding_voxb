@@ -193,7 +193,7 @@ class VoxbProfile extends VoxbBase {
       }
 
       foreach ($response->Body->fetchMyDataResponse->result as $v) {
-        if ($v->object && $v->object->objectIdentifierType == 'FAUST') {
+        if ($v->object && $v->object->objectIdentifierType == 'ISBN') {
           $this->actedItems[(string) $v->object->objectIdentifierValue] = array(
             'voxbIdentifier' => (string) $v->voxbIdentifier,
             'tags' => @$v->item->tags ? $this->prepareArray($v->item->tags->tag) : array(),
@@ -236,8 +236,7 @@ class VoxbProfile extends VoxbBase {
    * Update array of acted items.
    */
   public function updateActedItems() {
-    $this->actedItems = array();
-    $this->getActedItems();
+    $this->actedItems = $this->getActedItems();
   }
 
   /**
@@ -267,10 +266,9 @@ class VoxbProfile extends VoxbBase {
    * @param $faustNumber
    * @return array
    */
-  public function getVoxbUserData($faustNumber) {
+  public function getVoxbUserData($isbn) {
     $actedItems = $this->getActedItems();
 
-    return $actedItems[$faustNumber];
+    return $actedItems[$isbn];
   }
-
 }

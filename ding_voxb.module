@@ -234,10 +234,12 @@ function ding_voxb_preprocess_voxb_rating(&$variables) {
   $rating_block_class = array();
   $star_class = array();
   $star_class[] = 'star-off';
+  $variables['rate_enabled'] = FALSE;
   // In case the user has the ability to rate, assign respective classes.
   if (!$variables['display_only'] && is_object($profile)) {
     $rating_block_class[] = 'rate-enabled';
     $star_class[] = 'use-ajax';
+    $variables['rate_enabled'] = TRUE;
   }
 
   $variables['rating_block_class'] = implode(' ', $rating_block_class);

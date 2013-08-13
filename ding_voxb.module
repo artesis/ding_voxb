@@ -33,7 +33,7 @@ function ding_voxb_menu() {
     'page callback' => 'ding_voxb_paginator',
   );
 
-  $items['voxb/ajax/rating/%/%'] = array(
+  $items['voxb/%/rating/%/%'] = array(
     'title' => 'VoxB rating handler',
     'description' => '',
     'page arguments' => array(1, 3, 4),
@@ -574,8 +574,14 @@ function ding_voxb_add_tag_callback($form, &$form_state) {
  *   Item rating
  */
 function ding_voxb_rating($type = 'ajax', $isbn_number = NULL, $rating = 0) {
-  // We check if it's an ajax call
-  // this can be used if we will ipmlement NO-JS functionality in FE.
+  if ($type != 'ajax') {
+    global $base_root;
+    $referer = @$_SERVER["HTTP_REFERER"];
+    drupal_set_message(t('Can\'t rate item'), 'warning');
+    drupal_goto(preg_match('~^' . $base_root . '~', $referer) ? $referer : $base_root);
+  }
+
+  // We check if it's an ajax call.
   if ($type == 'ajax') {
     $commands = array();
     $rating = intval($rating);

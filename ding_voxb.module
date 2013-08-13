@@ -295,7 +295,7 @@ function ding_voxb_preprocess_voxb_review(&$variables) {
 
   // Pagination section
   $pagination = '';
-  $review_count = $voxb_item->getReviews('review')->getCount();
+  $review_count = count($voxb_item->getReviews('review'));
   $pages = -1;
 
   $pagination .= '<div id="pager-block" ' . (($review_count <= $limit) ? 'style="display: none;"' : '') . '>';
@@ -449,7 +449,7 @@ function ding_voxb_review_form_callback($form, &$form_state) {
       $item->addReviewHandler('review', new VoxbReviews());
       $item->fetchByISBN($form['isbn_number']['#value']);
       $reviews = $item->getReviews('review');
-      $reviews_count = $reviews->getCount();
+      $reviews_count = count($reviews);
 
       // Limit the count of displayed text reviews
       $limit = variable_get('voxb_reviews_per_page', VOXB_DEFAULT_REVIEWS_PER_PAGE);

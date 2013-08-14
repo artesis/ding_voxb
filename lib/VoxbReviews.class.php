@@ -6,7 +6,7 @@
  * This class handles reviews colection.
  */
 
-class VoxbReviews extends VoxbBase implements Iterator {
+class VoxbReviews extends VoxbBase implements Iterator, Countable {
 
   private $items = array();
   private $position;
@@ -83,5 +83,14 @@ class VoxbReviews extends VoxbBase implements Iterator {
    */
   public function getCount() {
     return count($this->items);
+  }
+
+  /**
+   * Implementation of Countable interface.
+   *
+   * @return integer
+   */
+  public function count() {
+    return $this->getCount();
   }
 }
